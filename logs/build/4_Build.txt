@@ -1,80 +1,118 @@
-﻿2026-09-26T15:34:53.4032850Z ##[group]Run export THEOS=$HOME/theos
-2026-09-26T15:34:53.4033190Z [36;1mexport THEOS=$HOME/theos[0m
-2026-09-26T15:34:53.4033410Z [36;1mmake package FINALPACKAGE=1[0m
-2026-09-26T15:34:53.4033620Z [36;1mmkdir -p out[0m
-2026-09-26T15:34:53.4033880Z [36;1mfind .theos packages -name '*.dylib' -exec cp {} out/ \;[0m
-2026-09-26T15:34:53.4034170Z [36;1mls -la out/[0m
-2026-09-26T15:34:53.4080600Z shell: /bin/bash -e {0}
-2026-09-26T15:34:53.4080900Z env:
-2026-09-26T15:34:53.4081080Z   THEOS: /Users/runner/theos
-2026-09-26T15:34:53.4081260Z ##[endgroup]
-2026-09-26T15:34:59.4782700Z [0;36m==> [1;36mNotice:[m Build may be slow as Theos isn’t using all available CPU cores on this computer. Consider upgrading GNU Make: https://theos.dev/docs/parallel-building
-2026-09-26T15:34:59.7698080Z [1;31m> [1;3;39mMaking all for tweak FenzuTweak…[m
-2026-09-26T15:35:02.5276170Z [0;31m==> [1;39mPreprocessing Tweak.x…[m
-2026-09-26T15:35:02.6845890Z [0;32m==> [1;39mCompiling Tweak.x (arm64)…[m
-2026-09-26T15:35:03.3933360Z [1mTweak.x:1:1: [0m[0;1;35mwarning: [0m[1midentifier contains Unicode character <U+FEFF> that is invisible in some environments [-Wunicode-zero-width][0m
-2026-09-26T15:35:03.3934300Z     1 | [7m<U+FEFF>[0m#import <UIKit/UIKit.h>[0m
-2026-09-26T15:35:03.3937370Z       | [0;1;32m^~~~~~~~
-2026-09-26T15:35:03.3994380Z [0m[1mTweak.x:1:1: [0m[0;1;31merror: [0m[1munknown type name '﻿'[0m
-2026-09-26T15:35:03.3999820Z [1mTweak.x:1:4: [0m[0;1;31merror: [0m[1mexpected identifier or '('[0m
-2026-09-26T15:35:03.4000510Z     1 | [7m<U+FEFF>[0m#import <UIKit/UIKit.h>[0m
-2026-09-26T15:35:03.4002170Z       | [0;1;32m        ^
-2026-09-26T15:35:05.4422400Z [0m[1mTweak.x:6:8: [0m[0;1;31merror: [0m[1munknown type name 'UIViewController'[0m
-2026-09-26T15:35:05.4425260Z     6 | static UIViewController *PJTopmostVC(void) {[0m
-2026-09-26T15:35:05.4427010Z       | [0;1;32m       ^
-2026-09-26T15:35:05.4494290Z [0m[1mTweak.x:7:5: [0m[0;1;31merror: [0m[1muse of undeclared identifier 'UIViewController'[0m
-2026-09-26T15:35:05.4496580Z     7 |     UIViewController *top = [UIApplication sharedApplication].keyWindow.rootViewController;[0m
-2026-09-26T15:35:05.4499890Z       | [0;1;32m    ^
-2026-09-26T15:35:05.4528510Z [0m[1mTweak.x:7:23: [0m[0;1;31merror: [0m[1muse of undeclared identifier 'top'[0m
-2026-09-26T15:35:05.4530490Z     7 |     UIViewController *top = [UIApplication sharedApplication].keyWindow.rootViewController;[0m
-2026-09-26T15:35:05.4533120Z       | [0;1;32m                      ^
-2026-09-26T15:35:05.4623150Z [0m[1mTweak.x:7:30: [0m[0;1;31merror: [0m[1muse of undeclared identifier 'UIApplication'[0m
-2026-09-26T15:35:05.4624520Z     7 |     UIViewController *top = [UIApplication sharedApplication].keyWindow.rootViewController;[0m
-2026-09-26T15:35:05.4625300Z       | [0;1;32m                             ^
-2026-09-26T15:35:05.4630680Z [0m[1mTweak.x:8:12: [0m[0;1;31merror: [0m[1muse of undeclared identifier 'top'[0m
-2026-09-26T15:35:05.4631610Z     8 |     while (top.presentedViewController) top = top.presentedViewController;[0m
-2026-09-26T15:35:05.4632200Z       | [0;1;32m           ^
-2026-09-26T15:35:05.4651450Z [0m[1mTweak.x:8:41: [0m[0;1;31merror: [0m[1muse of undeclared identifier 'top'[0m
-2026-09-26T15:35:05.4654640Z     8 |     while (top.presentedViewController) top = top.presentedViewController;[0m
-2026-09-26T15:35:05.4655440Z       | [0;1;32m                                        ^
-2026-09-26T15:35:05.4658140Z [0m[1mTweak.x:8:47: [0m[0;1;31merror: [0m[1muse of undeclared identifier 'top'[0m
-2026-09-26T15:35:05.4658820Z     8 |     while (top.presentedViewController) top = top.presentedViewController;[0m
-2026-09-26T15:35:05.4669320Z       | [0;1;32m                                              ^
-2026-09-26T15:35:05.4670150Z [0m[1mTweak.x:9:12: [0m[0;1;31merror: [0m[1muse of undeclared identifier 'top'[0m
-2026-09-26T15:35:05.4670880Z     9 |     return top;[0m
-2026-09-26T15:35:05.4671450Z       | [0;1;32m           ^
-2026-09-26T15:35:05.4720890Z [0m[1mTweak.x:36:8: [0m[0;1;31merror: [0m[1munknown type name 'UIImage'[0m
-2026-09-26T15:35:05.4721980Z    36 | static UIImage *PJGroupAvatar(NSString *gn) {[0m
-2026-09-26T15:35:05.4722380Z       | [0;1;32m       ^
-2026-09-26T15:35:05.4753350Z [0m[1mTweak.x:38:23: [0m[0;1;31merror: [0m[1muse of undeclared identifier 'UIImage'[0m
-2026-09-26T15:35:05.4781450Z    38 |     if (path) return [UIImage imageWithContentsOfFile:path];[0m
-2026-09-26T15:35:05.4782420Z       | [0;1;32m                      ^
-2026-09-26T15:35:05.4832030Z [0m[1mTweak.x:44:5: [0m[0;1;31merror: [0m[1muse of undeclared identifier 'UIViewController'[0m
-2026-09-26T15:35:05.4836510Z    44 |     UIViewController *host = PJTopmostVC();[0m
-2026-09-26T15:35:05.4840330Z       | [0;1;32m    ^
-2026-09-26T15:35:05.4851900Z [0m[1mTweak.x:44:23: [0m[0;1;31merror: [0m[1muse of undeclared identifier 'host'[0m
-2026-09-26T15:35:05.4852630Z    44 |     UIViewController *host = PJTopmostVC();[0m
-2026-09-26T15:35:05.4853180Z       | [0;1;32m                      ^
-2026-09-26T15:35:05.4915430Z [0m[1mTweak.x:45:5: [0m[0;1;31merror: [0m[1muse of undeclared identifier 'UIAlertController'[0m
-2026-09-26T15:35:05.4928240Z    45 |     UIAlertController *a = [UIAlertController alertControllerWithTitle:userName message:@"閫夋嫨鍒嗙粍" preferredStyle:UIAlertControllerStyleActionSheet];[0m
-2026-09-26T15:35:05.4932890Z       | [0;1;32m    ^
-2026-09-26T15:35:05.4946030Z [0m[1mTweak.x:45:24: [0m[0;1;31merror: [0m[1muse of undeclared identifier 'a'[0m
-2026-09-26T15:35:05.4947240Z    45 |     UIAlertController *a = [UIAlertController alertControllerWithTitle:userName message:@"閫夋嫨鍒嗙粍" preferredStyle:UIAlertControllerStyleActionSheet];[0m
-2026-09-26T15:35:05.4948220Z       | [0;1;32m                       ^
-2026-09-26T15:35:05.5082570Z [0m[1mTweak.x:45:29: [0m[0;1;31merror: [0m[1muse of undeclared identifier 'UIAlertController'[0m
-2026-09-26T15:35:05.5085730Z    45 |     UIAlertController *a = [UIAlertController alertControllerWithTitle:userName message:@"閫夋嫨鍒嗙粍" preferredStyle:UIAlertControllerStyleActionSheet];[0m
-2026-09-26T15:35:05.5088260Z       | [0;1;32m                            ^
-2026-09-26T15:35:05.5101560Z [0m[1mTweak.x:47:10: [0m[0;1;31merror: [0m[1muse of undeclared identifier 'a'[0m
-2026-09-26T15:35:05.5102770Z    47 |         [a addAction:[UIAlertAction actionWithTitle:gn style:UIAlertActionStyleDefault handler:^(UIAlertAction * _) {[0m
-2026-09-26T15:35:05.5103520Z       | [0;1;32m         ^
-2026-09-26T15:35:05.5121580Z [0m[1mTweak.x:52:6: [0m[0;1;31merror: [0m[1muse of undeclared identifier 'a'[0m
-2026-09-26T15:35:05.5130120Z    52 |     [a addAction:[UIAlertAction actionWithTitle:@"绉诲嚭鍒嗙粍" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _) {[0m
-2026-09-26T15:35:05.5138300Z       | [0;1;32m     ^
-2026-09-26T15:35:05.5147090Z [0m[0;1;31mfatal error: [0m[1mtoo many errors emitted, stopping now [-ferror-limit=][0m
-2026-09-26T15:35:05.5360720Z 1 warning and 20 errors generated.
-2026-09-26T15:35:05.5399150Z make[3]: *** [/Users/runner/work/fenzu/fenzu/.theos/obj/arm64/Tweak.x.12e56ab1.o] Error 1
-2026-09-26T15:35:05.5410350Z make[2]: *** [/Users/runner/work/fenzu/fenzu/.theos/obj/arm64/FenzuTweak.dylib] Error 2
-2026-09-26T15:35:05.5411080Z rm /Users/runner/work/fenzu/fenzu/.theos/obj/arm64/Tweak.x.m
-2026-09-26T15:35:05.5418250Z make[1]: *** [internal-library-all_] Error 2
-2026-09-26T15:35:05.5422970Z make: *** [FenzuTweak.all.tweak.variables] Error 2
-2026-09-26T15:35:05.5470230Z ##[error]Process completed with exit code 2.
+﻿2026-09-26T15:45:38.2753110Z ##[group]Run export THEOS=$HOME/theos
+2026-09-26T15:45:38.2754310Z [36;1mexport THEOS=$HOME/theos[0m
+2026-09-26T15:45:38.2754940Z [36;1mmake package FINALPACKAGE=1[0m
+2026-09-26T15:45:38.2755360Z [36;1mmkdir -p out[0m
+2026-09-26T15:45:38.2755980Z [36;1mfind .theos packages -name '*.dylib' -exec cp {} out/ \;[0m
+2026-09-26T15:45:38.2756480Z [36;1mls -la out/[0m
+2026-09-26T15:45:38.2813810Z shell: /bin/bash -e {0}
+2026-09-26T15:45:38.2814170Z env:
+2026-09-26T15:45:38.2814490Z   THEOS: /Users/runner/theos
+2026-09-26T15:45:38.2814770Z ##[endgroup]
+2026-09-26T15:45:43.4597720Z [0;36m==> [1;36mNotice:[m Build may be slow as Theos isn’t using all available CPU cores on this computer. Consider upgrading GNU Make: https://theos.dev/docs/parallel-building
+2026-09-26T15:45:43.7326980Z [1;31m> [1;3;39mMaking all for tweak FenzuTweak…[m
+2026-09-26T15:45:45.5728180Z [0;31m==> [1;39mPreprocessing Tweak.x…[m
+2026-09-26T15:45:45.6578520Z [0;32m==> [1;39mCompiling Tweak.x (arm64)…[m
+2026-09-26T15:45:48.0874040Z [1mTweak.x:56:50: [0m[0;1;35mwarning: [0m[1mmissing terminating '"' character [-Winvalid-pp-token][0m
+2026-09-26T15:45:48.0875500Z    56 |     [a addAction:[UIAlertAction actionWithTitle:@"閸欐牗绉? style:UIAlertActionStyleCancel handler:nil]];[0m
+2026-09-26T15:45:48.0884330Z       | [0;1;32m                                                 ^
+2026-09-26T15:45:48.0884930Z [0m[1mTweak.x:56:49: [0m[0;1;31merror: [0m[1munexpected '@' in program[0m
+2026-09-26T15:45:48.0885760Z    56 |     [a addAction:[UIAlertAction actionWithTitle:@"閸欐牗绉? style:UIAlertActionStyleCancel handler:nil]];[0m
+2026-09-26T15:45:48.0887270Z       | [0;1;32m                                                ^
+2026-09-26T15:45:48.0938010Z [0m[1mTweak.x:117:55: [0m[0;1;31merror: [0m[1mcharacter <U+E630> not allowed in an identifier[0m
+2026-09-26T15:45:48.0940080Z   117 |     NSArray *names = @[@"閹稿[7m<U+E630>[0m妞傞梻?, @"閹稿[7m<U+E630>[0m婀[7m<U+E160>[0m拠?, @"濞ｅ嘲鎮?];[0m
+2026-09-26T15:45:48.0940820Z       | [0;1;32m                                                    ^~~~~~~~
+2026-09-26T15:45:48.0941630Z [0m[1mTweak.x:117:61: [0m[0;1;31merror: [0m[1mcharacter <U+E160> not allowed in an identifier[0m
+2026-09-26T15:45:48.0942360Z   117 |     NSArray *names = @[@"閹稿[7m<U+E630>[0m妞傞梻?, @"閹稿[7m<U+E630>[0m婀[7m<U+E160>[0m拠?, @"濞ｅ嘲鎮?];[0m
+2026-09-26T15:45:48.0943070Z       | [0;1;32m                                                              ^~~~~~~~
+2026-09-26T15:45:48.0943910Z [0m[1mTweak.x:117:71: [0m[0;1;35mwarning: [0m[1mmissing terminating '"' character [-Winvalid-pp-token][0m
+2026-09-26T15:45:48.0944560Z   117 |     NSArray *names = @[@"閹稿[7m<U+E630>[0m妞傞梻?, @"閹稿[7m<U+E630>[0m婀[7m<U+E160>[0m拠?, @"濞ｅ嘲鎮?];[0m
+2026-09-26T15:45:48.0945200Z       | [0;1;32m                                                                            ^
+2026-09-26T15:45:48.0946020Z [0m[1mTweak.x:117:49: [0m[0;1;31merror: [0m[1mexpected ']' or ','[0m
+2026-09-26T15:45:48.0946630Z   117 |     NSArray *names = @[@"閹稿[7m<U+E630>[0m妞傞梻?, @"閹稿[7m<U+E630>[0m婀[7m<U+E160>[0m拠?, @"濞ｅ嘲鎮?];[0m
+2026-09-26T15:45:48.0947130Z       | [0;1;32m                                                ^
+2026-09-26T15:45:48.0953090Z [0m[1mTweak.x:168:140: [0m[0;1;35mwarning: [0m[1mmissing terminating '"' character [-Winvalid-pp-token][0m
+2026-09-26T15:45:48.0956120Z   168 |         c.detailTextLabel.text = [m isEqualToString:@"unread"] ? @"閹稿[7m<U+E630>[0m婀[7m<U+E160>[0m拠? : [m isEqualToString:@"mixed"] ? @"濞ｅ嘲鎮? : @"閹稿[7m<U+E630>[0m妞傞梻?;[0m
+2026-09-26T15:45:48.0960750Z       | [0;1;32m                                                                                                                                             ^
+2026-09-26T15:45:48.0973030Z [0m[1mTweak.x:179:62: [0m[0;1;35mwarning: [0m[1mmissing terminating '"' character [-Winvalid-pp-token][0m
+2026-09-26T15:45:48.0977020Z   179 |         c.detailTextLabel.text = [NSString stringWithFormat:@"%lu 娑擃亣浜版径?, (unsigned long)all.count];[0m
+2026-09-26T15:45:48.1012750Z       | [0;1;32m                                                             ^
+2026-09-26T15:45:48.1016940Z [0m[1mTweak.x:201:54: [0m[0;1;35mwarning: [0m[1mmissing terminating '"' character [-Winvalid-pp-token][0m
+2026-09-26T15:45:48.1017820Z   201 |         [a addAction:[UIAlertAction actionWithTitle:@"閸欐牗绉? style:UIAlertActionStyleCancel handler:nil]];[0m
+2026-09-26T15:45:48.1018530Z       | [0;1;32m                                                     ^
+2026-09-26T15:45:48.1019080Z [0m[1mTweak.x:236:82: [0m[0;1;35mwarning: [0m[1mmissing terminating '"' character [-Winvalid-pp-token][0m
+2026-09-26T15:45:48.1019840Z   236 |     [a addTextFieldWithConfigurationHandler:^(UITextField *f) { f.placeholder = @"閸掑棛绮嶉崥?; }];[0m
+2026-09-26T15:45:48.1020470Z       | [0;1;32m                                                                                 ^
+2026-09-26T15:45:48.1021130Z [0m[1mTweak.x:237:50: [0m[0;1;35mwarning: [0m[1mmissing terminating '"' character [-Winvalid-pp-token][0m
+2026-09-26T15:45:48.1021820Z   237 |     [a addAction:[UIAlertAction actionWithTitle:@"閸欐牗绉? style:UIAlertActionStyleCancel handler:nil]];[0m
+2026-09-26T15:45:48.1022380Z       | [0;1;32m                                                 ^
+2026-09-26T15:45:48.1022900Z [0m[1mTweak.x:238:50: [0m[0;1;35mwarning: [0m[1mmissing terminating '"' character [-Winvalid-pp-token][0m
+2026-09-26T15:45:48.1023660Z   238 |     [a addAction:[UIAlertAction actionWithTitle:@"绾[7m<U+E167>[0m喖鐣? style:UIAlertActionStyleDefault handler:^(UIAlertAction * _) {[0m
+2026-09-26T15:45:48.1024220Z       | [0;1;32m                                                 ^
+2026-09-26T15:45:48.1024670Z [0m[1mTweak.x:241:7: [0m[0;1;31merror: [0m[1mexpected identifier or '('[0m
+2026-09-26T15:45:48.1025110Z   241 |     }]];[0m
+2026-09-26T15:45:48.1025460Z       | [0;1;32m      ^
+2026-09-26T15:45:48.1025910Z [0m[1mTweak.x:242:6: [0m[0;1;31merror: [0m[1mmissing '[' at start of message send expression[0m
+2026-09-26T15:45:48.1026470Z   242 |     [self presentViewController:a animated:YES completion:nil];[0m
+2026-09-26T15:45:48.1026840Z       | [0;1;32m     ^
+2026-09-26T15:45:48.1027140Z [0m      | [0;32m     [
+2026-09-26T15:45:48.1033170Z [0m[1mTweak.x:242:33: [0m[0;1;31merror: [0m[1muse of undeclared identifier 'a'[0m
+2026-09-26T15:45:48.1033760Z   242 |     [self presentViewController:a animated:YES completion:nil];[0m
+2026-09-26T15:45:48.1034250Z       | [0;1;32m                                ^
+2026-09-26T15:45:48.1034680Z [0m[1mTweak.x:242:6: [0m[0;1;31merror: [0m[1muse of undeclared identifier 'self'[0m
+2026-09-26T15:45:48.1035280Z   242 |     [self presentViewController:a animated:YES completion:nil];[0m
+2026-09-26T15:45:48.1035650Z       | [0;1;32m     ^
+2026-09-26T15:45:48.1036110Z [0m[1mTweak.x:242:5: [0m[0;1;31merror: [0m[1mexpected identifier or '('[0m
+2026-09-26T15:45:48.1036660Z   242 |     [self presentViewController:a animated:YES completion:nil];[0m
+2026-09-26T15:45:48.1037170Z       | [0;1;32m    ^
+2026-09-26T15:45:48.1037520Z [0m[1mTweak.x:243:1: [0m[0;1;31merror: [0m[1mextraneous closing brace ('}')[0m
+2026-09-26T15:45:48.1037950Z   243 | }[0m
+2026-09-26T15:45:48.1038150Z       | [0;1;32m^
+2026-09-26T15:45:48.1042480Z [0m[1mTweak.x:159:41: [0m[0;1;31merror: [0m[1mexpected ':'[0m
+2026-09-26T15:45:48.1042840Z   159 |     return s == 0 ? @"閹烘帒绨? : @"閸掑棛绮?;[0m
+2026-09-26T15:45:48.1043160Z       | [0;1;32m                                    ^
+2026-09-26T15:45:48.1043460Z [0m      | [0;32m                                    : 
+2026-09-26T15:45:48.1043840Z [0m[1mTweak.x:159:19: [0m[0;1;36mnote: [0mto match this '?'[0m
+2026-09-26T15:45:48.1044790Z   159 |     return s == 0 ? @"閹烘帒绨? : @"閸掑棛绮?;[0m
+2026-09-26T15:45:48.1045110Z       | [0;1;32m                  ^
+2026-09-26T15:45:48.1095810Z [0m[1mTweak.x:159:54: [0m[0;1;31merror: [0m[1mexpected expression[0m
+2026-09-26T15:45:48.1096360Z   159 |     return s == 0 ? @"閹烘帒绨? : @"閸掑棛绮?;[0m
+2026-09-26T15:45:48.1097490Z       | [0;1;32m                                             ^
+2026-09-26T15:45:48.1098030Z [0m[1mTweak.x:159:41: [0m[0;1;31merror: [0m[1muse of undeclared identifier '閸掑棛绮'[0m
+2026-09-26T15:45:48.1098670Z   159 |     return s == 0 ? @"閹烘帒绨? : @"閸掑棛绮?;[0m
+2026-09-26T15:45:48.1099110Z       | [0;1;32m                                    ^
+2026-09-26T15:45:48.1099470Z [0m[1mTweak.x:159:54: [0m[0;1;31merror: [0m[1mexpected ':'[0m
+2026-09-26T15:45:48.1099820Z   159 |     return s == 0 ? @"閹烘帒绨? : @"閸掑棛绮?;[0m
+2026-09-26T15:45:48.1100150Z       | [0;1;32m                                             ^
+2026-09-26T15:45:48.1100670Z [0m      | [0;32m                                             : 
+2026-09-26T15:45:48.1101040Z [0m[1mTweak.x:159:53: [0m[0;1;36mnote: [0mto match this '?'[0m
+2026-09-26T15:45:48.1101490Z   159 |     return s == 0 ? @"閹烘帒绨? : @"閸掑棛绮?;[0m
+2026-09-26T15:45:48.1101840Z       | [0;1;32m                                            ^
+2026-09-26T15:45:48.1102220Z [0m[1mTweak.x:159:54: [0m[0;1;31merror: [0m[1mexpected expression[0m
+2026-09-26T15:45:48.1102650Z   159 |     return s == 0 ? @"閹烘帒绨? : @"閸掑棛绮?;[0m
+2026-09-26T15:45:48.1102950Z       | [0;1;32m                                             ^
+2026-09-26T15:45:48.1103320Z [0m[1mTweak.x:168:111: [0m[0;1;31merror: [0m[1mexpected ':'[0m
+2026-09-26T15:45:48.1104080Z   168 |         c.detailTextLabel.text = [m isEqualToString:@"unread"] ? @"閹稿[7m<U+E630>[0m婀[7m<U+E160>[0m拠? : [m isEqualToString:@"mixed"] ? @"濞ｅ嘲鎮? : @"閹稿[7m<U+E630>[0m妞傞梻?;[0m
+2026-09-26T15:45:48.1104800Z       | [0;1;32m                                                                                                                    ^
+2026-09-26T15:45:48.1105310Z [0m      | [0;32m                                                                                                                    : 
+2026-09-26T15:45:48.1105740Z [0m[1mTweak.x:168:64: [0m[0;1;36mnote: [0mto match this '?'[0m
+2026-09-26T15:45:48.1106650Z   168 |         c.detailTextLabel.text = [m isEqualToString:@"unread"] ? @"閹稿[7m<U+E630>[0m婀[7m<U+E160>[0m拠? : [m isEqualToString:@"mixed"] ? @"濞ｅ嘲鎮? : @"閹稿[7m<U+E630>[0m妞傞梻?;[0m
+2026-09-26T15:45:48.1107410Z       | [0;1;32m                                                               ^
+2026-09-26T15:45:48.1118150Z [0m[1mTweak.x:168:116: [0m[0;1;31merror: [0m[1mexpected ';' after expression[0m
+2026-09-26T15:45:48.1119280Z   168 |         c.detailTextLabel.text = [m isEqualToString:@"unread"] ? @"閹稿[7m<U+E630>[0m婀[7m<U+E160>[0m拠? : [m isEqualToString:@"mixed"] ? @"濞ｅ嘲鎮? : @"閹稿[7m<U+E630>[0m妞傞梻?;[0m
+2026-09-26T15:45:48.1120130Z       | [0;1;32m                                                                                                                         ^
+2026-09-26T15:45:48.1120690Z [0m      | [0;32m                                                                                                                         ;
+2026-09-26T15:45:48.1132400Z [0m[1mTweak.x:168:111: [0m[0;1;31merror: [0m[1muse of undeclared identifier 'mixed'[0m
+2026-09-26T15:45:48.1133640Z   168 |         c.detailTextLabel.text = [m isEqualToString:@"unread"] ? @"閹稿[7m<U+E630>[0m婀[7m<U+E160>[0m拠? : [m isEqualToString:@"mixed"] ? @"濞ｅ嘲鎮? : @"閹稿[7m<U+E630>[0m妞傞梻?;[0m
+2026-09-26T15:45:48.1134780Z       | [0;1;32m                                                                                                                    ^
+2026-09-26T15:45:48.1135550Z [0m[1mTweak.x:168:123: [0m[0;1;31merror: [0m[1mexpected ';' after expression[0m
+2026-09-26T15:45:48.1136640Z   168 |         c.detailTextLabel.text = [m isEqualToString:@"unread"] ? @"閹稿[7m<U+E630>[0m婀[7m<U+E160>[0m拠? : [m isEqualToString:@"mixed"] ? @"濞ｅ嘲鎮? : @"閹稿[7m<U+E630>[0m妞傞梻?;[0m
+2026-09-26T15:45:48.1138410Z       | [0;1;32m                                                                                                                                ^
+2026-09-26T15:45:48.1139210Z [0m      | [0;32m                                                                                                                                ;
+2026-09-26T15:45:48.1188550Z [0m[0;1;31mfatal error: [0m[1mtoo many errors emitted, stopping now [-ferror-limit=][0m
+2026-09-26T15:45:48.1594760Z 8 warnings and 20 errors generated.
+2026-09-26T15:45:48.1647690Z make[3]: *** [/Users/runner/work/fenzu/fenzu/.theos/obj/arm64/Tweak.x.12e56ab1.o] Error 1
+2026-09-26T15:45:48.1648570Z rm /Users/runner/work/fenzu/fenzu/.theos/obj/arm64/Tweak.x.m
+2026-09-26T15:45:48.1650840Z make[2]: *** [/Users/runner/work/fenzu/fenzu/.theos/obj/arm64/FenzuTweak.dylib] Error 2
+2026-09-26T15:45:48.1652900Z make[1]: *** [internal-library-all_] Error 2
+2026-09-26T15:45:48.1657290Z make: *** [FenzuTweak.all.tweak.variables] Error 2
+2026-09-26T15:45:48.1671220Z ##[error]Process completed with exit code 2.
