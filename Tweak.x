@@ -9,7 +9,6 @@ static UIViewController *PJTopmostVC(void) {
     return top;
 }
 
-// 设置页: 管理分组
 @interface PJGroupEditViewController : UIViewController <UITableViewDataSource, UITableViewDelegate>
 @property (nonatomic, strong) UITableView *tableView;
 @property (nonatomic, strong) NSMutableArray *groups;
@@ -17,9 +16,9 @@ static UIViewController *PJTopmostVC(void) {
 @implementation PJGroupEditViewController
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.title = @"会话分组";
+    self.title = @"Groups";
     self.view.backgroundColor = [UIColor groupTableViewBackgroundColor];
-    self.groups = [[NSUserDefaults standardUserDefaults] arrayForKey:@"misakaGroups"].mutableCopy ?: [@[@"工作", @"家人", @"其他"] mutableCopy];
+    self.groups = [[NSUserDefaults standardUserDefaults] arrayForKey:@"misakaGroups"].mutableCopy ?: [@[@"Work", @"Family", @"Other"] mutableCopy];
     self.tableView = [[UITableView alloc] initWithFrame:self.view.bounds style:UITableViewStyleGrouped];
     self.tableView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     self.tableView.dataSource = self;
@@ -36,10 +35,10 @@ static UIViewController *PJTopmostVC(void) {
     return c;
 }
 - (void)addGroup {
-    UIAlertController *a = [UIAlertController alertControllerWithTitle:@"新建分组" message:nil preferredStyle:UIAlertControllerStyleAlert];
-    [a addTextFieldWithConfigurationHandler:^(UITextField *f) { f.placeholder = @"分组名"; }];
-    [a addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
-    [a addAction:[UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _) {
+    UIAlertController *a = [UIAlertController alertControllerWithTitle:@"New Group" message:nil preferredStyle:UIAlertControllerStyleAlert];
+    [a addTextFieldWithConfigurationHandler:^(UITextField *f) { f.placeholder = @"Name"; }];
+    [a addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
+    [a addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _) {
         NSString *name = a.textFields.firstObject.text;
         if (name.length) { [self.groups addObject:name]; [self save]; [self.tableView reloadData]; }
     }]];
@@ -48,7 +47,6 @@ static UIViewController *PJTopmostVC(void) {
 - (void)save { [[NSUserDefaults standardUserDefaults] setObject:self.groups forKey:@"misakaGroups"]; }
 @end
 
-// 设置入口
 static UITableView *PJFindTableView(UIView *view) {
     if ([view isKindOfClass:[UITableView class]]) return (UITableView *)view;
     for (UIView *sub in view.subviews) { UITableView *t = PJFindTableView(sub); if (t) return t; }
@@ -71,7 +69,7 @@ static void PJAddSettingsEntry(UIViewController *vc) {
     btn.frame = CGRectMake(0, 0, tv.bounds.size.width, 54);
     btn.backgroundColor = [UIColor whiteColor];
     btn.accessibilityLabel = @"pj_entry";
-    [btn setTitle:@"会话分组设置" forState:UIControlStateNormal];
+    [btn setTitle:@"Session Groups" forState:UIControlStateNormal];
     btn.titleLabel.font = [UIFont systemFontOfSize:16];
     PJButtonTarget *t = [PJButtonTarget new];
     objc_setAssociatedObject(btn, "pj_t", t, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
