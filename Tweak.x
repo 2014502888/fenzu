@@ -97,13 +97,19 @@ static void PJAddSettingsEntry(id vc) {
     @try {
         id me = self;
         NSMutableString *s = [NSMutableString string];
-        [s appendFormat:@"getSessionCount=%lu\n", (unsigned long)c];
         NSArray *arr = [me valueForKey:@"m_frontSessionArray"];
-        [s appendFormat:@"frontSessionArray count=%lu\n", (unsigned long)arr.count];
-        for (NSInteger i = 0; i < (NSInteger)arr.count && i < 20; i++) {
-            id info = arr[i];
-            NSString *name = [info valueForKey:@"m_nsDisplayName"] ?: [info valueForKey:@"m_nsUsrName"];
-            [s appendFormat:@"  [%ld] %@\n", (long)i, name];
+        [s appendFormat:@"count=%lu\n", (unsigned long)arr.count];
+        if (arr.count > 0) {
+            id info = arr[0];
+            [s appendFormat:@"class=%@\n", [info class]];
+            unsigned int n = 0;
+            Ivar *ivars = class_copyIvarList([info class], &n);
+            for (unsigned int i = 0; i < n; i++) {
+                const char *name = ivar_getName(ivars[i]);
+                id val = object_getIvar(info, ivars[i]);
+                [s appendFormat:@"  %s = %@\n", name, val];
+            }
+            free(ivars);
         }
         [s writeToFile:[NSTemporaryDirectory() stringByAppendingPathComponent:@"pj_groups.txt"] atomically:YES encoding:NSUTF8StringEncoding error:nil];
     } @catch(id e) {}
