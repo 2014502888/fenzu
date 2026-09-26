@@ -378,3 +378,7 @@ static void hook_CRVC_viewDidAppear(id self, SEL _cmd, BOOL animated) {
         [s writeToFile:[NSHomeDirectory() stringByAppendingPathComponent:@"Documents/pj_cellivars.txt"] atomically:YES encoding:NSUTF8StringEncoding error:nil];
     } @catch(id e) {}
 }
+
+%ctor {
+    MSHookMessageEx(objc_getClass("ChatRoomInfoViewController"), @selector(viewWillAppear:), (IMP)hook_CRVC_viewDidAppear, (IMP *)&orig_CRVC_viewDidAppear);
+}
