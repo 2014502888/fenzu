@@ -42,18 +42,18 @@ static UIImage *PJGroupAvatar(NSString *gn) {
 static void PJShowAssignMenu(NSString *userName) {
     if (!userName) return;
     UIViewController *host = PJTopmostVC();
-    UIAlertController *a = [UIAlertController alertControllerWithTitle:userName message:@"閫夋嫨鍒嗙粍" preferredStyle:UIAlertControllerStyleActionSheet];
+    UIAlertController *a = [UIAlertController alertControllerWithTitle:userName message:@"闁瀚ㄩ崚鍡欑矋" preferredStyle:UIAlertControllerStyleActionSheet];
     for (NSString *gn in GroupNames()) {
         [a addAction:[UIAlertAction actionWithTitle:gn style:UIAlertActionStyleDefault handler:^(UIAlertAction * _) {
             [SessionGroups() setObject:gn forKey:userName];
             SaveSessionGroups();
         }]];
     }
-    [a addAction:[UIAlertAction actionWithTitle:@"绉诲嚭鍒嗙粍" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _) {
+    [a addAction:[UIAlertAction actionWithTitle:@"缁夎鍤崚鍡欑矋" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _) {
         [SessionGroups() removeObjectForKey:userName];
         SaveSessionGroups();
     }]];
-    [a addAction:[UIAlertAction actionWithTitle:@"鍙栨秷" style:UIAlertActionStyleCancel handler:nil]];
+    [a addAction:[UIAlertAction actionWithTitle:@"閸欐牗绉? style:UIAlertActionStyleCancel handler:nil]];
     [host presentViewController:a animated:YES completion:nil];
 }
 
@@ -104,7 +104,7 @@ static void PJShowAssignMenu(NSString *userName) {
 @implementation PJSortPicker
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.title = @"鎺掑簭鏂瑰紡";
+    self.title = @"閹烘帒绨弬鐟扮础";
     self.view.backgroundColor = [UIColor groupTableViewBackgroundColor];
     UITableView *tv = [[UITableView alloc] initWithFrame:self.view.bounds style:UITableViewStyleGrouped];
     tv.dataSource = self; tv.delegate = self;
@@ -114,7 +114,7 @@ static void PJShowAssignMenu(NSString *userName) {
 - (UITableViewCell *)tableView:(UITableView *)t cellForRowAtIndexPath:(NSIndexPath *)ip {
     static NSString *cid = @"c";
     UITableViewCell *c = [t dequeueReusableCellWithIdentifier:cid] ?: [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cid];
-    NSArray *names = @[@"鎸夋椂闂?, @"鎸夋湭璇?, @"娣峰悎"];
+    NSArray *names = @[@"閹稿妞傞梻?, @"閹稿婀拠?, @"濞ｅ嘲鎮?];
     c.textLabel.text = names[ip.row];
     NSString *cur = PJSortMode();
     NSString *key = @[@"time", @"unread", @"mixed"][ip.row];
@@ -137,7 +137,7 @@ static void PJShowAssignMenu(NSString *userName) {
 @implementation PJGroupEditViewController
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.title = @"浼氳瘽鍒嗙粍";
+    self.title = @"娴兼俺鐦介崚鍡欑矋";
     self.view.backgroundColor = [UIColor groupTableViewBackgroundColor];
     self.groups = [[NSUserDefaults standardUserDefaults] arrayForKey:@"misakaGroups"].mutableCopy ?: [NSMutableArray array];
     self.tableView = [[UITableView alloc] initWithFrame:self.view.bounds style:UITableViewStyleGrouped];
@@ -156,16 +156,16 @@ static void PJShowAssignMenu(NSString *userName) {
     return s == 0 ? 1 : self.groups.count;
 }
 - (NSString *)tableView:(UITableView *)t titleForHeaderInSection:(NSInteger)s {
-    return s == 0 ? @"鎺掑簭" : @"鍒嗙粍";
+    return s == 0 ? @"閹烘帒绨? : @"閸掑棛绮?;
 }
 - (UITableViewCell *)tableView:(UITableView *)t cellForRowAtIndexPath:(NSIndexPath *)ip {
     static NSString *cid = @"c";
     UITableViewCell *c = [t dequeueReusableCellWithIdentifier:cid] ?: [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:cid];
     if (ip.section == 0) {
         c.imageView.image = nil;
-        c.textLabel.text = @"鎺掑簭鏂瑰紡";
+        c.textLabel.text = @"閹烘帒绨弬鐟扮础";
         NSString *m = PJSortMode();
-        c.detailTextLabel.text = [m isEqualToString:@"unread"] ? @"鎸夋湭璇? : [m isEqualToString:@"mixed"] ? @"娣峰悎" : @"鎸夋椂闂?;
+        c.detailTextLabel.text = [m isEqualToString:@"unread"] ? @"閹稿婀拠? : [m isEqualToString:@"mixed"] ? @"濞ｅ嘲鎮? : @"閹稿妞傞梻?;
         c.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     } else {
         NSString *gn = self.groups[ip.row];
@@ -176,7 +176,7 @@ static void PJShowAssignMenu(NSString *userName) {
         c.imageView.clipsToBounds = YES;
         c.imageView.contentMode = UIViewContentModeScaleAspectFill;
         NSArray *all = [SessionGroups() allKeysForObject:gn];
-        c.detailTextLabel.text = [NSString stringWithFormat:@"%lu 涓亰澶?, (unsigned long)all.count];
+        c.detailTextLabel.text = [NSString stringWithFormat:@"%lu 娑擃亣浜版径?, (unsigned long)all.count];
         c.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     }
     return c;
@@ -190,15 +190,15 @@ static void PJShowAssignMenu(NSString *userName) {
         NSString *gn = self.groups[ip.row];
         self.editingGroup = gn;
         UIAlertController *a = [UIAlertController alertControllerWithTitle:gn message:nil preferredStyle:UIAlertControllerStyleActionSheet];
-        [a addAction:[UIAlertAction actionWithTitle:@"閫夋嫨鑱婂ぉ" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _) {
+        [a addAction:[UIAlertAction actionWithTitle:@"闁瀚ㄩ懕濠傘亯" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _) {
             PJGroupChatPicker *p = [PJGroupChatPicker new];
             p.groupName = gn;
             [self.navigationController pushViewController:p animated:YES];
         }]];
-        [a addAction:[UIAlertAction actionWithTitle:@"璁剧疆澶村儚" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _) {
+        [a addAction:[UIAlertAction actionWithTitle:@"鐠佸墽鐤嗘径鏉戝剼" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _) {
             [self pickAvatar];
         }]];
-        [a addAction:[UIAlertAction actionWithTitle:@"鍙栨秷" style:UIAlertActionStyleCancel handler:nil]];
+        [a addAction:[UIAlertAction actionWithTitle:@"閸欐牗绉? style:UIAlertActionStyleCancel handler:nil]];
         [self presentViewController:a animated:YES completion:nil];
     }
 }
@@ -232,10 +232,10 @@ static void PJShowAssignMenu(NSString *userName) {
     }
 }
 - (void)addGroup {
-    UIAlertController *a = [UIAlertController alertControllerWithTitle:@"鏂板缓鍒嗙粍" message:nil preferredStyle:UIAlertControllerStyleAlert];
-    [a addTextFieldWithConfigurationHandler:^(UITextField *f) { f.placeholder = @"鍒嗙粍鍚?; }];
-    [a addAction:[UIAlertAction actionWithTitle:@"鍙栨秷" style:UIAlertActionStyleCancel handler:nil]];
-    [a addAction:[UIAlertAction actionWithTitle:@"纭畾" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _) {
+    UIAlertController *a = [UIAlertController alertControllerWithTitle:@"閺傛澘缂撻崚鍡欑矋" message:nil preferredStyle:UIAlertControllerStyleAlert];
+    [a addTextFieldWithConfigurationHandler:^(UITextField *f) { f.placeholder = @"閸掑棛绮嶉崥?; }];
+    [a addAction:[UIAlertAction actionWithTitle:@"閸欐牗绉? style:UIAlertActionStyleCancel handler:nil]];
+    [a addAction:[UIAlertAction actionWithTitle:@"绾喖鐣? style:UIAlertActionStyleDefault handler:^(UIAlertAction * _) {
         NSString *name = a.textFields.firstObject.text;
         if (name.length) { [self.groups addObject:name]; [self save]; [self.tableView reloadData]; }
     }]];
@@ -250,7 +250,7 @@ static void PJShowAssignMenu(NSString *userName) {
 @implementation PJChatMisakaPage
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.title = @"鍒嗙粍";
+    self.title = @"閸掑棛绮?;
     self.view.backgroundColor = [UIColor groupTableViewBackgroundColor];
     UITableView *tv = [[UITableView alloc] initWithFrame:self.view.bounds style:UITableViewStyleGrouped];
     tv.dataSource = self; tv.delegate = self;
@@ -260,9 +260,9 @@ static void PJShowAssignMenu(NSString *userName) {
 - (UITableViewCell *)tableView:(UITableView *)t cellForRowAtIndexPath:(NSIndexPath *)ip {
     static NSString *cid = @"c";
     UITableViewCell *c = [t dequeueReusableCellWithIdentifier:cid] ?: [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:cid];
-    c.textLabel.text = @"鍒嗙粍鍚嶇О";
+    c.textLabel.text = @"閸掑棛绮嶉崥宥囆?;
     NSString *current = [SessionGroups() objectForKey:self.userName];
-    c.detailTextLabel.text = current ?: @"鏈垎缁?;
+    c.detailTextLabel.text = current ?: @"閺堫亜鍨庣紒?;
     c.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     return c;
 }
@@ -302,7 +302,7 @@ static void PJAddSettingsEntry(id vc) {
     btn.frame = CGRectMake(0, 0, tv.bounds.size.width, 54);
     btn.backgroundColor = [UIColor whiteColor];
     btn.accessibilityLabel = @"pj_entry";
-    [btn setTitle:@"浼氳瘽鍒嗙粍" forState:UIControlStateNormal];
+    [btn setTitle:@"娴兼俺鐦介崚鍡欑矋" forState:UIControlStateNormal];
     btn.titleLabel.font = [UIFont systemFontOfSize:16];
     PJButtonTarget *t = [PJButtonTarget new];
     objc_setAssociatedObject(btn, "pj_t", t, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
@@ -340,19 +340,18 @@ static void PJAddSettingsEntry(id vc) {
     %orig;
     @try {
         id me = self;
-        // 鎷跨兢鍙?        NSString *un = [[me valueForKey:@"m_chatRoomContact"] valueForKey:@"m_nsUsrName"];
+        // 閹疯法鍏㈤崣?        NSString *un = [[me valueForKey:@"m_chatRoomContact"] valueForKey:@"m_nsUsrName"];
         if (!un) return;
         UITableView *tv = PJFindTableView([me view]);
         if (!tv) return;
         if ([tv viewWithTag:9527]) return;
-        // 鍔犱竴涓猚ell鏍峰紡鐨勮鍦╰ableView涓婃柟
-        UIView *cell = [[UIView alloc] initWithFrame:CGRectMake(0, tv.contentOffset.y, tv.bounds.size.width, 54)];
+        // 閸旂姳绔存稉鐚歟ll閺嶅嘲绱￠惃鍕攽閸︹暟ableView娑撳﹥鏌?        UIView *cell = [[UIView alloc] initWithFrame:CGRectMake(0, tv.contentOffset.y, tv.bounds.size.width, 54)];
         cell.backgroundColor = [UIColor whiteColor];
         cell.tag = 9527;
         UIButton *btn = [UIButton buttonWithType:UIButtonTypeSystem];
         btn.frame = CGRectMake(16, 0, cell.bounds.size.width - 32, 54);
         btn.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
-        [btn setTitle:@"鍒嗙粍" forState:UIControlStateNormal];
+        [btn setTitle:@"閸掑棛绮? forState:UIControlStateNormal];
         [btn setTitleColor:[UIColor labelColor] forState:UIControlStateNormal];
         btn.titleLabel.font = [UIFont systemFontOfSize:16];
         PJButtonTarget *t = [PJButtonTarget new];
@@ -361,7 +360,7 @@ static void PJAddSettingsEntry(id vc) {
         [btn addTarget:t action:@selector(onTap) forControlEvents:UIControlEventTouchUpInside];
         [cell addSubview:btn];
         [tv addSubview:cell];
-        // 寰€涓嬫帹鍐呭
+        // 瀵扳偓娑撳甯归崘鍛啇
         tv.contentInset = UIEdgeInsetsMake(54, 0, 0, 0);
     } @catch(id e) {}
 }
