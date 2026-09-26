@@ -341,15 +341,19 @@ static void hook_CRVC_viewWillAppear(id self, SEL _cmd, BOOL animated) {
     orig_CRVC_viewWillAppear(self, _cmd, animated);
     @try {
         if (pjAdded) return;
+        NSMutableString *log = [NSMutableString string];
         id info = [self valueForKey:@"m_tableViewInfo"];
-        if (!info) return;
+        if (!info) { [log appendString:@"no info\n"]; goto done; }
         id sections = [info performSelector:@selector(getAllSections)];
+        NSInteger secCount = [(NSArray *)sections count];
+        [log appendFormat:@"secCount=%ld\n", (long)secCount];
         id sec1 = [(NSArray *)sections objectAtIndex:1];
         id cells1 = [sec1 performSelector:@selector(getAllCells)];
         id templateCell = [(NSArray *)cells1 objectAtIndex:0];
         id templateCfg = [templateCell valueForKey:@"cellConfig"];
         id templateLeft = [templateCfg valueForKey:@"leftConfig"];
-        // New config
+        [log appendFormat:@"templateLeft title=%@\n", [templateLeft valueForKey:@"title"]];
+        // Approach: create new config + left
         Class cfgCls = objc_getClass("WCTableViewCellNormalConfig");
         id newCfg = [[cfgCls alloc] init];
         Class leftCls = objc_getClass("WCTableViewCellLeftConfig");
@@ -361,21 +365,21 @@ static void hook_CRVC_viewWillAppear(id self, SEL _cmd, BOOL animated) {
         if (font) [newLeft setValue:font forKey:@"titleFont"];
         if (color) [newLeft setValue:color forKey:@"titleColor"];
         [newCfg setValue:newLeft forKey:@"leftConfig"];
-        // Copy base config
         id selStyle = [templateCfg valueForKey:@"selectionStyle"];
         if (selStyle) [newCfg setValue:selStyle forKey:@"selectionStyle"];
         // New cell
         Class cellCls = objc_getClass("WCTableViewNormalCellManager");
         id newCell = [[cellCls alloc] init];
         [newCell setValue:newCfg forKey:@"cellConfig"];
-        // New section
-        Class secCls = objc_getClass("WCTableViewSectionManager");
-        id newSec = [[secCls alloc] init];
-        [newSec performSelector:@selector(addCell:) withObject:newCell];
-        // Try addSection first (at bottom)
-        [info performSelector:@selector(addSection:) withObject:newSec];
+        [log appendFormat:@"newCell=%@\n", newCell];
+        // Add to sec1 directly at index 1
+        [sec1 performSelector:@selector(insertCell:At:) withObject:newCell withObject:@1];
+        [log appendString:@"inserted into sec1\n"];
         [info performSelector:@selector(reloadTableView)];
+        [log appendString:@"reloaded\n"];
         pjAdded = YES;
+    done:
+        [log writeToFile:[NSHomeDirectory() stringByAppendingPathComponent:@"Documents/pj_log.txt"] atomically:YES encoding:NSUTF8StringEncoding error:nil];
     } @catch(id e) {}
 }
 %ctor {
