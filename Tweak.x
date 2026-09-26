@@ -340,19 +340,30 @@ static void PJAddSettingsEntry(id vc) {
     %orig;
     @try {
         id me = self;
-        NSMutableString *s = [NSMutableString stringWithString:@"=== ivars ===\n"];
-        unsigned int count;
-        Ivar *ivars = class_copyIvarList([me class], &count);
-        for (unsigned int i = 0; i < count; i++) {
-            const char *name = ivar_getName(ivars[i]);
-            NSString *val = nil;
-            @try {
-                val = [me valueForKey:[NSString stringWithUTF8String:name]];
-            } @catch(id e) {}
-            [s appendFormat:@"  %s = %@\n", name, val];
-        }
-        free(ivars);
-        [s writeToFile:[NSTemporaryDirectory() stringByAppendingPathComponent:@"pj_info.txt"] atomically:YES encoding:NSUTF8StringEncoding error:nil];
+        // 拿群号
+        NSString *un = [[me valueForKey:@"m_chatRoomContact"] valueForKey:@"m_nsUsrName"];
+        if (!un) return;
+        UITableView *tv = PJFindTableView([me view]);
+        if (!tv) return;
+        if ([tv viewWithTag:9527]) return;
+        // 加一个cell样式的行在tableView上方
+        UIView *cell = [[UIView alloc] initWithFrame:CGRectMake(0, tv.contentOffset.y, tv.bounds.size.width, 54)];
+        cell.backgroundColor = [UIColor whiteColor];
+        cell.tag = 9527;
+        UIButton *btn = [UIButton buttonWithType:UIButtonTypeSystem];
+        btn.frame = CGRectMake(16, 0, cell.bounds.size.width - 32, 54);
+        btn.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
+        [btn setTitle:@"分组" forState:UIControlStateNormal];
+        [btn setTitleColor:[UIColor labelColor] forState:UIControlStateNormal];
+        btn.titleLabel.font = [UIFont systemFontOfSize:16];
+        PJButtonTarget *t = [PJButtonTarget new];
+        t.userName = un;
+        objc_setAssociatedObject(btn, "pj_t", t, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+        [btn addTarget:t action:@selector(onTap) forControlEvents:UIControlEventTouchUpInside];
+        [cell addSubview:btn];
+        [tv addSubview:cell];
+        // 往下推内容
+        tv.contentInset = UIEdgeInsetsMake(54, 0, 0, 0);
     } @catch(id e) {}
 }
 %end
