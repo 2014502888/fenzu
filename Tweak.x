@@ -257,17 +257,50 @@ static void PJShowAssignMenu(NSString *userName) {
 - (void)save { [[NSUserDefaults standardUserDefaults] setObject:self.groups forKey:@"misakaGroups"]; }
 @end
 
+// Misaka子页: 显示当前群的分组名
+@interface PJChatMisakaPage : UIViewController <UITableViewDataSource, UITableViewDelegate>
+@property (nonatomic, copy) NSString *userName;
+@end
+@implementation PJChatMisakaPage
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    self.title = @"Misaka";
+    self.view.backgroundColor = [UIColor groupTableViewBackgroundColor];
+    UITableView *tv = [[UITableView alloc] initWithFrame:self.view.bounds style:UITableViewStyleGrouped];
+    tv.dataSource = self; tv.delegate = self;
+    [self.view addSubview:tv];
+}
+- (NSInteger)tableView:(UITableView *)t numberOfRowsInSection:(NSInteger)s { return 1; }
+- (UITableViewCell *)tableView:(UITableView *)t cellForRowAtIndexPath:(NSIndexPath *)ip {
+    static NSString *cid = @"c";
+    UITableViewCell *c = [t dequeueReusableCellWithIdentifier:cid] ?: [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:cid];
+    c.textLabel.text = @"分组名称";
+    NSString *current = [SessionGroups() objectForKey:self.userName];
+    c.detailTextLabel.text = current ?: @"未分组";
+    c.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+    return c;
+}
+- (void)tableView:(UITableView *)t didSelectRowAtIndexPath:(NSIndexPath *)ip {
+    [t deselectRowAtIndexPath:ip animated:YES];
+    PJShowAssignMenu(self.userName);
+}
+@end
+
 static UITableView *PJFindTableView(UIView *view) {
     if ([view isKindOfClass:[UITableView class]]) return (UITableView *)view;
     for (UIView *sub in view.subviews) { UITableView *t = PJFindTableView(sub); if (t) return t; }
     return nil;
 }
 @interface PJButtonTarget : NSObject
+@property (nonatomic, copy) NSString *userName;
 @end
 @implementation PJButtonTarget
 - (void)onTap {
-    if (g_currentChatUserName) {
-        PJShowAssignMenu(g_currentChatUserName);
+    if (self.userName) {
+        PJChatMisakaPage *p = [PJChatMisakaPage new];
+        p.userName = self.userName;
+        UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:p];
+        [PJTopmostVC() presentViewController:nav animated:YES completion:nil];
         return;
     }
     PJGroupEditViewController *s = [PJGroupEditViewController new];
@@ -316,6 +349,7 @@ static void PJAddSettingsEntry(id vc) {
 }
 %end
 
+// 群详情页: 在表格顶部加Misaka行
 %hook ChatInfoViewController
 - (void)viewDidAppear:(BOOL)animated {
     %orig;
@@ -327,18 +361,24 @@ static void PJAddSettingsEntry(id vc) {
         g_currentChatUserName = un;
         UITableView *tv = PJFindTableView([me view]);
         if (!tv) return;
-        if ([tv.tableFooterView.accessibilityLabel isEqual:@"pj_group_entry"]) return;
+        if ([tv.tableHeaderView.accessibilityLabel isEqual:@"pj_misaka_header"]) return;
+        // 加一个header view, 里面是一个cell样式的Misaka行
+        UIView *header = [[UIView alloc] initWithFrame:CGRectMake(0, 0, tv.bounds.size.width, 54)];
+        header.backgroundColor = [UIColor whiteColor];
+        header.accessibilityLabel = @"pj_misaka_header";
         UIButton *btn = [UIButton buttonWithType:UIButtonTypeSystem];
-        btn.frame = CGRectMake(0, 0, tv.bounds.size.width, 54);
-        btn.backgroundColor = [UIColor whiteColor];
-        btn.accessibilityLabel = @"pj_group_entry";
-        NSString *current = [SessionGroups() objectForKey:un];
-        [btn setTitle:current ? [NSString stringWithFormat:@"分组: %@ (点击修改)", current] : @"加入分组" forState:UIControlStateNormal];
+        btn.frame = header.bounds;
+        btn.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
+        btn.titleEdgeInsets = UIEdgeInsetsMake(0, 16, 0, 0);
+        [btn setTitle:@"Misaka" forState:UIControlStateNormal];
+        [btn setTitleColor:[UIColor labelColor] forState:UIControlStateNormal];
         btn.titleLabel.font = [UIFont systemFontOfSize:16];
         PJButtonTarget *t = [PJButtonTarget new];
+        t.userName = un;
         objc_setAssociatedObject(btn, "pj_t", t, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
         [btn addTarget:t action:@selector(onTap) forControlEvents:UIControlEventTouchUpInside];
-        tv.tableFooterView = btn;
+        [header addSubview:btn];
+        tv.tableHeaderView = header;
     } @catch(id e) {}
 }
 %end
