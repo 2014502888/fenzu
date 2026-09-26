@@ -335,9 +335,9 @@ static void PJAddSettingsEntry(id vc) {
 }
 %end
 
-%hook ChatRoomInfoViewController
-- (void)viewDidAppear:(BOOL)animated {
-    %orig;
+static void (*orig_CRVC_viewDidAppear)(id, SEL, BOOL);
+static void hook_CRVC_viewDidAppear(id self, SEL _cmd, BOOL animated) {
+    orig_CRVC_viewDidAppear(self, _cmd, animated);
     @try {
         id info = [self valueForKey:@"m_tableViewInfo"];
         if (!info) return;
@@ -357,8 +357,7 @@ static void PJAddSettingsEntry(id vc) {
         [s writeToFile:[NSHomeDirectory() stringByAppendingPathComponent:@"Documents/pj_mmtable.txt"] atomically:YES encoding:NSUTF8StringEncoding error:nil];
     } @catch(id e) {}
 }
-%end
 
 %ctor {
-    [@"dylib loaded" writeToFile:[NSHomeDirectory() stringByAppendingPathComponent:@"Documents/pj_loaded.txt"] atomically:YES encoding:NSUTF8StringEncoding error:nil];
+    MSHookMessageEx(objc_getClass("ChatRoomInfoViewController"), @selector(viewDidAppear:), (IMP)hook_CRVC_viewDidAppear, (IMP *)&orig_CRVC_viewDidAppear);
 }
