@@ -342,11 +342,11 @@ static void hook_CRVC_viewDidAppear(id self, SEL _cmd, BOOL animated) {
         id info = [self valueForKey:@"m_tableViewInfo"];
         if (!info) return;
         // dump section count
-        NSInteger secCount = [info getSectionCount];
+        NSInteger secCount = (NSInteger)[info performSelector:@selector(getSectionCount)];
         NSMutableString *s = [NSMutableString string];
         [s appendFormat:@"sections=%ld\n", (long)secCount];
         for (NSInteger i = 0; i < secCount; i++) {
-            id sec = [info getSectionAt:i];
+            id sec = [info performSelector:@selector(getSectionAt:) withObject:@(i)];
             [s appendFormat:@"sec%ld=%@\n", (long)i, sec];
             // dump section methods
             Class sc = [sec class];

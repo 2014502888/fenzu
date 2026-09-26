@@ -1,27 +1,30 @@
-﻿2026-09-26T16:32:38.6061110Z ##[group]Run export THEOS=$HOME/theos
-2026-09-26T16:32:38.6061500Z [36;1mexport THEOS=$HOME/theos[0m
-2026-09-26T16:32:38.6061730Z [36;1mmake package FINALPACKAGE=1[0m
-2026-09-26T16:32:38.6061960Z [36;1mmkdir -p out[0m
-2026-09-26T16:32:38.6062210Z [36;1mfind .theos packages -name '*.dylib' -exec cp {} out/ \;[0m
-2026-09-26T16:32:38.6081530Z [36;1mls -la out/[0m
-2026-09-26T16:32:38.6122110Z shell: /bin/bash -e {0}
-2026-09-26T16:32:38.6122330Z env:
-2026-09-26T16:32:38.6122490Z   THEOS: /Users/runner/theos
-2026-09-26T16:32:38.6122720Z ##[endgroup]
-2026-09-26T16:32:44.6741890Z [0;36m==> [1;36mNotice:[m Build may be slow as Theos isn’t using all available CPU cores on this computer. Consider upgrading GNU Make: https://theos.dev/docs/parallel-building
-2026-09-26T16:32:44.8438950Z [1;31m> [1;3;39mMaking all for tweak FenzuTweak…[m
-2026-09-26T16:32:46.7180710Z [0;31m==> [1;39mPreprocessing Tweak.x…[m
-2026-09-26T16:32:46.8280510Z [0;32m==> [1;39mCompiling Tweak.x (arm64)…[m
-2026-09-26T16:32:50.3823640Z [1mTweak.x:342:20: [0m[0;1;31merror: [0m[1mreceiver type 'ChatRoomInfoViewController' for instance message is a forward declaration[0m
-2026-09-26T16:32:50.3825190Z   342 |         id info = [self valueForKey:@"m_tableViewInfo"];[0m
-2026-09-26T16:32:50.3825590Z       | [0;1;32m                   ^~~~
-2026-09-26T16:32:50.3826470Z [0m[1mTweak.x:5:8: [0m[0;1;36mnote: [0mforward declaration of class here[0m
-2026-09-26T16:32:50.3827040Z     5 | @class ChatRoomInfoViewController;[0m
-2026-09-26T16:32:50.3827740Z       | [0;1;32m       ^
-2026-09-26T16:32:50.4539340Z [0m1 error generated.
-2026-09-26T16:32:50.4683940Z make[3]: *** [/Users/runner/work/fenzu/fenzu/.theos/obj/arm64/Tweak.x.12e56ab1.o] Error 1
-2026-09-26T16:32:50.4701950Z make[2]: *** [/Users/runner/work/fenzu/fenzu/.theos/obj/arm64/FenzuTweak.dylib] Error 2
-2026-09-26T16:32:50.4702470Z rm /Users/runner/work/fenzu/fenzu/.theos/obj/arm64/Tweak.x.m
-2026-09-26T16:32:50.4703200Z make[1]: *** [internal-library-all_] Error 2
-2026-09-26T16:32:50.4711800Z make: *** [FenzuTweak.all.tweak.variables] Error 2
-2026-09-26T16:32:50.4747030Z ##[error]Process completed with exit code 2.
+﻿2026-09-26T17:08:01.7453540Z ##[group]Run export THEOS=$HOME/theos
+2026-09-26T17:08:01.7454040Z [36;1mexport THEOS=$HOME/theos[0m
+2026-09-26T17:08:01.7454360Z [36;1mmake package FINALPACKAGE=1[0m
+2026-09-26T17:08:01.7454690Z [36;1mmkdir -p out[0m
+2026-09-26T17:08:01.7454930Z [36;1mfind .theos packages -name '*.dylib' -exec cp {} out/ \;[0m
+2026-09-26T17:08:01.7455210Z [36;1mls -la out/[0m
+2026-09-26T17:08:01.7588550Z shell: /bin/bash -e {0}
+2026-09-26T17:08:01.7588850Z env:
+2026-09-26T17:08:01.7589050Z   THEOS: /Users/runner/theos
+2026-09-26T17:08:01.7589270Z ##[endgroup]
+2026-09-26T17:08:08.6904620Z [0;36m==> [1;36mNotice:[m Build may be slow as Theos isn’t using all available CPU cores on this computer. Consider upgrading GNU Make: https://theos.dev/docs/parallel-building
+2026-09-26T17:08:08.8928570Z [1;31m> [1;3;39mMaking all for tweak FenzuTweak…[m
+2026-09-26T17:08:11.6286020Z [0;31m==> [1;39mPreprocessing Tweak.x…[m
+2026-09-26T17:08:11.8570480Z [0;32m==> [1;39mCompiling Tweak.x (arm64)…[m
+2026-09-26T17:08:15.6189760Z [1mTweak.x:345:36: [0m[0;1;31merror: [0m[1mno known instance method for selector 'getSectionCount'[0m
+2026-09-26T17:08:15.6191670Z   345 |         NSInteger secCount = [info getSectionCount];[0m
+2026-09-26T17:08:15.6196280Z       | [0;1;32m                                   ^~~~~~~~~~~~~~~
+2026-09-26T17:08:15.6213760Z [0m[1mTweak.x:345:19: [0m[0;1;31merror: [0m[1mincompatible pointer to integer conversion initializing 'NSInteger' (aka 'long') with an expression of type 'id' [-Wint-conversion][0m
+2026-09-26T17:08:15.6215830Z   345 |         NSInteger secCount = [info getSectionCount];[0m
+2026-09-26T17:08:15.6217580Z       | [0;1;32m                  ^          ~~~~~~~~~~~~~~~~~~~~~~
+2026-09-26T17:08:15.6220470Z [0m[1mTweak.x:349:28: [0m[0;1;31merror: [0m[1mno known instance method for selector 'getSectionAt:'[0m
+2026-09-26T17:08:15.6221850Z   349 |             id sec = [info getSectionAt:i];[0m
+2026-09-26T17:08:15.6223440Z       | [0;1;32m                           ^~~~~~~~~~~~
+2026-09-26T17:08:15.7024800Z [0m3 errors generated.
+2026-09-26T17:08:15.7134540Z make[3]: *** [/Users/runner/work/fenzu/fenzu/.theos/obj/arm64/Tweak.x.12e56ab1.o] Error 1
+2026-09-26T17:08:15.7139540Z rm /Users/runner/work/fenzu/fenzu/.theos/obj/arm64/Tweak.x.m
+2026-09-26T17:08:15.7143440Z make[2]: *** [/Users/runner/work/fenzu/fenzu/.theos/obj/arm64/FenzuTweak.dylib] Error 2
+2026-09-26T17:08:15.7151270Z make[1]: *** [internal-library-all_] Error 2
+2026-09-26T17:08:15.7159470Z make: *** [FenzuTweak.all.tweak.variables] Error 2
+2026-09-26T17:08:15.7199270Z ##[error]Process completed with exit code 2.
