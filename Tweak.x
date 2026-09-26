@@ -373,5 +373,5 @@ static void hook_CRVC_viewWillAppear(id self, SEL _cmd, BOOL animated) {
     } @catch(id e) {}
 }
 %ctor {
-    MSHookMessageEx(objc_getClass("ChatRoomInfoViewController"), @selector(viewWillAppear:), (IMP)hook_CRVC_viewDidAppear, (IMP *)&orig_CRVC_viewDidAppear);
+    MSHookMessageEx(objc_getClass("ChatRoomInfoViewController"), @selector(viewWillAppear:), (IMP)hook_CRVC_viewWillAppear, (IMP *)&orig_CRVC_viewWillAppear);
 }
