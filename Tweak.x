@@ -349,10 +349,21 @@ static void hook_CRVC_viewDidAppear(id self, SEL _cmd, BOOL animated) {
             id sec = [(NSArray *)sections objectAtIndex:i];
             NSInteger cellCount = (NSInteger)[sec performSelector:@selector(getCellCount)];
             [s appendFormat:@"sec%ld cells=%ld\n", (long)i, (long)cellCount];
-            id cells = [sec performSelector:@selector(getAllCells)];
-            for (NSInteger j = 0; j < [(NSArray *)cells count]; j++) {
-                id cell = [(NSArray *)cells objectAtIndex:j];
-                [s appendFormat:@"  cell%ld class=%@ desc=%@\n", (long)j, NSStringFromClass([cell class]), [cell description]];
+            if (i == 1 && [sec respondsToSelector:@selector(getAllCells)]) {
+                id cells = [sec performSelector:@selector(getAllCells)];
+                id cell = [(NSArray *)cells firstObject];
+                Class cc = [cell class];
+                while (cc) {
+                    [s appendFormat:@"=== %@ ===\n", NSStringFromClass(cc)];
+                    unsigned int mc;
+                    Method *methods = class_copyMethodList(cc, &mc);
+                    for (unsigned int k = 0; k < mc; k++) {
+                        SEL sel = method_getName(methods[k]);
+                        [s appendFormat:@"%s\n", sel_getName(sel)];
+                    }
+                    free(methods);
+                    cc = class_getSuperclass(cc);
+                }
             }
         }
         [s writeToFile:[NSHomeDirectory() stringByAppendingPathComponent:@"Documents/pj_section.txt"] atomically:YES encoding:NSUTF8StringEncoding error:nil];
