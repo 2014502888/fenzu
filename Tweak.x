@@ -349,6 +349,8 @@ static void hook_CRVC_viewWillAppear(id self, SEL _cmd, BOOL animated) {
         id templateCell = [(NSArray *)cells1 objectAtIndex:0];
         id cfg = [templateCell valueForKey:@"cellConfig"];
         id leftCfg = [cfg valueForKey:@"leftConfig"];
+        id rightCfg = [cfg valueForKey:@"rightConfig"];
+        // Dump leftCfg
         NSMutableString *s = [NSMutableString string];
         [s appendFormat:@"leftCfg class=%@\n", NSStringFromClass([leftCfg class])];
         Class cls = [leftCfg class];
@@ -357,19 +359,33 @@ static void hook_CRVC_viewWillAppear(id self, SEL _cmd, BOOL animated) {
             Ivar *ivars = class_copyIvarList(cls, &ivarCount);
             for (unsigned int i = 0; i < ivarCount; i++) {
                 const char *name = ivar_getName(ivars[i]);
-                [s appendFormat:@"ivar[%s]: %s\n", class_getName(cls), name];
+                [s appendFormat:@"ivar: %s\n", name];
             }
             free(ivars);
-            unsigned int pCount;
-            objc_property_t *props = class_copyPropertyList(cls, &pCount);
-            for (unsigned int i = 0; i < pCount; i++) {
-                const char *name = property_getName(props[i]);
-                [s appendFormat:@"prop[%s]: %s\n", class_getName(cls), name];
-            }
-            free(props);
             cls = class_getSuperclass(cls);
         }
+        // Try to set title on leftCfg
+        NSArray *titleKeys = @[@"text", @"title", @"_text", @"_title", @"labelText"];
+        for (NSString *key in titleKeys) {
+            @try { [leftCfg setValue:@"分组" forKey:key]; } @catch(id e) {}
+        }
+        // Try to set detail on rightCfg
+        if (rightCfg) {
+            for (NSString *key in titleKeys) {
+                @try { [rightCfg setValue:@"未分组" forKey:key]; } @catch(id e) {}
+            }
+        }
         [s writeToFile:[NSHomeDirectory() stringByAppendingPathComponent:@"Documents/pj_leftcfg.txt"] atomically:YES encoding:NSUTF8StringEncoding error:nil];
+        // Create new cell with same config
+        Class cellCls = objc_getClass("WCTableViewNormalCellManager");
+        id newCell = [[cellCls alloc] init];
+        [newCell setValue:cfg forKey:@"cellConfig"];
+        // Create section and insert
+        Class secCls = objc_getClass("WCTableViewSectionManager");
+        id newSec = [[secCls alloc] init];
+        [newSec performSelector:@selector(addCell:) withObject:newCell];
+        [info performSelector:@selector(insertSection:At:) withObject:newSec withObject:@1];
+        [info performSelector:@selector(reloadTableView)];
         pjAdded = YES;
     } @catch(id e) {}
 }
