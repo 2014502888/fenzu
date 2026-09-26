@@ -344,21 +344,32 @@ static void hook_CRVC_viewDidAppear(id self, SEL _cmd, BOOL animated) {
         id info = [self valueForKey:@"m_tableViewInfo"];
         if (!info) return;
         id sections = [info performSelector:@selector(getAllSections)];
-        // copy sec1 cell0 as template
         id sec1 = [(NSArray *)sections objectAtIndex:1];
         id cells1 = [sec1 performSelector:@selector(getAllCells)];
         id templateCell = [(NSArray *)cells1 firstObject];
         if (!templateCell) return;
-        // dump ivars
         NSMutableString *s = [NSMutableString string];
-        unsigned int ivarCount;
-        Ivar *ivars = class_copyIvarList([templateCell class], &ivarCount);
-        for (unsigned int i = 0; i < ivarCount; i++) {
-            const char *name = ivar_getName(ivars[i]);
-            const char *type = ivar_getTypeEncoding(ivars[i]);
-            [s appendFormat:@"%s : %s\n", name, type];
+        // dump all properties
+        unsigned int pCount;
+        objc_property_t *props = class_copyPropertyList([templateCell class], &pCount);
+        for (unsigned int i = 0; i < pCount; i++) {
+            const char *name = property_getName(props[i]);
+            [s appendFormat:@"prop: %s\n", name];
         }
-        free(ivars);
+        free(props);
+        // dump ivars from superclass too
+        Class cls = [templateCell class];
+        while (cls && cls != [NSObject class]) {
+            unsigned int ivarCount;
+            Ivar *ivars = class_copyIvarList(cls, &ivarCount);
+            for (unsigned int i = 0; i < ivarCount; i++) {
+                const char *name = ivar_getName(ivars[i]);
+                const char *type = ivar_getTypeEncoding(ivars[i]);
+                [s appendFormat:@"ivar[%s]: %s : %s\n", class_getName(cls), name, type];
+            }
+            free(ivars);
+            cls = class_getSuperclass(cls);
+        }
         [s writeToFile:[NSHomeDirectory() stringByAppendingPathComponent:@"Documents/pj_cellivars.txt"] atomically:YES encoding:NSUTF8StringEncoding error:nil];
     } @catch(id e) {}
 }
