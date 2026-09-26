@@ -343,19 +343,23 @@ static void hook_CRVC_viewDidAppear(id self, SEL _cmd, BOOL animated) {
         if (pjAdded) return;
         id info = [self valueForKey:@"m_tableViewInfo"];
         if (!info) return;
-        Class cellCls = objc_getClass("WCTableViewNormalCellManager");
-        id cell = [[cellCls alloc] init];
-        [cell setValue:@"分组" forKey:@"cellTitle"];
-        [cell setValue:@"未分组" forKey:@"cellDetail"];
-        Class secCls = objc_getClass("WCTableViewSectionManager");
-        id sec = [[secCls alloc] init];
-        [sec performSelector:@selector(addCell:) withObject:cell];
-        [info performSelector:@selector(insertSection:At:) withObject:sec withObject:@1];
-        [info performSelector:@selector(reloadTableView)];
-        pjAdded = YES;
+        id sections = [info performSelector:@selector(getAllSections)];
+        // copy sec1 cell0 as template
+        id sec1 = [(NSArray *)sections objectAtIndex:1];
+        id cells1 = [sec1 performSelector:@selector(getAllCells)];
+        id templateCell = [(NSArray *)cells1 firstObject];
+        if (!templateCell) return;
+        // dump ivars
+        NSMutableString *s = [NSMutableString string];
+        unsigned int ivarCount;
+        Ivar *ivars = class_copyIvarList([templateCell class], &ivarCount);
+        for (unsigned int i = 0; i < ivarCount; i++) {
+            const char *name = ivar_getName(ivars[i]);
+            const char *type = ivar_getTypeEncoding(ivars[i]);
+            [s appendFormat:@"%s : %s\n", name, type];
+        }
+        free(ivars);
+        [s writeToFile:[NSHomeDirectory() stringByAppendingPathComponent:@"Documents/pj_cellivars.txt"] atomically:YES encoding:NSUTF8StringEncoding error:nil];
     } @catch(id e) {}
 }
-
-%ctor {
-    MSHookMessageEx(objc_getClass("ChatRoomInfoViewController"), @selector(viewDidAppear:), (IMP)hook_CRVC_viewDidAppear, (IMP *)&orig_CRVC_viewDidAppear);
 }
