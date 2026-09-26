@@ -335,25 +335,35 @@ static void PJAddSettingsEntry(id vc) {
 }
 %end
 
-// 诊断: hook UIViewController的viewDidAppear
-%hook UIViewController
+// 群详情页: ChatRoomInfoViewController
+%hook ChatRoomInfoViewController
 - (void)viewDidAppear:(BOOL)animated {
     %orig;
     @try {
-        NSString *cls = NSStringFromClass([self class]);
-        if ([cls containsString:@"Info"] || [cls containsString:@"Detail"] || [cls containsString:@"Room"]) {
-            NSMutableString *s = [NSMutableString string];
-            [s appendFormat:@"VC=%@\n", cls];
-            UITableView *tv = PJFindTableView(self.view);
-            [s appendFormat:@"tableView=%@\n", tv];
-            if (tv) {
-                [s appendFormat:@"sections=%lu\n", (unsigned long)tv.numberOfSections];
-                for (NSInteger i = 0; i < tv.numberOfSections; i++) {
-                    [s appendFormat:@"  section%ld rows=%lu\n", (long)i, (unsigned long)[tv numberOfRowsInSection:i]];
-                }
-            }
-            [s writeToFile:[NSTemporaryDirectory() stringByAppendingPathComponent:@"pj_info.txt"] atomically:YES encoding:NSUTF8StringEncoding error:nil];
-        }
+        id me = self;
+        NSString *un = [me valueForKey:@"m_strUserName"];
+        if (!un) un = [me valueForKey:@"m_nsUserName"];
+        if (!un) un = [me valueForKey:@"chatUserName"];
+        if (!un) return;
+        UITableView *tv = PJFindTableView([me view]);
+        if (!tv) return;
+        if ([tv.tableHeaderView.accessibilityLabel isEqual:@"pj_misaka_header"]) return;
+        UIView *header = [[UIView alloc] initWithFrame:CGRectMake(0, 0, tv.bounds.size.width, 54)];
+        header.backgroundColor = [UIColor whiteColor];
+        header.accessibilityLabel = @"pj_misaka_header";
+        UIButton *btn = [UIButton buttonWithType:UIButtonTypeSystem];
+        btn.frame = header.bounds;
+        btn.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
+        btn.titleEdgeInsets = UIEdgeInsetsMake(0, 16, 0, 0);
+        [btn setTitle:@"分组" forState:UIControlStateNormal];
+        [btn setTitleColor:[UIColor labelColor] forState:UIControlStateNormal];
+        btn.titleLabel.font = [UIFont systemFontOfSize:16];
+        PJButtonTarget *t = [PJButtonTarget new];
+        t.userName = un;
+        objc_setAssociatedObject(btn, "pj_t", t, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+        [btn addTarget:t action:@selector(onTap) forControlEvents:UIControlEventTouchUpInside];
+        [header addSubview:btn];
+        tv.tableHeaderView = header;
     } @catch(id e) {}
 }
 %end
