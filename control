@@ -2,4 +2,4 @@ Package: com.fenzu.tweak
 Name: FenzuTweak
 Version: 0.0.1
 Architecture: iphoneos-arm64
-Description: 微信会话分组插件
+Description: WeChat session grouping tweak
