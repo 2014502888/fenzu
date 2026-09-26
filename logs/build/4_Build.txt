@@ -1,27 +1,99 @@
-﻿2026-09-26T16:19:54.3299950Z ##[group]Run export THEOS=$HOME/theos
-2026-09-26T16:19:54.3300280Z [36;1mexport THEOS=$HOME/theos[0m
-2026-09-26T16:19:54.3300620Z [36;1mmake package FINALPACKAGE=1[0m
-2026-09-26T16:19:54.3300930Z [36;1mmkdir -p out[0m
-2026-09-26T16:19:54.3301350Z [36;1mfind .theos packages -name '*.dylib' -exec cp {} out/ \;[0m
-2026-09-26T16:19:54.3301680Z [36;1mls -la out/[0m
-2026-09-26T16:19:54.3378010Z shell: /bin/bash -e {0}
-2026-09-26T16:19:54.3378390Z env:
-2026-09-26T16:19:54.3378610Z   THEOS: /Users/runner/theos
-2026-09-26T16:19:54.3378920Z ##[endgroup]
-2026-09-26T16:19:59.7682230Z [0;36m==> [1;36mNotice:[m Build may be slow as Theos isn’t using all available CPU cores on this computer. Consider upgrading GNU Make: https://theos.dev/docs/parallel-building
-2026-09-26T16:19:59.9250140Z [1;31m> [1;3;39mMaking all for tweak FenzuTweak…[m
-2026-09-26T16:20:02.1859100Z [0;31m==> [1;39mPreprocessing Tweak.x…[m
-2026-09-26T16:20:02.3287320Z [0;32m==> [1;39mCompiling Tweak.x (arm64)…[m
-2026-09-26T16:20:05.8993250Z [1mTweak.x:339:20: [0m[0;1;31merror: [0m[1mreceiver type 'ChatRoomInfoViewController' for instance message is a forward declaration[0m
-2026-09-26T16:20:05.8995020Z   339 |         id info = [self valueForKey:@"m_tableViewInfo"];[0m
-2026-09-26T16:20:05.9005110Z       | [0;1;32m                   ^~~~
-2026-09-26T16:20:05.9005760Z [0m[1mTweak.x:333:68: [0m[0;1;36mnote: [0mforward declaration of class here[0m
-2026-09-26T16:20:05.9007070Z   333 | @class MainFrameLogicController; @class MoreViewController; @class ChatRoomInfoViewController; @class NewSettingViewController; [0m
-2026-09-26T16:20:05.9008160Z       | [0;1;32m                                                                   ^
-2026-09-26T16:20:05.9792770Z [0m1 error generated.
-2026-09-26T16:20:05.9846170Z make[3]: *** [/Users/runner/work/fenzu/fenzu/.theos/obj/arm64/Tweak.x.12e56ab1.o] Error 1
-2026-09-26T16:20:05.9847370Z rm /Users/runner/work/fenzu/fenzu/.theos/obj/arm64/Tweak.x.m
-2026-09-26T16:20:05.9850690Z make[2]: *** [/Users/runner/work/fenzu/fenzu/.theos/obj/arm64/FenzuTweak.dylib] Error 2
-2026-09-26T16:20:05.9853360Z make[1]: *** [internal-library-all_] Error 2
-2026-09-26T16:20:05.9862500Z make: *** [FenzuTweak.all.tweak.variables] Error 2
-2026-09-26T16:20:06.0010130Z ##[error]Process completed with exit code 2.
+﻿2026-09-26T16:21:59.4771650Z ##[group]Run export THEOS=$HOME/theos
+2026-09-26T16:21:59.4772020Z [36;1mexport THEOS=$HOME/theos[0m
+2026-09-26T16:21:59.4772370Z [36;1mmake package FINALPACKAGE=1[0m
+2026-09-26T16:21:59.4772750Z [36;1mmkdir -p out[0m
+2026-09-26T16:21:59.4773050Z [36;1mfind .theos packages -name '*.dylib' -exec cp {} out/ \;[0m
+2026-09-26T16:21:59.4773400Z [36;1mls -la out/[0m
+2026-09-26T16:21:59.4814420Z shell: /bin/bash -e {0}
+2026-09-26T16:21:59.4814670Z env:
+2026-09-26T16:21:59.4814930Z   THEOS: /Users/runner/theos
+2026-09-26T16:21:59.4815170Z ##[endgroup]
+2026-09-26T16:22:04.4947130Z [0;36m==> [1;36mNotice:[m Build may be slow as Theos isn’t using all available CPU cores on this computer. Consider upgrading GNU Make: https://theos.dev/docs/parallel-building
+2026-09-26T16:22:04.6867120Z [1;31m> [1;3;39mMaking all for tweak FenzuTweak…[m
+2026-09-26T16:22:06.9727640Z [0;31m==> [1;39mPreprocessing Tweak.x…[m
+2026-09-26T16:22:07.0555310Z [0;32m==> [1;39mCompiling Tweak.x (arm64)…[m
+2026-09-26T16:22:09.9418390Z [1mTweak.x:118:45: [0m[0;1;31merror: [0m[1mexpected ']' or ','[0m
+2026-09-26T16:22:09.9419600Z   118 |     c.textLabel.text = @[@"鎸夋椂闂?, @"鎸夋湭璇?, @"娣峰悎"][ip.row];[0m
+2026-09-26T16:22:09.9428810Z       | [0;1;32m                                        ^
+2026-09-26T16:22:09.9429620Z [0m[1mTweak.x:118:72: [0m[0;1;31merror: [0m[1mexpected expression[0m
+2026-09-26T16:22:09.9445760Z   118 |     c.textLabel.text = @[@"鎸夋椂闂?, @"鎸夋湭璇?, @"娣峰悎"][ip.row];[0m
+2026-09-26T16:22:09.9450300Z       | [0;1;32m                                                            ^
+2026-09-26T16:22:09.9457300Z [0m[1mTweak.x:177:62: [0m[0;1;35mwarning: [0m[1mmissing terminating '"' character [-Winvalid-pp-token][0m
+2026-09-26T16:22:09.9458460Z   177 |         c.detailTextLabel.text = [NSString stringWithFormat:@"%lu 涓[7m<U+E047>[0m亰澶?, (unsigned long)all.count];[0m
+2026-09-26T16:22:09.9469580Z       | [0;1;32m                                                             ^
+2026-09-26T16:22:09.9470290Z [0m[1mTweak.x:234:82: [0m[0;1;35mwarning: [0m[1mmissing terminating '"' character [-Winvalid-pp-token][0m
+2026-09-26T16:22:09.9471470Z   234 |     [a addTextFieldWithConfigurationHandler:^(UITextField *f) { f.placeholder = @"鍒嗙粍鍚?; }];[0m
+2026-09-26T16:22:09.9472620Z       | [0;1;32m                                                                                 ^
+2026-09-26T16:22:09.9473500Z [0m[1mTweak.x:263:42: [0m[0;1;35mwarning: [0m[1mmissing terminating '"' character [-Winvalid-pp-token][0m
+2026-09-26T16:22:09.9474390Z   263 |     c.detailTextLabel.text = current ?: @"鏈[7m<U+E044>[0m垎缁?;[0m
+2026-09-26T16:22:09.9474950Z       | [0;1;32m                                         ^
+2026-09-26T16:22:09.9475350Z [0m[1mTweak.x:166:105: [0m[0;1;31merror: [0m[1mexpected ':'[0m
+2026-09-26T16:22:09.9475940Z   166 |         c.detailTextLabel.text = [m isEqualToString:@"unread"] ? @"鎸夋湭璇? : [m isEqualToString:@"mixed"] ? @"娣峰悎" : @"鎸夋椂闂?;[0m
+2026-09-26T16:22:09.9476650Z       | [0;1;32m                                                                                                    ^
+2026-09-26T16:22:09.9477260Z [0m      | [0;32m                                                                                                    : 
+2026-09-26T16:22:09.9477690Z [0m[1mTweak.x:166:64: [0m[0;1;36mnote: [0mto match this '?'[0m
+2026-09-26T16:22:09.9478370Z   166 |         c.detailTextLabel.text = [m isEqualToString:@"unread"] ? @"鎸夋湭璇? : [m isEqualToString:@"mixed"] ? @"娣峰悎" : @"鎸夋椂闂?;[0m
+2026-09-26T16:22:09.9478970Z       | [0;1;32m                                                               ^
+2026-09-26T16:22:09.9485090Z [0m[1mTweak.x:166:110: [0m[0;1;31merror: [0m[1mexpected ';' after expression[0m
+2026-09-26T16:22:09.9485790Z   166 |         c.detailTextLabel.text = [m isEqualToString:@"unread"] ? @"鎸夋湭璇? : [m isEqualToString:@"mixed"] ? @"娣峰悎" : @"鎸夋椂闂?;[0m
+2026-09-26T16:22:09.9486400Z       | [0;1;32m                                                                                                         ^
+2026-09-26T16:22:09.9488630Z [0m      | [0;32m                                                                                                         ;
+2026-09-26T16:22:09.9496560Z [0m[1mTweak.x:166:105: [0m[0;1;31merror: [0m[1muse of undeclared identifier 'mixed'[0m
+2026-09-26T16:22:09.9498530Z   166 |         c.detailTextLabel.text = [m isEqualToString:@"unread"] ? @"鎸夋湭璇? : [m isEqualToString:@"mixed"] ? @"娣峰悎" : @"鎸夋椂闂?;[0m
+2026-09-26T16:22:09.9501080Z       | [0;1;32m                                                                                                    ^
+2026-09-26T16:22:09.9501780Z [0m[1mTweak.x:166:117: [0m[0;1;31merror: [0m[1mexpected ';' after expression[0m
+2026-09-26T16:22:09.9502590Z   166 |         c.detailTextLabel.text = [m isEqualToString:@"unread"] ? @"鎸夋湭璇? : [m isEqualToString:@"mixed"] ? @"娣峰悎" : @"鎸夋椂闂?;[0m
+2026-09-26T16:22:09.9503290Z       | [0;1;32m                                                                                                                ^
+2026-09-26T16:22:09.9503830Z [0m      | [0;32m                                                                                                                ;
+2026-09-26T16:22:09.9543300Z [0m[1mTweak.x:166:117: [0m[0;1;31merror: [0m[1muse of undeclared identifier '娣峰悎'[0m
+2026-09-26T16:22:09.9551750Z [1mTweak.x:177:61: [0m[0;1;31merror: [0m[1munexpected '@' in program[0m
+2026-09-26T16:22:09.9553740Z   177 |         c.detailTextLabel.text = [NSString stringWithFormat:@"%lu 涓[7m<U+E047>[0m亰澶?, (unsigned long)all.count];[0m
+2026-09-26T16:22:09.9555610Z       | [0;1;32m                                                            ^
+2026-09-26T16:22:09.9558140Z [0m[1mTweak.x:166:110: [0m[0;1;35mwarning: [0m[1mexpression result unused [-Wunused-value][0m
+2026-09-26T16:22:09.9560700Z   166 |         c.detailTextLabel.text = [m isEqualToString:@"unread"] ? @"鎸夋湭璇? : [m isEqualToString:@"mixed"] ? @"娣峰悎" : @"鎸夋椂闂?;[0m
+2026-09-26T16:22:09.9561900Z       | [0;1;32m                                                                                                         ^~~~~~~
+2026-09-26T16:22:09.9569170Z [0m[1mTweak.x:228:15: [0m[0;1;31merror: [0m[1mno visible @interface for 'PJGroupEditViewController' declares the selector 'save'[0m
+2026-09-26T16:22:09.9569990Z   228 |         [self save];[0m
+2026-09-26T16:22:09.9570290Z       | [0;1;32m         ~~~~ ^~~~
+2026-09-26T16:22:09.9570750Z [0m[1mTweak.x:234:81: [0m[0;1;31merror: [0m[1munexpected '@' in program[0m
+2026-09-26T16:22:09.9571430Z   234 |     [a addTextFieldWithConfigurationHandler:^(UITextField *f) { f.placeholder = @"鍒嗙粍鍚?; }];[0m
+2026-09-26T16:22:09.9573630Z       | [0;1;32m                                                                                ^
+2026-09-26T16:22:09.9574650Z [0m[1mTweak.x:238:64: [0m[0;1;31merror: [0m[1mno visible @interface for 'PJGroupEditViewController' declares the selector 'save'[0m
+2026-09-26T16:22:09.9576060Z   238 |         if (name.length) { [self.groups addObject:name]; [self save]; [self.tableView reloadData]; }[0m
+2026-09-26T16:22:09.9577530Z       | [0;1;32m                                                          ~~~~ ^~~~
+2026-09-26T16:22:09.9590500Z [0m[1mTweak.x:242:9: [0m[0;1;31merror: [0m[1muse of undeclared identifier 'save'[0m
+2026-09-26T16:22:09.9591530Z   242 | - (void)save { [[NSUserDefaults standardUserDefaults] setObject:self.groups forKey:@"misakaGroups"]; }[0m
+2026-09-26T16:22:09.9592240Z       | [0;1;32m        ^
+2026-09-26T16:22:09.9593120Z [0m[1mTweak.x:247:1: [0m[0;1;31merror: [0m[1munexpected '@' in program[0m
+2026-09-26T16:22:09.9594160Z   247 | @end[0m
+2026-09-26T16:22:09.9596210Z       | [0;1;32m^
+2026-09-26T16:22:09.9597490Z [0m[1mTweak.x:280:1: [0m[0;1;31merror: [0m[1munexpected '@' in program[0m
+2026-09-26T16:22:09.9597970Z   280 | @end[0m
+2026-09-26T16:22:09.9598820Z       | [0;1;32m^
+2026-09-26T16:22:09.9599900Z [0m[1mTweak.x:334:1: [0m[0;1;31merror: [0m[1munexpected '@' in program[0m
+2026-09-26T16:22:09.9600960Z   334 | @class NewSettingViewController; @class ChatRoomInfoViewController; @class MainFrameLogicController; @class MoreViewController; [0m
+2026-09-26T16:22:09.9601830Z       | [0;1;32m^
+2026-09-26T16:22:09.9603930Z [0m[1mTweak.x:334:34: [0m[0;1;31merror: [0m[1munexpected '@' in program[0m
+2026-09-26T16:22:09.9604690Z   334 | @class NewSettingViewController; @class ChatRoomInfoViewController; @class MainFrameLogicController; @class MoreViewController; [0m
+2026-09-26T16:22:09.9606490Z       | [0;1;32m                                 ^
+2026-09-26T16:22:09.9607240Z [0m[1mTweak.x:334:69: [0m[0;1;31merror: [0m[1munexpected '@' in program[0m
+2026-09-26T16:22:09.9610270Z   334 | @class NewSettingViewController; @class ChatRoomInfoViewController; @class MainFrameLogicController; @class MoreViewController; [0m
+2026-09-26T16:22:09.9611400Z       | [0;1;32m                                                                    ^
+2026-09-26T16:22:09.9612400Z [0m[1mTweak.x:334:102: [0m[0;1;31merror: [0m[1munexpected '@' in program[0m
+2026-09-26T16:22:09.9613650Z   334 | @class NewSettingViewController; @class ChatRoomInfoViewController; @class MainFrameLogicController; @class MoreViewController; [0m
+2026-09-26T16:22:09.9615040Z       | [0;1;32m                                                                                                     ^
+2026-09-26T16:22:09.9751060Z [0m[1mTweak.x:335:97: [0m[0;1;31merror: [0m[1munknown type name 'MoreViewController'; did you mean 'UIViewController'?[0m
+2026-09-26T16:22:09.9759850Z   335 | static void (*_logos_orig$_ungrouped$MoreViewController$viewDidAppear$)(_LOGOS_SELF_TYPE_NORMAL MoreViewController* _LOGOS_SELF_CONST, SEL, BOOL); static void _logos_method$_ungrouped$MoreViewController$viewDidAppear$(_LOGOS_SELF_TYPE_NORMAL MoreViewController* _LOGOS_SELF_CONST, SEL, BOOL); static void (*_logos_orig$_ungrouped$NewSettingViewController$viewDidAppear$)(_LOGOS_SELF_TYPE_NORMAL NewSettingViewController* _LOGOS_SELF_CONST, SEL, BOOL); static void _logos_method$_ungrouped$NewSettingViewController$viewDidAppear$(_LOGOS_SELF_TYPE_NORMAL NewSettingViewController* _LOGOS_SELF_CONST, SEL, BOOL); static NSUInteger (*_logos_orig$_ungrouped$MainFrameLogicController$getSessionCount)(_LOGOS_SELF_TYPE_NORMAL MainFrameLogicController* _LOGOS_SELF_CONST, SEL); static NSUInteger _logos_method$_ungrouped$MainFrameLogicController$getSessionCount(_LOGOS_SELF_TYPE_NORMAL MainFrameLogicController* _LOGOS_SELF_CONST, SEL); static void (*_logos_orig$_ungrouped$ChatRoomInfoViewController$viewDidAppear$)(_LOGOS_SELF_TYPE_NORMAL ChatRoomInfoViewController* _LOGOS_SELF_CONST, SEL, BOOL); static void _logos_method$_ungrouped$ChatRoomInfoViewController$viewDidAppear$(_LOGOS_SELF_TYPE_NORMAL ChatRoomInfoViewController* _LOGOS_SELF_CONST, SEL, BOOL); [0m
+2026-09-26T16:22:09.9764110Z       | [0;1;32m                                                                                                ^~~~~~~~~~~~~~~~~~
+2026-09-26T16:22:09.9764810Z [0m      | [0;32m                                                                                                UIViewController
+2026-09-26T16:22:09.9766050Z [0m[1m/Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.5.sdk/System/Library/Frameworks/UIKit.framework/Headers/UIPrinterPickerController.h:16:54: [0m[0;1;36mnote: [0m'UIViewController' declared here[0m
+2026-09-26T16:22:09.9767590Z    16 | @class UIPrinterPickerController, UIPrinter, UIView, UIViewController, UIBarButtonItem;[0m
+2026-09-26T16:22:09.9768370Z       | [0;1;32m                                                     ^
+2026-09-26T16:22:09.9913430Z [0m[0;1;31mfatal error: [0m[1mtoo many errors emitted, stopping now [-ferror-limit=][0m
+2026-09-26T16:22:10.0336180Z 4 warnings and 20 errors generated.
+2026-09-26T16:22:10.0399590Z make[3]: *** [/Users/runner/work/fenzu/fenzu/.theos/obj/arm64/Tweak.x.12e56ab1.o] Error 1
+2026-09-26T16:22:10.0404360Z make[2]: *** [/Users/runner/work/fenzu/fenzu/.theos/obj/arm64/FenzuTweak.dylib] Error 2
+2026-09-26T16:22:10.0405370Z rm /Users/runner/work/fenzu/fenzu/.theos/obj/arm64/Tweak.x.m
+2026-09-26T16:22:10.0407170Z make[1]: *** [internal-library-all_] Error 2
+2026-09-26T16:22:10.0410100Z make: *** [FenzuTweak.all.tweak.variables] Error 2
+2026-09-26T16:22:10.0428020Z ##[error]Process completed with exit code 2.
