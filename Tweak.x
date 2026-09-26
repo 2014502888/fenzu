@@ -349,28 +349,31 @@ static void hook_CRVC_viewWillAppear(id self, SEL _cmd, BOOL animated) {
         id templateCell = [(NSArray *)cells1 objectAtIndex:0];
         id templateCfg = [templateCell valueForKey:@"cellConfig"];
         id templateLeft = [templateCfg valueForKey:@"leftConfig"];
-        // Create new config by copying
+        // New config
         Class cfgCls = objc_getClass("WCTableViewCellNormalConfig");
         id newCfg = [[cfgCls alloc] init];
         Class leftCls = objc_getClass("WCTableViewCellLeftConfig");
         id newLeft = [[leftCls alloc] init];
         [newLeft setValue:@"分组" forKey:@"title"];
         [newLeft setValue:@"未分组" forKey:@"detail"];
-        // Copy title font/color from template
         id font = [templateLeft valueForKey:@"titleFont"];
         id color = [templateLeft valueForKey:@"titleColor"];
         if (font) [newLeft setValue:font forKey:@"titleFont"];
         if (color) [newLeft setValue:color forKey:@"titleColor"];
         [newCfg setValue:newLeft forKey:@"leftConfig"];
-        // Create cell
+        // Copy base config
+        id selStyle = [templateCfg valueForKey:@"selectionStyle"];
+        if (selStyle) [newCfg setValue:selStyle forKey:@"selectionStyle"];
+        // New cell
         Class cellCls = objc_getClass("WCTableViewNormalCellManager");
         id newCell = [[cellCls alloc] init];
         [newCell setValue:newCfg forKey:@"cellConfig"];
-        // Create section and insert
+        // New section
         Class secCls = objc_getClass("WCTableViewSectionManager");
         id newSec = [[secCls alloc] init];
         [newSec performSelector:@selector(addCell:) withObject:newCell];
-        [info performSelector:@selector(insertSection:At:) withObject:newSec withObject:@1];
+        // Try addSection first (at bottom)
+        [info performSelector:@selector(addSection:) withObject:newSec];
         [info performSelector:@selector(reloadTableView)];
         pjAdded = YES;
     } @catch(id e) {}
