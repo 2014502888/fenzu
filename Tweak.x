@@ -341,20 +341,24 @@ static void hook_CRVC_viewDidAppear(id self, SEL _cmd, BOOL animated) {
     @try {
         id info = [self valueForKey:@"m_tableViewInfo"];
         if (!info) return;
+        // dump section count
+        NSInteger secCount = [info getSectionCount];
         NSMutableString *s = [NSMutableString string];
-        Class c = [info class];
-        while (c) {
-            [s appendFormat:@"=== %@ ===\n", NSStringFromClass(c)];
+        [s appendFormat:@"sections=%ld\n", (long)secCount];
+        for (NSInteger i = 0; i < secCount; i++) {
+            id sec = [info getSectionAt:i];
+            [s appendFormat:@"sec%ld=%@\n", (long)i, sec];
+            // dump section methods
+            Class sc = [sec class];
             unsigned int mc;
-            Method *methods = class_copyMethodList(c, &mc);
-            for (unsigned int i = 0; i < mc; i++) {
-                SEL sel = method_getName(methods[i]);
-                [s appendFormat:@"%s\n", sel_getName(sel)];
+            Method *methods = class_copyMethodList(sc, &mc);
+            for (unsigned int j = 0; j < mc; j++) {
+                SEL sel = method_getName(methods[j]);
+                [s appendFormat:@"  %s\n", sel_getName(sel)];
             }
             free(methods);
-            c = class_getSuperclass(c);
         }
-        [s writeToFile:[NSHomeDirectory() stringByAppendingPathComponent:@"Documents/pj_mmtable.txt"] atomically:YES encoding:NSUTF8StringEncoding error:nil];
+        [s writeToFile:[NSHomeDirectory() stringByAppendingPathComponent:@"Documents/pj_section.txt"] atomically:YES encoding:NSUTF8StringEncoding error:nil];
     } @catch(id e) {}
 }
 
