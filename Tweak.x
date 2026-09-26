@@ -22,7 +22,10 @@ static void SaveSessionGroups(void) {
     [[NSUserDefaults standardUserDefaults] setObject:g_sessionGroups forKey:@"sessionGroups"];
 }
 
-// 直接从session cell data拿显示名
+static NSString *PJSortMode(void) {
+    return [[NSUserDefaults standardUserDefaults] stringForKey:@"misakaSortMode"] ?: @"time";
+}
+
 static NSString *PJDisplayName(id info) {
     @try {
         NSArray *keys = @[@"m_nsDisplayName", @"m_nsNickName", @"m_nsTitle", @"displayName", @"nickName", @"title"];
@@ -76,6 +79,36 @@ static NSString *PJDisplayName(id info) {
 }
 @end
 
+@interface PJSortPicker : UIViewController <UITableViewDataSource, UITableViewDelegate>
+@end
+@implementation PJSortPicker
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    self.title = @"Sort";
+    self.view.backgroundColor = [UIColor groupTableViewBackgroundColor];
+    UITableView *tv = [[UITableView alloc] initWithFrame:self.view.bounds style:UITableViewStyleGrouped];
+    tv.dataSource = self; tv.delegate = self;
+    [self.view addSubview:tv];
+}
+- (NSInteger)tableView:(UITableView *)t numberOfRowsInSection:(NSInteger)s { return 3; }
+- (UITableViewCell *)tableView:(UITableView *)t cellForRowAtIndexPath:(NSIndexPath *)ip {
+    static NSString *cid = @"c";
+    UITableViewCell *c = [t dequeueReusableCellWithIdentifier:cid] ?: [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cid];
+    NSArray *names = @[@"By Time", @"By Unread", @"Mixed"];
+    c.textLabel.text = names[ip.row];
+    NSString *cur = PJSortMode();
+    NSString *key = @[@"time", @"unread", @"mixed"][ip.row];
+    c.accessoryType = [cur isEqualToString:key] ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
+    return c;
+}
+- (void)tableView:(UITableView *)t didSelectRowAtIndexPath:(NSIndexPath *)ip {
+    [t deselectRowAtIndexPath:ip animated:YES];
+    NSString *key = @[@"time", @"unread", @"mixed"][ip.row];
+    [[NSUserDefaults standardUserDefaults] setObject:key forKey:@"misakaSortMode"];
+    [t reloadData];
+}
+@end
+
 @interface PJGroupEditViewController : UIViewController <UITableViewDataSource, UITableViewDelegate>
 @property (nonatomic, strong) UITableView *tableView;
 @property (nonatomic, strong) NSMutableArray *groups;
@@ -97,22 +130,40 @@ static NSString *PJDisplayName(id info) {
     [super viewWillAppear:animated];
     [self.tableView reloadData];
 }
-- (NSInteger)tableView:(UITableView *)t numberOfRowsInSection:(NSInteger)s { return self.groups.count; }
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)t { return 2; }
+- (NSInteger)tableView:(UITableView *)t numberOfRowsInSection:(NSInteger)s {
+    return s == 0 ? 1 : self.groups.count;
+}
+- (NSString *)tableView:(UITableView *)t titleForHeaderInSection:(NSInteger)s {
+    return s == 0 ? @"Sort" : @"Groups";
+}
 - (UITableViewCell *)tableView:(UITableView *)t cellForRowAtIndexPath:(NSIndexPath *)ip {
     static NSString *cid = @"c";
-    UITableViewCell *c = [t dequeueReusableCellWithIdentifier:cid] ?: [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cid];
-    NSString *gn = self.groups[ip.row];
-    c.textLabel.text = gn;
-    NSArray *all = [SessionGroups() allKeysForObject:gn];
-    c.detailTextLabel.text = [NSString stringWithFormat:@"%lu chats", (unsigned long)all.count];
-    c.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+    UITableViewCell *c = [t dequeueReusableCellWithIdentifier:cid] ?: [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:cid];
+    if (ip.section == 0) {
+        c.textLabel.text = @"Sort Mode";
+        NSString *m = PJSortMode();
+        c.detailTextLabel.text = [m isEqualToString:@"unread"] ? @"By Unread" : [m isEqualToString:@"mixed"] ? @"Mixed" : @"By Time";
+        c.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+    } else {
+        NSString *gn = self.groups[ip.row];
+        c.textLabel.text = gn;
+        NSArray *all = [SessionGroups() allKeysForObject:gn];
+        c.detailTextLabel.text = [NSString stringWithFormat:@"%lu chats", (unsigned long)all.count];
+        c.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+    }
     return c;
 }
 - (void)tableView:(UITableView *)t didSelectRowAtIndexPath:(NSIndexPath *)ip {
     [t deselectRowAtIndexPath:ip animated:YES];
-    PJGroupChatPicker *p = [PJGroupChatPicker new];
-    p.groupName = self.groups[ip.row];
-    [self.navigationController pushViewController:p animated:YES];
+    if (ip.section == 0) {
+        PJSortPicker *p = [PJSortPicker new];
+        [self.navigationController pushViewController:p animated:YES];
+    } else {
+        PJGroupChatPicker *p = [PJGroupChatPicker new];
+        p.groupName = self.groups[ip.row];
+        [self.navigationController pushViewController:p animated:YES];
+    }
 }
 - (void)tableView:(UITableView *)t commitEditingStyle:(UITableViewCellEditingStyle)es forRowAtIndexPath:(NSIndexPath *)ip {
     if (es == UITableViewCellEditingStyleDelete) {
