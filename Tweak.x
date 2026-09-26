@@ -102,14 +102,14 @@ static void PJAddSettingsEntry(id vc) {
         if (arr.count > 0) {
             id info = arr[0];
             [s appendFormat:@"class=%@\n", [info class]];
-            unsigned int n = 0;
-            Ivar *ivars = class_copyIvarList([info class], &n);
-            for (unsigned int i = 0; i < n; i++) {
-                const char *name = ivar_getName(ivars[i]);
-                id val = object_getIvar(info, ivars[i]);
-                [s appendFormat:@"  %s = %@\n", name, val];
+            // 试常见key
+            NSArray *keys = @[@"m_nsDisplayName", @"m_nsUsrName", @"name", @"displayName", @"userName", @"nickName", @"m_nsNickName", @"m_nsFromUsr"];
+            for (NSString *k in keys) {
+                @try {
+                    id v = [info valueForKey:k];
+                    [s appendFormat:@"  %@ = %@\n", k, v];
+                } @catch(...) {}
             }
-            free(ivars);
         }
         [s writeToFile:[NSTemporaryDirectory() stringByAppendingPathComponent:@"pj_groups.txt"] atomically:YES encoding:NSUTF8StringEncoding error:nil];
     } @catch(id e) {}
