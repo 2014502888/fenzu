@@ -39,25 +39,9 @@ static UIImage *PJGroupAvatar(NSString *gn) {
     return nil;
 }
 
-// 从contactStorage拿昵称
 static NSString *PJContactName(NSString *userName) {
-    @try {
-        id center = [NSClassFromString(@"MMServiceCenter") performSelector:@selector(defaultCenter)];
-        if (!center) return userName;
-        id contactMgr = [center performSelector:@selector(getService:) withObject:NSClassFromString(@"MMContactStorage")];
-        if (!contactMgr) return userName;
-        id contact = [contactMgr performSelector:@selector(GetContact:) withObject:userName];
-        if (contact) {
-            NSString *nick = [contact valueForKey:@"m_nsNickName"];
-            if (nick.length) return nick;
-            nick = [contact valueForKey:@"m_nsMuzidianName"];
-            if (nick.length) return nick;
-        }
-    } @catch(id e) {}
     return userName;
 }
-
-static NSString *g_currentChatUserName = nil;
 
 static void PJShowAssignMenu(NSString *userName) {
     if (!userName) return;
@@ -98,7 +82,7 @@ static void PJShowAssignMenu(NSString *userName) {
     UITableViewCell *c = [t dequeueReusableCellWithIdentifier:cid] ?: [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cid];
     id info = g_allSessions[ip.row];
     NSString *un = [info valueForKey:@"userName"];
-    c.textLabel.text = PJContactName(un);
+    c.textLabel.text = un;
     c.detailTextLabel.text = un;
     NSString *current = [SessionGroups() objectForKey:un];
     c.accessoryType = [current isEqualToString:self.groupName] ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
@@ -355,74 +339,46 @@ static void PJAddSettingsEntry(id vc) {
 }
 %end
 
-// 群详情页 hook 多个可能的类
-%hook ChatInfoViewController
-- (void)viewDidAppear:(BOOL)animated {
-    %orig;
+// 诊断: dump所有viewDidAppear的VC类名
+%hook NSObject
+- (void)pj_dumpViewDidAppear {
     @try {
-        id me = self;
-        NSString *un = [me valueForKey:@"m_strUserName"];
-        if (!un) un = [me valueForKey:@"chatUserName"];
-        if (!un) un = [me valueForKey:@"m_contactUsrName"];
-        if (!un) un = [me valueForKey:@"m_nsUserName"];
-        if (!un) return;
-        g_currentChatUserName = un;
-        UITableView *tv = PJFindTableView([me view]);
-        if (!tv) return;
-        if ([tv.tableHeaderView.accessibilityLabel isEqual:@"pj_misaka_header"]) return;
-        UIView *header = [[UIView alloc] initWithFrame:CGRectMake(0, 0, tv.bounds.size.width, 54)];
-        header.backgroundColor = [UIColor whiteColor];
-        header.accessibilityLabel = @"pj_misaka_header";
-        UIButton *btn = [UIButton buttonWithType:UIButtonTypeSystem];
-        btn.frame = header.bounds;
-        btn.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
-        btn.titleEdgeInsets = UIEdgeInsetsMake(0, 16, 0, 0);
-        [btn setTitle:@"分组" forState:UIControlStateNormal];
-        [btn setTitleColor:[UIColor labelColor] forState:UIControlStateNormal];
-        btn.titleLabel.font = [UIFont systemFontOfSize:16];
-        PJButtonTarget *t = [PJButtonTarget new];
-        t.userName = un;
-        objc_setAssociatedObject(btn, "pj_t", t, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-        [btn addTarget:t action:@selector(onTap) forControlEvents:UIControlEventTouchUpInside];
-        [header addSubview:btn];
-        tv.tableHeaderView = header;
-    } @catch(id e) {}
-}
-%end
-
-%hook RoomInfoViewController
-- (void)viewDidAppear:(BOOL)animated {
-    %orig;
-    @try {
-        id me = self;
-        NSString *un = [me valueForKey:@"m_strUserName"];
-        if (!un) un = [me valueForKey:@"chatUserName"];
-        if (!un) un = [me valueForKey:@"m_contactUsrName"];
-        if (!un) return;
-        g_currentChatUserName = un;
-        UITableView *tv = PJFindTableView([me view]);
-        if (!tv) return;
-        if ([tv.tableHeaderView.accessibilityLabel isEqual:@"pj_misaka_header"]) return;
-        UIView *header = [[UIView alloc] initWithFrame:CGRectMake(0, 0, tv.bounds.size.width, 54)];
-        header.backgroundColor = [UIColor whiteColor];
-        header.accessibilityLabel = @"pj_misaka_header";
-        UIButton *btn = [UIButton buttonWithType:UIButtonTypeSystem];
-        btn.frame = header.bounds;
-        btn.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
-        btn.titleEdgeInsets = UIEdgeInsetsMake(0, 16, 0, 0);
-        [btn setTitle:@"分组" forState:UIControlStateNormal];
-        [btn setTitleColor:[UIColor labelColor] forState:UIControlStateNormal];
-        btn.titleLabel.font = [UIFont systemFontOfSize:16];
-        PJButtonTarget *t = [PJButtonTarget new];
-        t.userName = un;
-        objc_setAssociatedObject(btn, "pj_t", t, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-        [btn addTarget:t action:@selector(onTap) forControlEvents:UIControlEventTouchUpInside];
-        [header addSubview:btn];
-        tv.tableHeaderView = header;
+        if (![self isKindOfClass:[UIViewController class]]) return;
+        UIViewController *vc = (UIViewController *)self;
+        NSString *cls = NSStringFromClass([vc class]);
+        if ([cls containsString:@"Info"] || [cls containsString:@"Detail"] || [cls containsString:@"Setting"] || [cls containsString:@"Chat"]) {
+            NSMutableString *s = [NSMutableString string];
+            [s appendFormat:@"VC=%@\n", cls];
+            UITableView *tv = PJFindTableView(vc.view);
+            [s appendFormat:@"tableView=%@\n", tv];
+            if (tv) {
+                [s appendFormat:@"sections=%lu rows=%lu\n", (unsigned long)tv.numberOfSections, (unsigned long)[tv numberOfRowsInSection:0]];
+            }
+            [s writeToFile:[NSTemporaryDirectory() stringByAppendingPathComponent:@"pj_info.txt"] atomically:YES encoding:NSUTF8StringEncoding error:nil];
+        }
     } @catch(id e) {}
 }
 %end
 
 %ctor {
-    @autoreleasepool { }
+    // hook所有UIViewController的viewDidAppear
+    MSHookMessageEx(objc_getClass("UIViewController"), @selector(viewDidAppear:), MSHK(void, (id self, SEL _cmd, BOOL animated), {
+        orig(self, _cmd, animated);
+        @try {
+            NSString *cls = NSStringFromClass([self class]);
+            if ([cls containsString:@"Info"] || [cls containsString:@"Detail"] || [cls containsString:@"Room"]) {
+                NSMutableString *s = [NSMutableString string];
+                [s appendFormat:@"VC=%@\n", cls];
+                UITableView *tv = PJFindTableView([self view]);
+                [s appendFormat:@"tableView=%@\n", tv];
+                if (tv) {
+                    [s appendFormat:@"sections=%lu\n", (unsigned long)tv.numberOfSections];
+                    for (NSInteger i = 0; i < tv.numberOfSections; i++) {
+                        [s appendFormat:@"  section%ld rows=%lu\n", (long)i, (unsigned long)[tv numberOfRowsInSection:i]];
+                    }
+                }
+                [s writeToFile:[NSTemporaryDirectory() stringByAppendingPathComponent:@"pj_info.txt"] atomically:YES encoding:NSUTF8StringEncoding error:nil];
+            }
+        } @catch(id e) {}
+    }), NULL);
 }
