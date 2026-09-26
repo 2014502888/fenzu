@@ -95,9 +95,10 @@ static void PJAddSettingsEntry(id vc) {
 - (NSUInteger)getSessionCount {
     NSUInteger c = %orig;
     @try {
+        id me = self;
         NSMutableString *s = [NSMutableString string];
         [s appendFormat:@"getSessionCount=%lu\n", (unsigned long)c];
-        NSArray *arr = [self valueForKey:@"m_frontSessionArray"];
+        NSArray *arr = [me valueForKey:@"m_frontSessionArray"];
         [s appendFormat:@"frontSessionArray count=%lu\n", (unsigned long)arr.count];
         for (NSInteger i = 0; i < (NSInteger)arr.count && i < 20; i++) {
             id info = arr[i];

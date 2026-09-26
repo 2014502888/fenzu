@@ -1,231 +1,201 @@
-﻿2026-09-26T06:53:57.1535850Z Current runner version: '2.337.0'
-2026-09-26T06:53:57.1560620Z ##[group]Runner Image Provisioner
-2026-09-26T06:53:57.1561290Z Hosted Compute Agent
-2026-09-26T06:53:57.1561690Z Version: 20260828.587
-2026-09-26T06:53:57.1562100Z Commit: abac92662cab4cc7352de4f9f9d2e2419aad9c29
-2026-09-26T06:53:57.1562660Z Build Date: 2026-08-28T16:44:25Z
-2026-09-26T06:53:57.1563100Z Worker ID: {47037821-b523-494e-96bd-e88b56fa8f49}
-2026-09-26T06:53:57.1563560Z Azure Region: westus
-2026-09-26T06:53:57.1564400Z ##[endgroup]
-2026-09-26T06:53:57.1565400Z ##[group]Operating System
-2026-09-26T06:53:57.1565840Z macOS
-2026-09-26T06:53:57.1566210Z 15.7.9
-2026-09-26T06:53:57.1566530Z 24G830
-2026-09-26T06:53:57.1566850Z ##[endgroup]
-2026-09-26T06:53:57.1567280Z ##[group]Runner Image
-2026-09-26T06:53:57.1567740Z Image: macos-15-arm64
-2026-09-26T06:53:57.1568140Z Version: 20260907.0337.1
-2026-09-26T06:53:57.1569010Z Included Software: https://github.com/actions/runner-images/blob/macos-15-arm64/20260907.0337/images/macos/macos-15-arm64-Readme.md
-2026-09-26T06:53:57.1570150Z Image Release: https://github.com/actions/runner-images/releases/tag/macos-15-arm64%2F20260907.0337
-2026-09-26T06:53:57.1570830Z ##[endgroup]
-2026-09-26T06:53:57.1571730Z ##[group]GITHUB_TOKEN Permissions
-2026-09-26T06:53:57.1573090Z Contents: read
-2026-09-26T06:53:57.1573450Z Metadata: read
-2026-09-26T06:53:57.1573810Z Packages: read
-2026-09-26T06:53:57.1574230Z ##[endgroup]
-2026-09-26T06:53:57.1576510Z Secret source: Actions
-2026-09-26T06:53:57.1577080Z Cache mode: write
-2026-09-26T06:53:57.1577520Z Prepare workflow directory
-2026-09-26T06:53:57.1892240Z Prepare all required actions
-2026-09-26T06:53:57.1958890Z Getting action download info
-2026-09-26T06:53:57.6147610Z Download action repository 'actions/checkout@v4' (SHA:11d5960a326750d5838078e36cf38b85af677262)
-2026-09-26T06:53:58.1486140Z Download action repository 'actions/upload-artifact@v4' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
-2026-09-26T06:53:58.5220080Z Complete job name: build
-2026-09-26T06:53:58.6062100Z ##[group]Run actions/checkout@v4
-2026-09-26T06:53:58.6062980Z with:
-2026-09-26T06:53:58.6063760Z   repository: 2014502888/fenzu
-2026-09-26T06:53:58.6066950Z   token: ***
-2026-09-26T06:53:58.6067290Z   ssh-strict: true
-2026-09-26T06:53:58.6067620Z   ssh-user: git
-2026-09-26T06:53:58.6068480Z   persist-credentials: true
-2026-09-26T06:53:58.6068880Z   clean: true
-2026-09-26T06:53:58.6069240Z   sparse-checkout-cone-mode: true
-2026-09-26T06:53:58.6069640Z   fetch-depth: 1
-2026-09-26T06:53:58.6070060Z   fetch-tags: false
-2026-09-26T06:53:58.6070420Z   show-progress: true
-2026-09-26T06:53:58.6070750Z   lfs: false
-2026-09-26T06:53:58.6071070Z   submodules: false
-2026-09-26T06:53:58.6071410Z   set-safe-directory: true
-2026-09-26T06:53:58.6071810Z   allow-unsafe-pr-checkout: false
-2026-09-26T06:53:58.6072420Z ##[endgroup]
-2026-09-26T06:53:59.1812230Z Syncing repository: 2014502888/fenzu
-2026-09-26T06:53:59.1814540Z ##[group]Getting Git version info
-2026-09-26T06:53:59.1815360Z Working directory is '/Users/runner/work/fenzu/fenzu'
-2026-09-26T06:53:59.1816290Z [command]/opt/homebrew/bin/git version
-2026-09-26T06:53:59.2638810Z git version 2.55.0
-2026-09-26T06:53:59.2660820Z ##[endgroup]
-2026-09-26T06:53:59.2669220Z Copying '/Users/runner/.gitconfig' to '/Users/runner/work/_temp/9f42619b-d098-417e-b0be-611e33b993f7/.gitconfig'
-2026-09-26T06:53:59.2676020Z Temporarily overriding HOME='/Users/runner/work/_temp/9f42619b-d098-417e-b0be-611e33b993f7' before making global git config changes
-2026-09-26T06:53:59.2677250Z Adding repository directory to the temporary git global config as a safe directory
-2026-09-26T06:53:59.2678450Z [command]/opt/homebrew/bin/git config --global --add safe.directory /Users/runner/work/fenzu/fenzu
-2026-09-26T06:53:59.2830790Z Deleting the contents of '/Users/runner/work/fenzu/fenzu'
-2026-09-26T06:53:59.2838270Z ##[group]Initializing the repository
-2026-09-26T06:53:59.2841640Z [command]/opt/homebrew/bin/git init /Users/runner/work/fenzu/fenzu
-2026-09-26T06:53:59.3219650Z hint: Using 'master' as the name for the initial branch. This default branch name
-2026-09-26T06:53:59.3223500Z hint: will change to "main" in Git 3.0. To configure the initial branch name
-2026-09-26T06:53:59.3224870Z hint: to use in all of your new repositories, which will suppress this warning,
-2026-09-26T06:53:59.3225640Z hint: call:
-2026-09-26T06:53:59.3226170Z hint:
-2026-09-26T06:53:59.3226820Z hint: 	git config --global init.defaultBranch <name>
-2026-09-26T06:53:59.3227420Z hint:
-2026-09-26T06:53:59.3227980Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
-2026-09-26T06:53:59.3228800Z hint: 'development'. The just-created branch can be renamed via this command:
-2026-09-26T06:53:59.3229400Z hint:
-2026-09-26T06:53:59.3229810Z hint: 	git branch -m <name>
-2026-09-26T06:53:59.3230340Z hint:
-2026-09-26T06:53:59.3230880Z hint: Disable this message with "git config set advice.defaultBranchName false"
-2026-09-26T06:53:59.3231910Z Initialized empty Git repository in /Users/runner/work/fenzu/fenzu/.git/
-2026-09-26T06:53:59.3233800Z [command]/opt/homebrew/bin/git remote add origin https://github.com/2014502888/fenzu
-2026-09-26T06:53:59.3331890Z ##[endgroup]
-2026-09-26T06:53:59.3351490Z ##[group]Disabling automatic garbage collection
-2026-09-26T06:53:59.3353170Z [command]/opt/homebrew/bin/git config --local gc.auto 0
-2026-09-26T06:53:59.3419550Z ##[endgroup]
-2026-09-26T06:53:59.3421640Z ##[group]Setting up auth
-2026-09-26T06:53:59.3424100Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp core\.sshCommand
-2026-09-26T06:53:59.3546320Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
-2026-09-26T06:53:59.5395790Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
-2026-09-26T06:53:59.5541200Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
-2026-09-26T06:53:59.6637220Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
-2026-09-26T06:53:59.6717010Z [command]/opt/homebrew/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
-2026-09-26T06:53:59.9105370Z [command]/opt/homebrew/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
-2026-09-26T06:53:59.9159650Z ##[endgroup]
-2026-09-26T06:53:59.9167400Z ##[group]Fetching the repository
-2026-09-26T06:53:59.9169060Z [command]/opt/homebrew/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +512af95991302ca1842e148ace4ba09610f2b1b2:refs/remotes/origin/main
-2026-09-26T06:54:00.4065370Z From https://github.com/2014502888/fenzu
-2026-09-26T06:54:00.4068270Z  * [new ref]         512af95991302ca1842e148ace4ba09610f2b1b2 -> origin/main
-2026-09-26T06:54:00.4074250Z ##[endgroup]
-2026-09-26T06:54:00.4076530Z ##[group]Determining the checkout info
-2026-09-26T06:54:00.4079080Z ##[endgroup]
-2026-09-26T06:54:00.4080770Z [command]/opt/homebrew/bin/git sparse-checkout disable
-2026-09-26T06:54:00.4164740Z [command]/opt/homebrew/bin/git config --local --unset-all extensions.worktreeConfig
-2026-09-26T06:54:00.4282170Z ##[group]Checking out the ref
-2026-09-26T06:54:00.4285970Z [command]/opt/homebrew/bin/git checkout --progress --force -B main refs/remotes/origin/main
-2026-09-26T06:54:00.4498210Z Switched to a new branch 'main'
-2026-09-26T06:54:00.4514550Z branch 'main' set up to track 'origin/main'.
-2026-09-26T06:54:00.4522100Z ##[endgroup]
-2026-09-26T06:54:00.4647290Z [command]/opt/homebrew/bin/git log -1 --format=%H
-2026-09-26T06:54:00.4731020Z 512af95991302ca1842e148ace4ba09610f2b1b2
-2026-09-26T06:54:00.5014630Z ##[group]Run brew install ldid
-2026-09-26T06:54:00.5015750Z [36;1mbrew install ldid[0m
-2026-09-26T06:54:00.5017130Z [36;1mgit clone --recursive https://github.com/theos/theos.git $HOME/theos[0m
-2026-09-26T06:54:00.5019490Z [36;1mecho "THEOS=$HOME/theos" >> $GITHUB_ENV[0m
-2026-09-26T06:54:00.5080330Z shell: /bin/bash -e {0}
-2026-09-26T06:54:00.5081670Z ##[endgroup]
-2026-09-26T06:54:04.4874610Z [32m==>[0m [1mDownloading bottle manifests[0m
-2026-09-26T06:54:04.5078960Z ✔︎ Bottle Manifest ldid (2.1.5_1)
-2026-09-26T06:54:04.5079550Z [34m==>[0m [1mWould install 1 formula:[0m
-2026-09-26T06:54:04.5181380Z ldid
-2026-09-26T06:54:04.6259810Z [34m==>[0m [1mWould install 1 dependency for ldid:[0m
-2026-09-26T06:54:04.6315520Z libplist
-2026-09-26T06:54:04.6422380Z [32m==>[0m [1mFetching downloads for: [32mldid[39m[0m
-2026-09-26T06:54:04.8545410Z ✔︎ Bottle Manifest libplist (2.7.0)
-2026-09-26T06:54:04.8819050Z ✔︎ Bottle ldid (2.1.5_1)
-2026-09-26T06:54:04.9043140Z ✔︎ Bottle libplist (2.7.0)
-2026-09-26T06:54:04.9240550Z [32m==>[0m [1mInstalling ldid dependency: [32mlibplist[39m[0m
-2026-09-26T06:54:04.9422260Z [34m==>[0m [1mPouring libplist--2.7.0.arm64_sequoia.bottle.tar.gz[0m
-2026-09-26T06:54:05.0979480Z 🍺  /opt/homebrew/Cellar/libplist/2.7.0: 32 files, 604.1KB
-2026-09-26T06:54:05.0994300Z [32m==>[0m [1mInstalling [32mldid[39m[0m
-2026-09-26T06:54:05.0995180Z [34m==>[0m [1mPouring ldid--2.1.5_1.arm64_sequoia.bottle.1.tar.gz[0m
-2026-09-26T06:54:05.1463350Z 🍺  /opt/homebrew/Cellar/ldid/2.1.5_1: 6 files, 270KB
-2026-09-26T06:54:05.1667000Z Cloning into '/Users/runner/theos'...
-2026-09-26T06:54:05.9376180Z Submodule 'vendor/dm.pl' (https://github.com/theos/dm.pl.git) registered for path 'vendor/dm.pl'
-2026-09-26T06:54:05.9378130Z Submodule 'vendor/include' (https://github.com/theos/headers.git) registered for path 'vendor/include'
-2026-09-26T06:54:05.9379710Z Submodule 'vendor/lib' (https://github.com/theos/lib.git) registered for path 'vendor/lib'
-2026-09-26T06:54:05.9386820Z Submodule 'vendor/logos' (https://github.com/theos/logos.git) registered for path 'vendor/logos'
-2026-09-26T06:54:05.9390270Z Submodule 'vendor/nic' (https://github.com/theos/nic.git) registered for path 'vendor/nic'
-2026-09-26T06:54:05.9398680Z Submodule 'vendor/orion' (https://github.com/theos/orion.git) registered for path 'vendor/orion'
-2026-09-26T06:54:05.9407670Z Submodule 'vendor/swift-support' (https://github.com/theos/swift-support.git) registered for path 'vendor/swift-support'
-2026-09-26T06:54:05.9413510Z Submodule 'vendor/templates' (https://github.com/theos/templates.git) registered for path 'vendor/templates'
-2026-09-26T06:54:05.9637370Z Cloning into '/Users/runner/theos/vendor/dm.pl'...
-2026-09-26T06:54:06.5019420Z Cloning into '/Users/runner/theos/vendor/include'...
-2026-09-26T06:54:07.1424100Z Cloning into '/Users/runner/theos/vendor/lib'...
-2026-09-26T06:54:07.8177490Z Cloning into '/Users/runner/theos/vendor/logos'...
-2026-09-26T06:54:08.4455580Z Cloning into '/Users/runner/theos/vendor/nic'...
-2026-09-26T06:54:08.9700310Z Cloning into '/Users/runner/theos/vendor/orion'...
-2026-09-26T06:54:09.9886340Z Cloning into '/Users/runner/theos/vendor/swift-support'...
-2026-09-26T06:54:10.5309510Z Cloning into '/Users/runner/theos/vendor/templates'...
-2026-09-26T06:54:11.1280530Z Submodule path 'vendor/dm.pl': checked out 'd9a3b72e274226dd2823c0a7c1d6d05099f4f51c'
-2026-09-26T06:54:11.3662440Z Submodule path 'vendor/include': checked out '13c1f17176d7efe6871551cd69a75b71ac4eeaf1'
-2026-09-26T06:54:11.4770410Z Submodule path 'vendor/lib': checked out '6f2af307568e6b8c52181d26314b0cd69ffaf188'
-2026-09-26T06:54:11.5274390Z Submodule path 'vendor/logos': checked out '777925d1add4ee3485a2432a6f6d5e3ded59de7b'
-2026-09-26T06:54:11.5891570Z Submodule path 'vendor/nic': checked out '4e7adcbeac2e4636b91e2f76341adfe4c4d0ceec'
-2026-09-26T06:54:11.6524650Z Submodule path 'vendor/orion': checked out '762159dc214d5aafa2edfc7554c659fc3c658b5b'
-2026-09-26T06:54:11.6619990Z Submodule 'fishhook' (https://github.com/facebook/fishhook.git) registered for path 'vendor/orion/fishhook'
-2026-09-26T06:54:11.6747220Z Cloning into '/Users/runner/theos/vendor/orion/fishhook'...
-2026-09-26T06:54:12.1929730Z Submodule path 'vendor/orion/fishhook': checked out 'aadc161ac3b80db07a9908851839a17ba63a9eb1'
-2026-09-26T06:54:12.2378280Z Submodule path 'vendor/swift-support': checked out '4cf59ff04cdb2ceb27ea2228753e0497297b6182'
-2026-09-26T06:54:12.3312960Z Submodule path 'vendor/templates': checked out '6c3944e281c4726f1383755d0fbb642840312d28'
-2026-09-26T06:54:12.3613560Z ##[group]Run export THEOS=$HOME/theos
-2026-09-26T06:54:12.3614390Z [36;1mexport THEOS=$HOME/theos[0m
-2026-09-26T06:54:12.3614960Z [36;1mmake package FINALPACKAGE=1[0m
-2026-09-26T06:54:12.3615750Z [36;1mmkdir -p out[0m
-2026-09-26T06:54:12.3616400Z [36;1mfind .theos packages -name '*.dylib' -exec cp {} out/ \;[0m
-2026-09-26T06:54:12.3617150Z [36;1mls -la out/[0m
-2026-09-26T06:54:12.3676190Z shell: /bin/bash -e {0}
-2026-09-26T06:54:12.3676470Z env:
-2026-09-26T06:54:12.3677100Z   THEOS: /Users/runner/theos
-2026-09-26T06:54:12.3677370Z ##[endgroup]
-2026-09-26T06:54:20.1798790Z [0;36m==> [1;36mNotice:[m Build may be slow as Theos isn’t using all available CPU cores on this computer. Consider upgrading GNU Make: https://theos.dev/docs/parallel-building
-2026-09-26T06:54:20.4041860Z [1;31m> [1;3;39mMaking all for tweak FenzuTweak…[m
-2026-09-26T06:54:23.2627370Z [0;31m==> [1;39mPreprocessing Tweak.x…[m
-2026-09-26T06:54:23.4207880Z [0;32m==> [1;39mCompiling Tweak.x (arm64)…[m
-2026-09-26T06:54:28.4176320Z [1mTweak.x:83:24: [0m[0;1;35mwarning: [0m[1mincompatible pointer types passing 'MoreViewController *' to parameter of type 'UIViewController *' [-Wincompatible-pointer-types][0m
-2026-09-26T06:54:28.4179870Z    83 |     PJAddSettingsEntry(self);[0m
-2026-09-26T06:54:28.4180980Z       | [0;1;32m                       ^~~~
-2026-09-26T06:54:28.4182970Z [0m[1mTweak.x:64:50: [0m[0;1;36mnote: [0mpassing argument to parameter 'vc' here[0m
-2026-09-26T06:54:28.4199910Z    64 | static void PJAddSettingsEntry(UIViewController *vc) {[0m
-2026-09-26T06:54:28.4244610Z       | [0;1;32m                                                 ^
-2026-09-26T06:54:28.4257630Z [0m[1mTweak.x:90:24: [0m[0;1;35mwarning: [0m[1mincompatible pointer types passing 'NewSettingViewController *' to parameter of type 'UIViewController *' [-Wincompatible-pointer-types][0m
-2026-09-26T06:54:28.4260520Z    90 |     PJAddSettingsEntry(self);[0m
-2026-09-26T06:54:28.4262850Z       | [0;1;32m                       ^~~~
-2026-09-26T06:54:28.4300860Z [0m[1mTweak.x:64:50: [0m[0;1;36mnote: [0mpassing argument to parameter 'vc' here[0m
-2026-09-26T06:54:28.4302010Z    64 | static void PJAddSettingsEntry(UIViewController *vc) {[0m
-2026-09-26T06:54:28.4302680Z       | [0;1;32m                                                 ^
-2026-09-26T06:54:28.8323770Z [0m2 warnings generated.
-2026-09-26T06:54:28.9196670Z [0;33m==> [1;39mLinking tweak FenzuTweak (arm64)…[m
-2026-09-26T06:54:29.2394480Z ld: warning: -multiply_defined is obsolete
-2026-09-26T06:54:29.6285020Z [0;34m==> [1;39mGenerating debug symbols for FenzuTweak…[m
-2026-09-26T06:54:29.8068100Z [0;34m==> [1;39mStripping FenzuTweak (arm64)…[m
-2026-09-26T06:54:30.4237170Z [0;31m==> [1;39mPreprocessing Tweak.x…[m
-2026-09-26T06:54:30.5645600Z [0;32m==> [1;39mCompiling Tweak.x (arm64e)…[m
-2026-09-26T06:54:33.5134850Z [1mTweak.x:83:24: [0m[0;1;35mwarning: [0m[1mincompatible pointer types passing 'MoreViewController *' to parameter of type 'UIViewController *' [-Wincompatible-pointer-types][0m
-2026-09-26T06:54:33.5137390Z    83 |     PJAddSettingsEntry(self);[0m
-2026-09-26T06:54:33.5138020Z       | [0;1;32m                       ^~~~
-2026-09-26T06:54:33.5139110Z [0m[1mTweak.x:64:50: [0m[0;1;36mnote: [0mpassing argument to parameter 'vc' here[0m
-2026-09-26T06:54:33.5140250Z    64 | static void PJAddSettingsEntry(UIViewController *vc) {[0m
-2026-09-26T06:54:33.5140920Z       | [0;1;32m                                                 ^
-2026-09-26T06:54:33.5142760Z [0m[1mTweak.x:90:24: [0m[0;1;35mwarning: [0m[1mincompatible pointer types passing 'NewSettingViewController *' to parameter of type 'UIViewController *' [-Wincompatible-pointer-types][0m
-2026-09-26T06:54:33.5150470Z    90 |     PJAddSettingsEntry(self);[0m
-2026-09-26T06:54:33.5151870Z       | [0;1;32m                       ^~~~
-2026-09-26T06:54:33.5153110Z [0m[1mTweak.x:64:50: [0m[0;1;36mnote: [0mpassing argument to parameter 'vc' here[0m
-2026-09-26T06:54:33.5156120Z    64 | static void PJAddSettingsEntry(UIViewController *vc) {[0m
-2026-09-26T06:54:33.5157390Z       | [0;1;32m                                                 ^
-2026-09-26T06:54:33.6524130Z [0m2 warnings generated.
-2026-09-26T06:54:33.7065780Z [0;33m==> [1;39mLinking tweak FenzuTweak (arm64e)…[m
-2026-09-26T06:54:33.7423190Z ld: warning: -multiply_defined is obsolete
-2026-09-26T06:54:33.9801480Z [0;34m==> [1;39mGenerating debug symbols for FenzuTweak…[m
-2026-09-26T06:54:34.0132670Z [0;34m==> [1;39mStripping FenzuTweak (arm64e)…[m
-2026-09-26T06:54:34.0307900Z [0;34m==> [1;39mMerging tweak FenzuTweak…[m
-2026-09-26T06:54:34.0484320Z [0;34m==> [1;39mSigning FenzuTweak…[m
-2026-09-26T06:54:34.8308930Z [1;31m> [1;3;39mMaking stage for tweak FenzuTweak…[m
-2026-09-26T06:54:36.0242910Z [0;31m==> [1;31mError:[m You are missing a filter property list. Make sure it’s named "FenzuTweak.plist" or "Filter.plist". Refer to http://iphonedevwiki.net/index.php/Cydia_Substrate#MobileLoader.
-2026-09-26T06:54:36.0246440Z make[1]: *** [internal-tweak-stage_] Error 1
-2026-09-26T06:54:36.0248490Z make: *** [FenzuTweak.stage.tweak.variables] Error 2
-2026-09-26T06:54:36.0295260Z ##[error]Process completed with exit code 2.
-2026-09-26T06:54:36.0634670Z Post job cleanup.
-2026-09-26T06:54:36.4652510Z [command]/opt/homebrew/bin/git version
-2026-09-26T06:54:36.5177640Z git version 2.55.0
-2026-09-26T06:54:36.5455780Z Copying '/Users/runner/.gitconfig' to '/Users/runner/work/_temp/1ce2c984-264e-4d2c-b269-13a3ceec030a/.gitconfig'
-2026-09-26T06:54:36.5456810Z Temporarily overriding HOME='/Users/runner/work/_temp/1ce2c984-264e-4d2c-b269-13a3ceec030a' before making global git config changes
-2026-09-26T06:54:36.5457700Z Adding repository directory to the temporary git global config as a safe directory
-2026-09-26T06:54:36.5458400Z [command]/opt/homebrew/bin/git config --global --add safe.directory /Users/runner/work/fenzu/fenzu
-2026-09-26T06:54:36.5459530Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp core\.sshCommand
-2026-09-26T06:54:36.5479280Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
-2026-09-26T06:54:36.7481430Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
-2026-09-26T06:54:36.7559910Z http.https://github.com/.extraheader
-2026-09-26T06:54:36.7629790Z [command]/opt/homebrew/bin/git config --local --unset-all http.https://github.com/.extraheader
-2026-09-26T06:54:36.7777400Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
-2026-09-26T06:54:36.9101860Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
-2026-09-26T06:54:36.9414350Z [command]/opt/homebrew/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
-2026-09-26T06:54:37.1233720Z Cleaning up orphan processes
-2026-09-26T06:54:37.8990220Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+﻿2026-09-26T07:11:57.4464910Z Current runner version: '2.337.0'
+2026-09-26T07:11:57.4484170Z ##[group]Runner Image Provisioner
+2026-09-26T07:11:57.4484770Z Hosted Compute Agent
+2026-09-26T07:11:57.4485140Z Version: 20260828.587
+2026-09-26T07:11:57.4485550Z Commit: abac92662cab4cc7352de4f9f9d2e2419aad9c29
+2026-09-26T07:11:57.4486010Z Build Date: 2026-08-28T16:44:25Z
+2026-09-26T07:11:57.4486440Z Worker ID: {80d89216-f753-4998-b737-8f0d87c1d965}
+2026-09-26T07:11:57.4486880Z Azure Region: westus
+2026-09-26T07:11:57.4487240Z ##[endgroup]
+2026-09-26T07:11:57.4488160Z ##[group]Operating System
+2026-09-26T07:11:57.4488550Z macOS
+2026-09-26T07:11:57.4488870Z 15.7.9
+2026-09-26T07:11:57.4489190Z 24G830
+2026-09-26T07:11:57.4489520Z ##[endgroup]
+2026-09-26T07:11:57.4489860Z ##[group]Runner Image
+2026-09-26T07:11:57.4490260Z Image: macos-15-arm64
+2026-09-26T07:11:57.4490660Z Version: 20260907.0337.1
+2026-09-26T07:11:57.4491540Z Included Software: https://github.com/actions/runner-images/blob/macos-15-arm64/20260907.0337/images/macos/macos-15-arm64-Readme.md
+2026-09-26T07:11:57.4492610Z Image Release: https://github.com/actions/runner-images/releases/tag/macos-15-arm64%2F20260907.0337
+2026-09-26T07:11:57.4493310Z ##[endgroup]
+2026-09-26T07:11:57.4494140Z ##[group]GITHUB_TOKEN Permissions
+2026-09-26T07:11:57.4495610Z Contents: read
+2026-09-26T07:11:57.4495990Z Metadata: read
+2026-09-26T07:11:57.4496370Z Packages: read
+2026-09-26T07:11:57.4496760Z ##[endgroup]
+2026-09-26T07:11:57.4499280Z Secret source: Actions
+2026-09-26T07:11:57.4501800Z Cache mode: write
+2026-09-26T07:11:57.4503090Z Prepare workflow directory
+2026-09-26T07:11:57.5033860Z Prepare all required actions
+2026-09-26T07:11:57.5090160Z Getting action download info
+2026-09-26T07:11:57.6464720Z Download action repository 'actions/checkout@v4' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+2026-09-26T07:11:58.2193910Z Download action repository 'actions/upload-artifact@v4' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
+2026-09-26T07:11:58.4891420Z Complete job name: build
+2026-09-26T07:11:58.5485450Z ##[group]Run actions/checkout@v4
+2026-09-26T07:11:58.5486990Z with:
+2026-09-26T07:11:58.5487780Z   repository: 2014502888/fenzu
+2026-09-26T07:11:58.5496420Z   token: ***
+2026-09-26T07:11:58.5499250Z   ssh-strict: true
+2026-09-26T07:11:58.5500180Z   ssh-user: git
+2026-09-26T07:11:58.5500660Z   persist-credentials: true
+2026-09-26T07:11:58.5501510Z   clean: true
+2026-09-26T07:11:58.5501860Z   sparse-checkout-cone-mode: true
+2026-09-26T07:11:58.5502380Z   fetch-depth: 1
+2026-09-26T07:11:58.5505250Z   fetch-tags: false
+2026-09-26T07:11:58.5505670Z   show-progress: true
+2026-09-26T07:11:58.5506010Z   lfs: false
+2026-09-26T07:11:58.5507320Z   submodules: false
+2026-09-26T07:11:58.5508970Z   set-safe-directory: true
+2026-09-26T07:11:58.5511550Z   allow-unsafe-pr-checkout: false
+2026-09-26T07:11:58.5513900Z ##[endgroup]
+2026-09-26T07:11:59.0308170Z Syncing repository: 2014502888/fenzu
+2026-09-26T07:11:59.0309500Z ##[group]Getting Git version info
+2026-09-26T07:11:59.0310150Z Working directory is '/Users/runner/work/fenzu/fenzu'
+2026-09-26T07:11:59.0310990Z [command]/opt/homebrew/bin/git version
+2026-09-26T07:11:59.0947840Z git version 2.55.0
+2026-09-26T07:11:59.0961510Z ##[endgroup]
+2026-09-26T07:11:59.0967660Z Copying '/Users/runner/.gitconfig' to '/Users/runner/work/_temp/d4465de7-2722-4170-b598-058a201775c2/.gitconfig'
+2026-09-26T07:11:59.0979230Z Temporarily overriding HOME='/Users/runner/work/_temp/d4465de7-2722-4170-b598-058a201775c2' before making global git config changes
+2026-09-26T07:11:59.0982180Z Adding repository directory to the temporary git global config as a safe directory
+2026-09-26T07:11:59.0984590Z [command]/opt/homebrew/bin/git config --global --add safe.directory /Users/runner/work/fenzu/fenzu
+2026-09-26T07:11:59.1108440Z Deleting the contents of '/Users/runner/work/fenzu/fenzu'
+2026-09-26T07:11:59.1114660Z ##[group]Initializing the repository
+2026-09-26T07:11:59.1118160Z [command]/opt/homebrew/bin/git init /Users/runner/work/fenzu/fenzu
+2026-09-26T07:11:59.1388890Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-09-26T07:11:59.1390470Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-09-26T07:11:59.1391380Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-09-26T07:11:59.1392070Z hint: call:
+2026-09-26T07:11:59.1392440Z hint:
+2026-09-26T07:11:59.1392880Z hint: 	git config --global init.defaultBranch <name>
+2026-09-26T07:11:59.1393450Z hint:
+2026-09-26T07:11:59.1393950Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-09-26T07:11:59.1394680Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-09-26T07:11:59.1395260Z hint:
+2026-09-26T07:11:59.1395640Z hint: 	git branch -m <name>
+2026-09-26T07:11:59.1396080Z hint:
+2026-09-26T07:11:59.1396580Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-09-26T07:11:59.1397350Z Initialized empty Git repository in /Users/runner/work/fenzu/fenzu/.git/
+2026-09-26T07:11:59.1409880Z [command]/opt/homebrew/bin/git remote add origin https://github.com/2014502888/fenzu
+2026-09-26T07:11:59.1494200Z ##[endgroup]
+2026-09-26T07:11:59.1496140Z ##[group]Disabling automatic garbage collection
+2026-09-26T07:11:59.1497730Z [command]/opt/homebrew/bin/git config --local gc.auto 0
+2026-09-26T07:11:59.1565910Z ##[endgroup]
+2026-09-26T07:11:59.1567460Z ##[group]Setting up auth
+2026-09-26T07:11:59.1569910Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-09-26T07:11:59.1642430Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-09-26T07:11:59.2656320Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-09-26T07:11:59.2723690Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-09-26T07:11:59.3590730Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-09-26T07:11:59.3652000Z [command]/opt/homebrew/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-09-26T07:11:59.5657490Z [command]/opt/homebrew/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-09-26T07:11:59.5680390Z ##[endgroup]
+2026-09-26T07:11:59.5685060Z ##[group]Fetching the repository
+2026-09-26T07:11:59.5693460Z [command]/opt/homebrew/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +e3e5dbd8a6ef06a87fe467422707bc79e5888d83:refs/remotes/origin/main
+2026-09-26T07:12:00.2265040Z From https://github.com/2014502888/fenzu
+2026-09-26T07:12:00.2268510Z  * [new ref]         e3e5dbd8a6ef06a87fe467422707bc79e5888d83 -> origin/main
+2026-09-26T07:12:00.2277170Z ##[endgroup]
+2026-09-26T07:12:00.2278810Z ##[group]Determining the checkout info
+2026-09-26T07:12:00.2279810Z ##[endgroup]
+2026-09-26T07:12:00.2280510Z [command]/opt/homebrew/bin/git sparse-checkout disable
+2026-09-26T07:12:00.2355110Z [command]/opt/homebrew/bin/git config --local --unset-all extensions.worktreeConfig
+2026-09-26T07:12:00.2426890Z ##[group]Checking out the ref
+2026-09-26T07:12:00.2430610Z [command]/opt/homebrew/bin/git checkout --progress --force -B main refs/remotes/origin/main
+2026-09-26T07:12:00.2579360Z Switched to a new branch 'main'
+2026-09-26T07:12:00.2590220Z branch 'main' set up to track 'origin/main'.
+2026-09-26T07:12:00.2595680Z ##[endgroup]
+2026-09-26T07:12:00.2701060Z [command]/opt/homebrew/bin/git log -1 --format=%H
+2026-09-26T07:12:00.2781680Z e3e5dbd8a6ef06a87fe467422707bc79e5888d83
+2026-09-26T07:12:00.3029890Z ##[group]Run brew install ldid
+2026-09-26T07:12:00.3031030Z [36;1mbrew install ldid[0m
+2026-09-26T07:12:00.3032400Z [36;1mgit clone --recursive https://github.com/theos/theos.git $HOME/theos[0m
+2026-09-26T07:12:00.3034250Z [36;1mecho "THEOS=$HOME/theos" >> $GITHUB_ENV[0m
+2026-09-26T07:12:00.3103480Z shell: /bin/bash -e {0}
+2026-09-26T07:12:00.3104370Z ##[endgroup]
+2026-09-26T07:12:03.5935310Z [32m==>[0m [1mDownloading bottle manifests[0m
+2026-09-26T07:12:03.6034010Z ✔︎ Bottle Manifest ldid (2.1.5_1)
+2026-09-26T07:12:03.6034770Z [34m==>[0m [1mWould install 1 formula:[0m
+2026-09-26T07:12:03.6141270Z ldid
+2026-09-26T07:12:03.6968730Z [34m==>[0m [1mWould install 1 dependency for ldid:[0m
+2026-09-26T07:12:03.6970270Z libplist
+2026-09-26T07:12:03.7106590Z [32m==>[0m [1mFetching downloads for: [32mldid[39m[0m
+2026-09-26T07:12:03.9925370Z ✔︎ Bottle Manifest libplist (2.7.0)
+2026-09-26T07:12:04.0300760Z ✔︎ Bottle ldid (2.1.5_1)
+2026-09-26T07:12:04.0410570Z ✔︎ Bottle libplist (2.7.0)
+2026-09-26T07:12:04.0622380Z [32m==>[0m [1mInstalling ldid dependency: [32mlibplist[39m[0m
+2026-09-26T07:12:04.0829920Z [34m==>[0m [1mPouring libplist--2.7.0.arm64_sequoia.bottle.tar.gz[0m
+2026-09-26T07:12:04.2456650Z 🍺  /opt/homebrew/Cellar/libplist/2.7.0: 32 files, 604.1KB
+2026-09-26T07:12:04.2561210Z [32m==>[0m [1mInstalling [32mldid[39m[0m
+2026-09-26T07:12:04.2712310Z [34m==>[0m [1mPouring ldid--2.1.5_1.arm64_sequoia.bottle.1.tar.gz[0m
+2026-09-26T07:12:04.3211640Z 🍺  /opt/homebrew/Cellar/ldid/2.1.5_1: 6 files, 270KB
+2026-09-26T07:12:04.3441440Z Cloning into '/Users/runner/theos'...
+2026-09-26T07:12:05.5037120Z Submodule 'vendor/dm.pl' (https://github.com/theos/dm.pl.git) registered for path 'vendor/dm.pl'
+2026-09-26T07:12:05.5038560Z Submodule 'vendor/include' (https://github.com/theos/headers.git) registered for path 'vendor/include'
+2026-09-26T07:12:05.5039350Z Submodule 'vendor/lib' (https://github.com/theos/lib.git) registered for path 'vendor/lib'
+2026-09-26T07:12:05.5042550Z Submodule 'vendor/logos' (https://github.com/theos/logos.git) registered for path 'vendor/logos'
+2026-09-26T07:12:05.5050300Z Submodule 'vendor/nic' (https://github.com/theos/nic.git) registered for path 'vendor/nic'
+2026-09-26T07:12:05.5057860Z Submodule 'vendor/orion' (https://github.com/theos/orion.git) registered for path 'vendor/orion'
+2026-09-26T07:12:05.5060020Z Submodule 'vendor/swift-support' (https://github.com/theos/swift-support.git) registered for path 'vendor/swift-support'
+2026-09-26T07:12:05.5062400Z Submodule 'vendor/templates' (https://github.com/theos/templates.git) registered for path 'vendor/templates'
+2026-09-26T07:12:05.5206000Z Cloning into '/Users/runner/theos/vendor/dm.pl'...
+2026-09-26T07:12:06.2482230Z Cloning into '/Users/runner/theos/vendor/include'...
+2026-09-26T07:12:07.2010480Z Cloning into '/Users/runner/theos/vendor/lib'...
+2026-09-26T07:12:08.1724500Z Cloning into '/Users/runner/theos/vendor/logos'...
+2026-09-26T07:12:09.0682870Z Cloning into '/Users/runner/theos/vendor/nic'...
+2026-09-26T07:12:09.8507480Z Cloning into '/Users/runner/theos/vendor/orion'...
+2026-09-26T07:12:11.0782200Z Cloning into '/Users/runner/theos/vendor/swift-support'...
+2026-09-26T07:12:11.7749770Z Cloning into '/Users/runner/theos/vendor/templates'...
+2026-09-26T07:12:12.6650690Z Submodule path 'vendor/dm.pl': checked out 'd9a3b72e274226dd2823c0a7c1d6d05099f4f51c'
+2026-09-26T07:12:12.9280810Z Submodule path 'vendor/include': checked out '13c1f17176d7efe6871551cd69a75b71ac4eeaf1'
+2026-09-26T07:12:13.0284060Z Submodule path 'vendor/lib': checked out '6f2af307568e6b8c52181d26314b0cd69ffaf188'
+2026-09-26T07:12:13.0672530Z Submodule path 'vendor/logos': checked out '777925d1add4ee3485a2432a6f6d5e3ded59de7b'
+2026-09-26T07:12:13.1013410Z Submodule path 'vendor/nic': checked out '4e7adcbeac2e4636b91e2f76341adfe4c4d0ceec'
+2026-09-26T07:12:13.2037230Z Submodule path 'vendor/orion': checked out '762159dc214d5aafa2edfc7554c659fc3c658b5b'
+2026-09-26T07:12:13.2092840Z Submodule 'fishhook' (https://github.com/facebook/fishhook.git) registered for path 'vendor/orion/fishhook'
+2026-09-26T07:12:13.2218590Z Cloning into '/Users/runner/theos/vendor/orion/fishhook'...
+2026-09-26T07:12:14.0806240Z Submodule path 'vendor/orion/fishhook': checked out 'aadc161ac3b80db07a9908851839a17ba63a9eb1'
+2026-09-26T07:12:14.1820750Z Submodule path 'vendor/swift-support': checked out '4cf59ff04cdb2ceb27ea2228753e0497297b6182'
+2026-09-26T07:12:14.2904810Z Submodule path 'vendor/templates': checked out '6c3944e281c4726f1383755d0fbb642840312d28'
+2026-09-26T07:12:14.3419260Z ##[group]Run export THEOS=$HOME/theos
+2026-09-26T07:12:14.3419600Z [36;1mexport THEOS=$HOME/theos[0m
+2026-09-26T07:12:14.3419890Z [36;1mmake package FINALPACKAGE=1[0m
+2026-09-26T07:12:14.3420100Z [36;1mmkdir -p out[0m
+2026-09-26T07:12:14.3420490Z [36;1mfind .theos packages -name '*.dylib' -exec cp {} out/ \;[0m
+2026-09-26T07:12:14.3420820Z [36;1mls -la out/[0m
+2026-09-26T07:12:14.3471010Z shell: /bin/bash -e {0}
+2026-09-26T07:12:14.3471220Z env:
+2026-09-26T07:12:14.3471380Z   THEOS: /Users/runner/theos
+2026-09-26T07:12:14.3471560Z ##[endgroup]
+2026-09-26T07:12:21.7466790Z [0;36m==> [1;36mNotice:[m Build may be slow as Theos isn’t using all available CPU cores on this computer. Consider upgrading GNU Make: https://theos.dev/docs/parallel-building
+2026-09-26T07:12:21.9100320Z [1;31m> [1;3;39mMaking all for tweak FenzuTweak…[m
+2026-09-26T07:12:23.7749230Z [0;31m==> [1;39mPreprocessing Tweak.x…[m
+2026-09-26T07:12:23.9359720Z [0;32m==> [1;39mCompiling Tweak.x (arm64)…[m
+2026-09-26T07:12:27.5696370Z [1mTweak.x:100:25: [0m[0;1;31merror: [0m[1mreceiver type 'MainFrameLogicController' for instance message is a forward declaration[0m
+2026-09-26T07:12:27.5697250Z   100 |         NSArray *arr = [self valueForKey:@"m_frontSessionArray"];[0m
+2026-09-26T07:12:27.5697830Z       | [0;1;32m                        ^~~~
+2026-09-26T07:12:27.5698720Z [0m[1mTweak.x:103:41: [0m[0;1;36mnote: [0mforward declaration of class here[0m
+2026-09-26T07:12:27.5699810Z   103 | @class NewSettingViewController; @class MainFrameLogicController; @class MoreViewController; [0m
+2026-09-26T07:12:27.5701430Z       | [0;1;32m                                        ^
+2026-09-26T07:12:27.6522650Z [0m1 error generated.
+2026-09-26T07:12:27.6633010Z make[3]: *** [/Users/runner/work/fenzu/fenzu/.theos/obj/arm64/Tweak.x.12e56ab1.o] Error 1
+2026-09-26T07:12:27.6635130Z rm /Users/runner/work/fenzu/fenzu/.theos/obj/arm64/Tweak.x.m
+2026-09-26T07:12:27.6638180Z make[2]: *** [/Users/runner/work/fenzu/fenzu/.theos/obj/arm64/FenzuTweak.dylib] Error 2
+2026-09-26T07:12:27.6642380Z make[1]: *** [internal-library-all_] Error 2
+2026-09-26T07:12:27.6653730Z make: *** [FenzuTweak.all.tweak.variables] Error 2
+2026-09-26T07:12:27.6690630Z ##[error]Process completed with exit code 2.
+2026-09-26T07:12:27.7058060Z Post job cleanup.
+2026-09-26T07:12:28.0502040Z [command]/opt/homebrew/bin/git version
+2026-09-26T07:12:28.0726600Z git version 2.55.0
+2026-09-26T07:12:28.0747040Z Copying '/Users/runner/.gitconfig' to '/Users/runner/work/_temp/e1f8cbf5-9227-45a7-8cab-5be10aea7748/.gitconfig'
+2026-09-26T07:12:28.0754150Z Temporarily overriding HOME='/Users/runner/work/_temp/e1f8cbf5-9227-45a7-8cab-5be10aea7748' before making global git config changes
+2026-09-26T07:12:28.0755010Z Adding repository directory to the temporary git global config as a safe directory
+2026-09-26T07:12:28.0757080Z [command]/opt/homebrew/bin/git config --global --add safe.directory /Users/runner/work/fenzu/fenzu
+2026-09-26T07:12:28.0874600Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-09-26T07:12:28.0978890Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-09-26T07:12:28.2068130Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-09-26T07:12:28.2130010Z http.https://github.com/.extraheader
+2026-09-26T07:12:28.2139530Z [command]/opt/homebrew/bin/git config --local --unset-all http.https://github.com/.extraheader
+2026-09-26T07:12:28.2210920Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-09-26T07:12:28.3086490Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-09-26T07:12:28.3168450Z [command]/opt/homebrew/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-09-26T07:12:28.4369780Z Cleaning up orphan processes
+2026-09-26T07:12:28.7759940Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

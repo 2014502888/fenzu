@@ -1,57 +1,27 @@
-﻿2026-09-26T06:54:12.3613520Z ##[group]Run export THEOS=$HOME/theos
-2026-09-26T06:54:12.3614390Z [36;1mexport THEOS=$HOME/theos[0m
-2026-09-26T06:54:12.3614960Z [36;1mmake package FINALPACKAGE=1[0m
-2026-09-26T06:54:12.3615740Z [36;1mmkdir -p out[0m
-2026-09-26T06:54:12.3616390Z [36;1mfind .theos packages -name '*.dylib' -exec cp {} out/ \;[0m
-2026-09-26T06:54:12.3617150Z [36;1mls -la out/[0m
-2026-09-26T06:54:12.3676170Z shell: /bin/bash -e {0}
-2026-09-26T06:54:12.3676460Z env:
-2026-09-26T06:54:12.3677100Z   THEOS: /Users/runner/theos
-2026-09-26T06:54:12.3677360Z ##[endgroup]
-2026-09-26T06:54:20.1798700Z [0;36m==> [1;36mNotice:[m Build may be slow as Theos isn’t using all available CPU cores on this computer. Consider upgrading GNU Make: https://theos.dev/docs/parallel-building
-2026-09-26T06:54:20.4041800Z [1;31m> [1;3;39mMaking all for tweak FenzuTweak…[m
-2026-09-26T06:54:23.2627300Z [0;31m==> [1;39mPreprocessing Tweak.x…[m
-2026-09-26T06:54:23.4207480Z [0;32m==> [1;39mCompiling Tweak.x (arm64)…[m
-2026-09-26T06:54:28.4173910Z [1mTweak.x:83:24: [0m[0;1;35mwarning: [0m[1mincompatible pointer types passing 'MoreViewController *' to parameter of type 'UIViewController *' [-Wincompatible-pointer-types][0m
-2026-09-26T06:54:28.4179860Z    83 |     PJAddSettingsEntry(self);[0m
-2026-09-26T06:54:28.4180970Z       | [0;1;32m                       ^~~~
-2026-09-26T06:54:28.4182510Z [0m[1mTweak.x:64:50: [0m[0;1;36mnote: [0mpassing argument to parameter 'vc' here[0m
-2026-09-26T06:54:28.4199880Z    64 | static void PJAddSettingsEntry(UIViewController *vc) {[0m
-2026-09-26T06:54:28.4244540Z       | [0;1;32m                                                 ^
-2026-09-26T06:54:28.4257590Z [0m[1mTweak.x:90:24: [0m[0;1;35mwarning: [0m[1mincompatible pointer types passing 'NewSettingViewController *' to parameter of type 'UIViewController *' [-Wincompatible-pointer-types][0m
-2026-09-26T06:54:28.4260510Z    90 |     PJAddSettingsEntry(self);[0m
-2026-09-26T06:54:28.4262750Z       | [0;1;32m                       ^~~~
-2026-09-26T06:54:28.4300820Z [0m[1mTweak.x:64:50: [0m[0;1;36mnote: [0mpassing argument to parameter 'vc' here[0m
-2026-09-26T06:54:28.4302000Z    64 | static void PJAddSettingsEntry(UIViewController *vc) {[0m
-2026-09-26T06:54:28.4302670Z       | [0;1;32m                                                 ^
-2026-09-26T06:54:28.8323720Z [0m2 warnings generated.
-2026-09-26T06:54:28.9196580Z [0;33m==> [1;39mLinking tweak FenzuTweak (arm64)…[m
-2026-09-26T06:54:29.2394410Z ld: warning: -multiply_defined is obsolete
-2026-09-26T06:54:29.6284960Z [0;34m==> [1;39mGenerating debug symbols for FenzuTweak…[m
-2026-09-26T06:54:29.8067980Z [0;34m==> [1;39mStripping FenzuTweak (arm64)…[m
-2026-09-26T06:54:30.4237120Z [0;31m==> [1;39mPreprocessing Tweak.x…[m
-2026-09-26T06:54:30.5645560Z [0;32m==> [1;39mCompiling Tweak.x (arm64e)…[m
-2026-09-26T06:54:33.5134540Z [1mTweak.x:83:24: [0m[0;1;35mwarning: [0m[1mincompatible pointer types passing 'MoreViewController *' to parameter of type 'UIViewController *' [-Wincompatible-pointer-types][0m
-2026-09-26T06:54:33.5137380Z    83 |     PJAddSettingsEntry(self);[0m
-2026-09-26T06:54:33.5138020Z       | [0;1;32m                       ^~~~
-2026-09-26T06:54:33.5139110Z [0m[1mTweak.x:64:50: [0m[0;1;36mnote: [0mpassing argument to parameter 'vc' here[0m
-2026-09-26T06:54:33.5140240Z    64 | static void PJAddSettingsEntry(UIViewController *vc) {[0m
-2026-09-26T06:54:33.5140920Z       | [0;1;32m                                                 ^
-2026-09-26T06:54:33.5142760Z [0m[1mTweak.x:90:24: [0m[0;1;35mwarning: [0m[1mincompatible pointer types passing 'NewSettingViewController *' to parameter of type 'UIViewController *' [-Wincompatible-pointer-types][0m
-2026-09-26T06:54:33.5150460Z    90 |     PJAddSettingsEntry(self);[0m
-2026-09-26T06:54:33.5151830Z       | [0;1;32m                       ^~~~
-2026-09-26T06:54:33.5153100Z [0m[1mTweak.x:64:50: [0m[0;1;36mnote: [0mpassing argument to parameter 'vc' here[0m
-2026-09-26T06:54:33.5154630Z    64 | static void PJAddSettingsEntry(UIViewController *vc) {[0m
-2026-09-26T06:54:33.5157380Z       | [0;1;32m                                                 ^
-2026-09-26T06:54:33.6524080Z [0m2 warnings generated.
-2026-09-26T06:54:33.7065740Z [0;33m==> [1;39mLinking tweak FenzuTweak (arm64e)…[m
-2026-09-26T06:54:33.7423150Z ld: warning: -multiply_defined is obsolete
-2026-09-26T06:54:33.9801410Z [0;34m==> [1;39mGenerating debug symbols for FenzuTweak…[m
-2026-09-26T06:54:34.0132600Z [0;34m==> [1;39mStripping FenzuTweak (arm64e)…[m
-2026-09-26T06:54:34.0307870Z [0;34m==> [1;39mMerging tweak FenzuTweak…[m
-2026-09-26T06:54:34.0484280Z [0;34m==> [1;39mSigning FenzuTweak…[m
-2026-09-26T06:54:34.8308860Z [1;31m> [1;3;39mMaking stage for tweak FenzuTweak…[m
-2026-09-26T06:54:36.0242800Z [0;31m==> [1;31mError:[m You are missing a filter property list. Make sure it’s named "FenzuTweak.plist" or "Filter.plist". Refer to http://iphonedevwiki.net/index.php/Cydia_Substrate#MobileLoader.
-2026-09-26T06:54:36.0246240Z make[1]: *** [internal-tweak-stage_] Error 1
-2026-09-26T06:54:36.0248470Z make: *** [FenzuTweak.stage.tweak.variables] Error 2
-2026-09-26T06:54:36.0295220Z ##[error]Process completed with exit code 2.
+﻿2026-09-26T07:12:14.3419240Z ##[group]Run export THEOS=$HOME/theos
+2026-09-26T07:12:14.3419600Z [36;1mexport THEOS=$HOME/theos[0m
+2026-09-26T07:12:14.3419880Z [36;1mmake package FINALPACKAGE=1[0m
+2026-09-26T07:12:14.3420100Z [36;1mmkdir -p out[0m
+2026-09-26T07:12:14.3420480Z [36;1mfind .theos packages -name '*.dylib' -exec cp {} out/ \;[0m
+2026-09-26T07:12:14.3420820Z [36;1mls -la out/[0m
+2026-09-26T07:12:14.3471000Z shell: /bin/bash -e {0}
+2026-09-26T07:12:14.3471220Z env:
+2026-09-26T07:12:14.3471380Z   THEOS: /Users/runner/theos
+2026-09-26T07:12:14.3471560Z ##[endgroup]
+2026-09-26T07:12:21.7466640Z [0;36m==> [1;36mNotice:[m Build may be slow as Theos isn’t using all available CPU cores on this computer. Consider upgrading GNU Make: https://theos.dev/docs/parallel-building
+2026-09-26T07:12:21.9100280Z [1;31m> [1;3;39mMaking all for tweak FenzuTweak…[m
+2026-09-26T07:12:23.7748950Z [0;31m==> [1;39mPreprocessing Tweak.x…[m
+2026-09-26T07:12:23.9357930Z [0;32m==> [1;39mCompiling Tweak.x (arm64)…[m
+2026-09-26T07:12:27.5696230Z [1mTweak.x:100:25: [0m[0;1;31merror: [0m[1mreceiver type 'MainFrameLogicController' for instance message is a forward declaration[0m
+2026-09-26T07:12:27.5697250Z   100 |         NSArray *arr = [self valueForKey:@"m_frontSessionArray"];[0m
+2026-09-26T07:12:27.5697830Z       | [0;1;32m                        ^~~~
+2026-09-26T07:12:27.5698720Z [0m[1mTweak.x:103:41: [0m[0;1;36mnote: [0mforward declaration of class here[0m
+2026-09-26T07:12:27.5699810Z   103 | @class NewSettingViewController; @class MainFrameLogicController; @class MoreViewController; [0m
+2026-09-26T07:12:27.5701430Z       | [0;1;32m                                        ^
+2026-09-26T07:12:27.6522600Z [0m1 error generated.
+2026-09-26T07:12:27.6632980Z make[3]: *** [/Users/runner/work/fenzu/fenzu/.theos/obj/arm64/Tweak.x.12e56ab1.o] Error 1
+2026-09-26T07:12:27.6635030Z rm /Users/runner/work/fenzu/fenzu/.theos/obj/arm64/Tweak.x.m
+2026-09-26T07:12:27.6638030Z make[2]: *** [/Users/runner/work/fenzu/fenzu/.theos/obj/arm64/FenzuTweak.dylib] Error 2
+2026-09-26T07:12:27.6642360Z make[1]: *** [internal-library-all_] Error 2
+2026-09-26T07:12:27.6653710Z make: *** [FenzuTweak.all.tweak.variables] Error 2
+2026-09-26T07:12:27.6690600Z ##[error]Process completed with exit code 2.
