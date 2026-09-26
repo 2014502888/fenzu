@@ -39,10 +39,6 @@ static UIImage *PJGroupAvatar(NSString *gn) {
     return nil;
 }
 
-static NSString *PJContactName(NSString *userName) {
-    return userName;
-}
-
 static void PJShowAssignMenu(NSString *userName) {
     if (!userName) return;
     UIViewController *host = PJTopmostVC();
@@ -339,46 +335,25 @@ static void PJAddSettingsEntry(id vc) {
 }
 %end
 
-// 诊断: dump所有viewDidAppear的VC类名
-%hook NSObject
-- (void)pj_dumpViewDidAppear {
+// 诊断: hook UIViewController的viewDidAppear
+%hook UIViewController
+- (void)viewDidAppear:(BOOL)animated {
+    %orig;
     @try {
-        if (![self isKindOfClass:[UIViewController class]]) return;
-        UIViewController *vc = (UIViewController *)self;
-        NSString *cls = NSStringFromClass([vc class]);
-        if ([cls containsString:@"Info"] || [cls containsString:@"Detail"] || [cls containsString:@"Setting"] || [cls containsString:@"Chat"]) {
+        NSString *cls = NSStringFromClass([self class]);
+        if ([cls containsString:@"Info"] || [cls containsString:@"Detail"] || [cls containsString:@"Room"]) {
             NSMutableString *s = [NSMutableString string];
             [s appendFormat:@"VC=%@\n", cls];
-            UITableView *tv = PJFindTableView(vc.view);
+            UITableView *tv = PJFindTableView(self.view);
             [s appendFormat:@"tableView=%@\n", tv];
             if (tv) {
-                [s appendFormat:@"sections=%lu rows=%lu\n", (unsigned long)tv.numberOfSections, (unsigned long)[tv numberOfRowsInSection:0]];
+                [s appendFormat:@"sections=%lu\n", (unsigned long)tv.numberOfSections];
+                for (NSInteger i = 0; i < tv.numberOfSections; i++) {
+                    [s appendFormat:@"  section%ld rows=%lu\n", (long)i, (unsigned long)[tv numberOfRowsInSection:i]];
+                }
             }
             [s writeToFile:[NSTemporaryDirectory() stringByAppendingPathComponent:@"pj_info.txt"] atomically:YES encoding:NSUTF8StringEncoding error:nil];
         }
     } @catch(id e) {}
 }
 %end
-
-%ctor {
-    // hook所有UIViewController的viewDidAppear
-    MSHookMessageEx(objc_getClass("UIViewController"), @selector(viewDidAppear:), MSHK(void, (id self, SEL _cmd, BOOL animated), {
-        orig(self, _cmd, animated);
-        @try {
-            NSString *cls = NSStringFromClass([self class]);
-            if ([cls containsString:@"Info"] || [cls containsString:@"Detail"] || [cls containsString:@"Room"]) {
-                NSMutableString *s = [NSMutableString string];
-                [s appendFormat:@"VC=%@\n", cls];
-                UITableView *tv = PJFindTableView([self view]);
-                [s appendFormat:@"tableView=%@\n", tv];
-                if (tv) {
-                    [s appendFormat:@"sections=%lu\n", (unsigned long)tv.numberOfSections];
-                    for (NSInteger i = 0; i < tv.numberOfSections; i++) {
-                        [s appendFormat:@"  section%ld rows=%lu\n", (long)i, (unsigned long)[tv numberOfRowsInSection:i]];
-                    }
-                }
-                [s writeToFile:[NSTemporaryDirectory() stringByAppendingPathComponent:@"pj_info.txt"] atomically:YES encoding:NSUTF8StringEncoding error:nil];
-            }
-        } @catch(id e) {}
-    }), NULL);
-}
