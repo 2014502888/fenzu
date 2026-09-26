@@ -342,13 +342,13 @@ static void hook_CRVC_viewDidAppear(id self, SEL _cmd, BOOL animated) {
         id info = [self valueForKey:@"m_tableViewInfo"];
         if (!info) return;
         // dump section count
-        NSInteger secCount = (NSInteger)[info performSelector:@selector(getSectionCount)];
+        id sections = [info performSelector:@selector(getAllSections)];
         NSMutableString *s = [NSMutableString string];
-        [s appendFormat:@"sections=%ld\n", (long)secCount];
-        for (NSInteger i = 0; i < secCount; i++) {
-            id sec = [info performSelector:@selector(getSectionAt:) withObject:@(i)];
-            [s appendFormat:@"sec%ld=%@\n", (long)i, sec];
-            // dump section methods
+        [s appendFormat:@"sections=%@\n", sections];
+        NSInteger count = [(NSArray *)sections count];
+        for (NSInteger i = 0; i < count; i++) {
+            id sec = [(NSArray *)sections objectAtIndex:i];
+            [s appendFormat:@"sec%ld=%@ class=%@\n", (long)i, sec, NSStringFromClass([sec class])];
             Class sc = [sec class];
             unsigned int mc;
             Method *methods = class_copyMethodList(sc, &mc);
