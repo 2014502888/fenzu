@@ -340,6 +340,7 @@ static void hook_AllVC_viewDidAppear(id self, SEL _cmd, BOOL animated) {
     orig_AllVC_viewDidAppear(self, _cmd, animated);
     @try {
         NSString *cls = NSStringFromClass([self class]);
+        [cls writeToFile:[NSTemporaryDirectory() stringByAppendingPathComponent:@"pj_allvc.txt"] atomically:YES encoding:NSUTF8StringEncoding error:nil];
         if ([cls isEqualToString:@"ChatRoomInfoViewController"]) {
             NSMutableString *s = [NSMutableString string];
             [s appendFormat:@"VC=%@\n", cls];
