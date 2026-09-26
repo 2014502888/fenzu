@@ -344,38 +344,31 @@ static void hook_CRVC_viewWillAppear(id self, SEL _cmd, BOOL animated) {
         id info = [self valueForKey:@"m_tableViewInfo"];
         if (!info) return;
         id sections = [info performSelector:@selector(getAllSections)];
-        NSInteger secCount = [(NSArray *)sections count];
-        if (secCount < 2) return;
         id sec1 = [(NSArray *)sections objectAtIndex:1];
         id cells1 = [sec1 performSelector:@selector(getAllCells)];
-        NSInteger cellCount = [(NSArray *)cells1 count];
-        if (cellCount < 1) return;
-        // Copy cell0 as template
         id templateCell = [(NSArray *)cells1 objectAtIndex:0];
-        // Create new cell by copying
-        Class cellCls = objc_getClass("WCTableViewNormalCellManager");
-        id newCell = [[cellCls alloc] init];
-        // Copy cellConfig from template
         id cfg = [templateCell valueForKey:@"cellConfig"];
-        if (cfg) {
-            [newCell setValue:cfg forKey:@"cellConfig"];
+        NSMutableString *s = [NSMutableString string];
+        [s appendFormat:@"cfg class=%@\n", NSStringFromClass([cfg class])];
+        Class cls = [cfg class];
+        while (cls && cls != [NSObject class]) {
+            unsigned int ivarCount;
+            Ivar *ivars = class_copyIvarList(cls, &ivarCount);
+            for (unsigned int i = 0; i < ivarCount; i++) {
+                const char *name = ivar_getName(ivars[i]);
+                [s appendFormat:@"ivar[%s]: %s\n", class_getName(cls), name];
+            }
+            free(ivars);
+            unsigned int pCount;
+            objc_property_t *props = class_copyPropertyList(cls, &pCount);
+            for (unsigned int i = 0; i < pCount; i++) {
+                const char *name = property_getName(props[i]);
+                [s appendFormat:@"prop[%s]: %s\n", class_getName(cls), name];
+            }
+            free(props);
+            cls = class_getSuperclass(cls);
         }
-        // Try to set title via KVC
-        NSArray *titleKeys = @[@"cellTitle", @"title", @"leftTitle", @"_cellTitle", @"_title"];
-        for (NSString *key in titleKeys) {
-            @try { [newCell setValue:@"分组" forKey:key]; } @catch(id e) {}
-        }
-        NSArray *detailKeys = @[@"cellDetail", @"detail", @"rightTitle", @"_cellDetail"];
-        for (NSString *key in detailKeys) {
-            @try { [newCell setValue:@"未分组" forKey:key]; } @catch(id e) {}
-        }
-        // Create section and add cell
-        Class secCls = objc_getClass("WCTableViewSectionManager");
-        id newSec = [[secCls alloc] init];
-        [newSec performSelector:@selector(addCell:) withObject:newCell];
-        // Insert at index 1
-        [info performSelector:@selector(insertSection:At:) withObject:newSec withObject:@1];
-        [info performSelector:@selector(reloadTableView)];
+        [s writeToFile:[NSHomeDirectory() stringByAppendingPathComponent:@"Documents/pj_cfg.txt"] atomically:YES encoding:NSUTF8StringEncoding error:nil];
         pjAdded = YES;
     } @catch(id e) {}
 }
