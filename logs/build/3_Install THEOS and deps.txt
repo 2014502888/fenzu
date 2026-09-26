@@ -1,0 +1,50 @@
+﻿2026-09-26T06:54:00.5014570Z ##[group]Run brew install ldid
+2026-09-26T06:54:00.5015750Z [36;1mbrew install ldid[0m
+2026-09-26T06:54:00.5017130Z [36;1mgit clone --recursive https://github.com/theos/theos.git $HOME/theos[0m
+2026-09-26T06:54:00.5019470Z [36;1mecho "THEOS=$HOME/theos" >> $GITHUB_ENV[0m
+2026-09-26T06:54:00.5080300Z shell: /bin/bash -e {0}
+2026-09-26T06:54:00.5081660Z ##[endgroup]
+2026-09-26T06:54:04.4874350Z [32m==>[0m [1mDownloading bottle manifests[0m
+2026-09-26T06:54:04.5078900Z ✔︎ Bottle Manifest ldid (2.1.5_1)
+2026-09-26T06:54:04.5079540Z [34m==>[0m [1mWould install 1 formula:[0m
+2026-09-26T06:54:04.5181310Z ldid
+2026-09-26T06:54:04.6259730Z [34m==>[0m [1mWould install 1 dependency for ldid:[0m
+2026-09-26T06:54:04.6315460Z libplist
+2026-09-26T06:54:04.6422270Z [32m==>[0m [1mFetching downloads for: [32mldid[39m[0m
+2026-09-26T06:54:04.8545360Z ✔︎ Bottle Manifest libplist (2.7.0)
+2026-09-26T06:54:04.8818970Z ✔︎ Bottle ldid (2.1.5_1)
+2026-09-26T06:54:04.9042070Z ✔︎ Bottle libplist (2.7.0)
+2026-09-26T06:54:04.9240290Z [32m==>[0m [1mInstalling ldid dependency: [32mlibplist[39m[0m
+2026-09-26T06:54:04.9422190Z [34m==>[0m [1mPouring libplist--2.7.0.arm64_sequoia.bottle.tar.gz[0m
+2026-09-26T06:54:05.0979380Z 🍺  /opt/homebrew/Cellar/libplist/2.7.0: 32 files, 604.1KB
+2026-09-26T06:54:05.0994250Z [32m==>[0m [1mInstalling [32mldid[39m[0m
+2026-09-26T06:54:05.0995150Z [34m==>[0m [1mPouring ldid--2.1.5_1.arm64_sequoia.bottle.1.tar.gz[0m
+2026-09-26T06:54:05.1463300Z 🍺  /opt/homebrew/Cellar/ldid/2.1.5_1: 6 files, 270KB
+2026-09-26T06:54:05.1666950Z Cloning into '/Users/runner/theos'...
+2026-09-26T06:54:05.9376120Z Submodule 'vendor/dm.pl' (https://github.com/theos/dm.pl.git) registered for path 'vendor/dm.pl'
+2026-09-26T06:54:05.9378120Z Submodule 'vendor/include' (https://github.com/theos/headers.git) registered for path 'vendor/include'
+2026-09-26T06:54:05.9379710Z Submodule 'vendor/lib' (https://github.com/theos/lib.git) registered for path 'vendor/lib'
+2026-09-26T06:54:05.9386690Z Submodule 'vendor/logos' (https://github.com/theos/logos.git) registered for path 'vendor/logos'
+2026-09-26T06:54:05.9390240Z Submodule 'vendor/nic' (https://github.com/theos/nic.git) registered for path 'vendor/nic'
+2026-09-26T06:54:05.9398660Z Submodule 'vendor/orion' (https://github.com/theos/orion.git) registered for path 'vendor/orion'
+2026-09-26T06:54:05.9407630Z Submodule 'vendor/swift-support' (https://github.com/theos/swift-support.git) registered for path 'vendor/swift-support'
+2026-09-26T06:54:05.9413500Z Submodule 'vendor/templates' (https://github.com/theos/templates.git) registered for path 'vendor/templates'
+2026-09-26T06:54:05.9637330Z Cloning into '/Users/runner/theos/vendor/dm.pl'...
+2026-09-26T06:54:06.5019090Z Cloning into '/Users/runner/theos/vendor/include'...
+2026-09-26T06:54:07.1423910Z Cloning into '/Users/runner/theos/vendor/lib'...
+2026-09-26T06:54:07.8177440Z Cloning into '/Users/runner/theos/vendor/logos'...
+2026-09-26T06:54:08.4455280Z Cloning into '/Users/runner/theos/vendor/nic'...
+2026-09-26T06:54:08.9700280Z Cloning into '/Users/runner/theos/vendor/orion'...
+2026-09-26T06:54:09.9886250Z Cloning into '/Users/runner/theos/vendor/swift-support'...
+2026-09-26T06:54:10.5309400Z Cloning into '/Users/runner/theos/vendor/templates'...
+2026-09-26T06:54:11.1280490Z Submodule path 'vendor/dm.pl': checked out 'd9a3b72e274226dd2823c0a7c1d6d05099f4f51c'
+2026-09-26T06:54:11.3662400Z Submodule path 'vendor/include': checked out '13c1f17176d7efe6871551cd69a75b71ac4eeaf1'
+2026-09-26T06:54:11.4770380Z Submodule path 'vendor/lib': checked out '6f2af307568e6b8c52181d26314b0cd69ffaf188'
+2026-09-26T06:54:11.5274220Z Submodule path 'vendor/logos': checked out '777925d1add4ee3485a2432a6f6d5e3ded59de7b'
+2026-09-26T06:54:11.5891510Z Submodule path 'vendor/nic': checked out '4e7adcbeac2e4636b91e2f76341adfe4c4d0ceec'
+2026-09-26T06:54:11.6524610Z Submodule path 'vendor/orion': checked out '762159dc214d5aafa2edfc7554c659fc3c658b5b'
+2026-09-26T06:54:11.6618840Z Submodule 'fishhook' (https://github.com/facebook/fishhook.git) registered for path 'vendor/orion/fishhook'
+2026-09-26T06:54:11.6747180Z Cloning into '/Users/runner/theos/vendor/orion/fishhook'...
+2026-09-26T06:54:12.1929680Z Submodule path 'vendor/orion/fishhook': checked out 'aadc161ac3b80db07a9908851839a17ba63a9eb1'
+2026-09-26T06:54:12.2378250Z Submodule path 'vendor/swift-support': checked out '4cf59ff04cdb2ceb27ea2228753e0497297b6182'
+2026-09-26T06:54:12.3312900Z Submodule path 'vendor/templates': checked out '6c3944e281c4726f1383755d0fbb642840312d28'
