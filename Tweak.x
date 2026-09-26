@@ -22,6 +22,20 @@ static void SaveSessionGroups(void) {
     [[NSUserDefaults standardUserDefaults] setObject:g_sessionGroups forKey:@"sessionGroups"];
 }
 
+// 从contactStorage拿昵称
+static NSString *PJDisplayName(NSString *userName) {
+    @try {
+        MMService *s = [objc_getClass("MMServiceCenter") defaultService];
+        id contactMgr = [s getService:objc_getClass("MMContactStorage")];
+        id contact = [contactMgr GetContact:userName];
+        if (contact) {
+            NSString *nick = [contact valueForKey:nickName];
+            if (nick.length) return nick;
+        }
+    } @catch(id e) {}
+    return userName;
+}
+
 @interface PJGroupChatPicker : UIViewController <UITableViewDataSource, UITableViewDelegate>
 @property (nonatomic, strong) NSString *groupName;
 @property (nonatomic, strong) UITableView *tableView;
@@ -40,10 +54,11 @@ static void SaveSessionGroups(void) {
 - (NSInteger)tableView:(UITableView *)t numberOfRowsInSection:(NSInteger)s { return g_allSessions.count; }
 - (UITableViewCell *)tableView:(UITableView *)t cellForRowAtIndexPath:(NSIndexPath *)ip {
     static NSString *cid = @"c";
-    UITableViewCell *c = [t dequeueReusableCellWithIdentifier:cid] ?: [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cid];
+    UITableViewCell *c = [t dequeueReusableCellWithIdentifier:cid] ?: [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cid];
     id info = g_allSessions[ip.row];
     NSString *un = [info valueForKey:@"userName"];
-    c.textLabel.text = un;
+    c.textLabel.text = PJDisplayName(un);
+    c.detailTextLabel.text = un;
     NSString *current = [SessionGroups() objectForKey:un];
     c.accessoryType = [current isEqualToString:self.groupName] ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
     return c;
@@ -73,7 +88,6 @@ static void SaveSessionGroups(void) {
     self.title = @"Groups";
     self.view.backgroundColor = [UIColor groupTableViewBackgroundColor];
     self.groups = [[NSUserDefaults standardUserDefaults] arrayForKey:@"misakaGroups"].mutableCopy ?: [NSMutableArray array];
-    if (self.groups.count == 0) self.groups = [NSMutableArray array];
     self.tableView = [[UITableView alloc] initWithFrame:self.view.bounds style:UITableViewStyleGrouped];
     self.tableView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     self.tableView.dataSource = self;
@@ -105,7 +119,6 @@ static void SaveSessionGroups(void) {
 - (void)tableView:(UITableView *)t commitEditingStyle:(UITableViewCellEditingStyle)es forRowAtIndexPath:(NSIndexPath *)ip {
     if (es == UITableViewCellEditingStyleDelete) {
         NSString *gn = self.groups[ip.row];
-        // 删掉该组所有会话的分组
         NSArray *keys = [SessionGroups() allKeysForObject:gn];
         for (NSString *k in keys) [SessionGroups() removeObjectForKey:k];
         SaveSessionGroups();
