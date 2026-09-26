@@ -347,39 +347,25 @@ static void hook_CRVC_viewWillAppear(id self, SEL _cmd, BOOL animated) {
         id sec1 = [(NSArray *)sections objectAtIndex:1];
         id cells1 = [sec1 performSelector:@selector(getAllCells)];
         id templateCell = [(NSArray *)cells1 objectAtIndex:0];
-        id cfg = [templateCell valueForKey:@"cellConfig"];
-        id leftCfg = [cfg valueForKey:@"leftConfig"];
-        id rightCfg = [cfg valueForKey:@"rightConfig"];
-        // Dump leftCfg
-        NSMutableString *s = [NSMutableString string];
-        [s appendFormat:@"leftCfg class=%@\n", NSStringFromClass([leftCfg class])];
-        Class cls = [leftCfg class];
-        while (cls && cls != [NSObject class]) {
-            unsigned int ivarCount;
-            Ivar *ivars = class_copyIvarList(cls, &ivarCount);
-            for (unsigned int i = 0; i < ivarCount; i++) {
-                const char *name = ivar_getName(ivars[i]);
-                [s appendFormat:@"ivar: %s\n", name];
-            }
-            free(ivars);
-            cls = class_getSuperclass(cls);
-        }
-        // Try to set title on leftCfg
-        NSArray *titleKeys = @[@"text", @"title", @"_text", @"_title", @"labelText"];
-        for (NSString *key in titleKeys) {
-            @try { [leftCfg setValue:@"分组" forKey:key]; } @catch(id e) {}
-        }
-        // Try to set detail on rightCfg
-        if (rightCfg) {
-            for (NSString *key in titleKeys) {
-                @try { [rightCfg setValue:@"未分组" forKey:key]; } @catch(id e) {}
-            }
-        }
-        [s writeToFile:[NSHomeDirectory() stringByAppendingPathComponent:@"Documents/pj_leftcfg.txt"] atomically:YES encoding:NSUTF8StringEncoding error:nil];
-        // Create new cell with same config
+        id templateCfg = [templateCell valueForKey:@"cellConfig"];
+        id templateLeft = [templateCfg valueForKey:@"leftConfig"];
+        // Create new config by copying
+        Class cfgCls = objc_getClass("WCTableViewCellNormalConfig");
+        id newCfg = [[cfgCls alloc] init];
+        Class leftCls = objc_getClass("WCTableViewCellLeftConfig");
+        id newLeft = [[leftCls alloc] init];
+        [newLeft setValue:@"分组" forKey:@"title"];
+        [newLeft setValue:@"未分组" forKey:@"detail"];
+        // Copy title font/color from template
+        id font = [templateLeft valueForKey:@"titleFont"];
+        id color = [templateLeft valueForKey:@"titleColor"];
+        if (font) [newLeft setValue:font forKey:@"titleFont"];
+        if (color) [newLeft setValue:color forKey:@"titleColor"];
+        [newCfg setValue:newLeft forKey:@"leftConfig"];
+        // Create cell
         Class cellCls = objc_getClass("WCTableViewNormalCellManager");
         id newCell = [[cellCls alloc] init];
-        [newCell setValue:cfg forKey:@"cellConfig"];
+        [newCell setValue:newCfg forKey:@"cellConfig"];
         // Create section and insert
         Class secCls = objc_getClass("WCTableViewSectionManager");
         id newSec = [[secCls alloc] init];
