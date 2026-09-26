@@ -1,4 +1,4 @@
-﻿#import <UIKit/UIKit.h>
+#import <UIKit/UIKit.h>
 #import <Foundation/Foundation.h>
 #import <objc/runtime.h>
 #import <substrate.h>
@@ -39,15 +39,22 @@ static UIImage *PJGroupAvatar(NSString *gn) {
     return nil;
 }
 
-static NSString *PJDisplayName(id info) {
+// 从contactStorage拿昵称
+static NSString *PJContactName(NSString *userName) {
     @try {
-        NSArray *keys = @[@"m_nsDisplayName", @"m_nsNickName", @"m_nsTitle", @"displayName", @"nickName", @"title"];
-        for (NSString *k in keys) {
-            NSString *v = [info valueForKey:k];
-            if (v.length) return v;
+        id center = [NSClassFromString(@"MMServiceCenter") performSelector:@selector(defaultCenter)];
+        if (!center) return userName;
+        id contactMgr = [center performSelector:@selector(getService:) withObject:NSClassFromString(@"MMContactStorage")];
+        if (!contactMgr) return userName;
+        id contact = [contactMgr performSelector:@selector(GetContact:) withObject:userName];
+        if (contact) {
+            NSString *nick = [contact valueForKey:@"m_nsNickName"];
+            if (nick.length) return nick;
+            nick = [contact valueForKey:@"m_nsMuzidianName"];
+            if (nick.length) return nick;
         }
     } @catch(id e) {}
-    return [info valueForKey:@"userName"];
+    return userName;
 }
 
 static NSString *g_currentChatUserName = nil;
@@ -55,18 +62,18 @@ static NSString *g_currentChatUserName = nil;
 static void PJShowAssignMenu(NSString *userName) {
     if (!userName) return;
     UIViewController *host = PJTopmostVC();
-    UIAlertController *a = [UIAlertController alertControllerWithTitle:userName message:@"閫夋嫨鍒嗙粍" preferredStyle:UIAlertControllerStyleActionSheet];
+    UIAlertController *a = [UIAlertController alertControllerWithTitle:userName message:@"选择分组" preferredStyle:UIAlertControllerStyleActionSheet];
     for (NSString *gn in GroupNames()) {
         [a addAction:[UIAlertAction actionWithTitle:gn style:UIAlertActionStyleDefault handler:^(UIAlertAction * _) {
             [SessionGroups() setObject:gn forKey:userName];
             SaveSessionGroups();
         }]];
     }
-    [a addAction:[UIAlertAction actionWithTitle:@"绉诲嚭鍒嗙粍" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _) {
+    [a addAction:[UIAlertAction actionWithTitle:@"移出分组" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _) {
         [SessionGroups() removeObjectForKey:userName];
         SaveSessionGroups();
     }]];
-    [a addAction:[UIAlertAction actionWithTitle:@"鍙栨秷" style:UIAlertActionStyleCancel handler:nil]];
+    [a addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
     [host presentViewController:a animated:YES completion:nil];
 }
 
@@ -91,7 +98,7 @@ static void PJShowAssignMenu(NSString *userName) {
     UITableViewCell *c = [t dequeueReusableCellWithIdentifier:cid] ?: [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cid];
     id info = g_allSessions[ip.row];
     NSString *un = [info valueForKey:@"userName"];
-    c.textLabel.text = PJDisplayName(info);
+    c.textLabel.text = PJContactName(un);
     c.detailTextLabel.text = un;
     NSString *current = [SessionGroups() objectForKey:un];
     c.accessoryType = [current isEqualToString:self.groupName] ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
@@ -117,7 +124,7 @@ static void PJShowAssignMenu(NSString *userName) {
 @implementation PJSortPicker
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.title = @"鎺掑簭鏂瑰紡";
+    self.title = @"排序方式";
     self.view.backgroundColor = [UIColor groupTableViewBackgroundColor];
     UITableView *tv = [[UITableView alloc] initWithFrame:self.view.bounds style:UITableViewStyleGrouped];
     tv.dataSource = self; tv.delegate = self;
@@ -127,7 +134,7 @@ static void PJShowAssignMenu(NSString *userName) {
 - (UITableViewCell *)tableView:(UITableView *)t cellForRowAtIndexPath:(NSIndexPath *)ip {
     static NSString *cid = @"c";
     UITableViewCell *c = [t dequeueReusableCellWithIdentifier:cid] ?: [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cid];
-    NSArray *names = @[@"鎸夋椂闂?, @"鎸夋湭璇?, @"娣峰悎"];
+    NSArray *names = @[@"按时间", @"按未读", @"混合"];
     c.textLabel.text = names[ip.row];
     NSString *cur = PJSortMode();
     NSString *key = @[@"time", @"unread", @"mixed"][ip.row];
@@ -150,7 +157,7 @@ static void PJShowAssignMenu(NSString *userName) {
 @implementation PJGroupEditViewController
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.title = @"浼氳瘽鍒嗙粍";
+    self.title = @"会话分组";
     self.view.backgroundColor = [UIColor groupTableViewBackgroundColor];
     self.groups = [[NSUserDefaults standardUserDefaults] arrayForKey:@"misakaGroups"].mutableCopy ?: [NSMutableArray array];
     self.tableView = [[UITableView alloc] initWithFrame:self.view.bounds style:UITableViewStyleGrouped];
@@ -169,16 +176,16 @@ static void PJShowAssignMenu(NSString *userName) {
     return s == 0 ? 1 : self.groups.count;
 }
 - (NSString *)tableView:(UITableView *)t titleForHeaderInSection:(NSInteger)s {
-    return s == 0 ? @"鎺掑簭" : @"鍒嗙粍";
+    return s == 0 ? @"排序" : @"分组";
 }
 - (UITableViewCell *)tableView:(UITableView *)t cellForRowAtIndexPath:(NSIndexPath *)ip {
     static NSString *cid = @"c";
     UITableViewCell *c = [t dequeueReusableCellWithIdentifier:cid] ?: [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:cid];
     if (ip.section == 0) {
         c.imageView.image = nil;
-        c.textLabel.text = @"鎺掑簭鏂瑰紡";
+        c.textLabel.text = @"排序方式";
         NSString *m = PJSortMode();
-        c.detailTextLabel.text = [m isEqualToString:@"unread"] ? @"鎸夋湭璇? : [m isEqualToString:@"mixed"] ? @"娣峰悎" : @"鎸夋椂闂?;
+        c.detailTextLabel.text = [m isEqualToString:@"unread"] ? @"按未读" : [m isEqualToString:@"mixed"] ? @"混合" : @"按时间";
         c.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     } else {
         NSString *gn = self.groups[ip.row];
@@ -189,7 +196,7 @@ static void PJShowAssignMenu(NSString *userName) {
         c.imageView.clipsToBounds = YES;
         c.imageView.contentMode = UIViewContentModeScaleAspectFill;
         NSArray *all = [SessionGroups() allKeysForObject:gn];
-        c.detailTextLabel.text = [NSString stringWithFormat:@"%lu 涓亰澶?, (unsigned long)all.count];
+        c.detailTextLabel.text = [NSString stringWithFormat:@"%lu 个聊天", (unsigned long)all.count];
         c.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     }
     return c;
@@ -203,15 +210,15 @@ static void PJShowAssignMenu(NSString *userName) {
         NSString *gn = self.groups[ip.row];
         self.editingGroup = gn;
         UIAlertController *a = [UIAlertController alertControllerWithTitle:gn message:nil preferredStyle:UIAlertControllerStyleActionSheet];
-        [a addAction:[UIAlertAction actionWithTitle:@"閫夋嫨鑱婂ぉ" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _) {
+        [a addAction:[UIAlertAction actionWithTitle:@"选择聊天" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _) {
             PJGroupChatPicker *p = [PJGroupChatPicker new];
             p.groupName = gn;
             [self.navigationController pushViewController:p animated:YES];
         }]];
-        [a addAction:[UIAlertAction actionWithTitle:@"璁剧疆澶村儚" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _) {
+        [a addAction:[UIAlertAction actionWithTitle:@"设置头像" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _) {
             [self pickAvatar];
         }]];
-        [a addAction:[UIAlertAction actionWithTitle:@"鍙栨秷" style:UIAlertActionStyleCancel handler:nil]];
+        [a addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
         [self presentViewController:a animated:YES completion:nil];
     }
 }
@@ -245,10 +252,10 @@ static void PJShowAssignMenu(NSString *userName) {
     }
 }
 - (void)addGroup {
-    UIAlertController *a = [UIAlertController alertControllerWithTitle:@"鏂板缓鍒嗙粍" message:nil preferredStyle:UIAlertControllerStyleAlert];
-    [a addTextFieldWithConfigurationHandler:^(UITextField *f) { f.placeholder = @"鍒嗙粍鍚?; }];
-    [a addAction:[UIAlertAction actionWithTitle:@"鍙栨秷" style:UIAlertActionStyleCancel handler:nil]];
-    [a addAction:[UIAlertAction actionWithTitle:@"纭畾" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _) {
+    UIAlertController *a = [UIAlertController alertControllerWithTitle:@"新建分组" message:nil preferredStyle:UIAlertControllerStyleAlert];
+    [a addTextFieldWithConfigurationHandler:^(UITextField *f) { f.placeholder = @"分组名"; }];
+    [a addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
+    [a addAction:[UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _) {
         NSString *name = a.textFields.firstObject.text;
         if (name.length) { [self.groups addObject:name]; [self save]; [self.tableView reloadData]; }
     }]];
@@ -257,7 +264,7 @@ static void PJShowAssignMenu(NSString *userName) {
 - (void)save { [[NSUserDefaults standardUserDefaults] setObject:self.groups forKey:@"misakaGroups"]; }
 @end
 
-// Misaka瀛愰〉: 鏄剧ず褰撳墠缇ょ殑鍒嗙粍鍚?@interface PJChatMisakaPage : UIViewController <UITableViewDataSource, UITableViewDelegate>
+@interface PJChatMisakaPage : UIViewController <UITableViewDataSource, UITableViewDelegate>
 @property (nonatomic, copy) NSString *userName;
 @end
 @implementation PJChatMisakaPage
@@ -273,9 +280,9 @@ static void PJShowAssignMenu(NSString *userName) {
 - (UITableViewCell *)tableView:(UITableView *)t cellForRowAtIndexPath:(NSIndexPath *)ip {
     static NSString *cid = @"c";
     UITableViewCell *c = [t dequeueReusableCellWithIdentifier:cid] ?: [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:cid];
-    c.textLabel.text = @"鍒嗙粍鍚嶇О";
+    c.textLabel.text = @"分组名称";
     NSString *current = [SessionGroups() objectForKey:self.userName];
-    c.detailTextLabel.text = current ?: @"鏈垎缁?;
+    c.detailTextLabel.text = current ?: @"未分组";
     c.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     return c;
 }
@@ -315,7 +322,7 @@ static void PJAddSettingsEntry(id vc) {
     btn.frame = CGRectMake(0, 0, tv.bounds.size.width, 54);
     btn.backgroundColor = [UIColor whiteColor];
     btn.accessibilityLabel = @"pj_entry";
-    [btn setTitle:@"浼氳瘽鍒嗙粍" forState:UIControlStateNormal];
+    [btn setTitle:@"会话分组" forState:UIControlStateNormal];
     btn.titleLabel.font = [UIFont systemFontOfSize:16];
     PJButtonTarget *t = [PJButtonTarget new];
     objc_setAssociatedObject(btn, "pj_t", t, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
@@ -348,19 +355,55 @@ static void PJAddSettingsEntry(id vc) {
 }
 %end
 
-// 缇よ鎯呴〉: 鍦ㄨ〃鏍奸《閮ㄥ姞Misaka琛?%hook ChatInfoViewController
+// 群详情页 hook 多个可能的类
+%hook ChatInfoViewController
 - (void)viewDidAppear:(BOOL)animated {
     %orig;
     @try {
         id me = self;
-        NSString *un = [me valueForKey:@"m_strUserName"] ?: [me valueForKey:@"chatUserName"];
+        NSString *un = [me valueForKey:@"m_strUserName"];
+        if (!un) un = [me valueForKey:@"chatUserName"];
+        if (!un) un = [me valueForKey:@"m_contactUsrName"];
+        if (!un) un = [me valueForKey:@"m_nsUserName"];
+        if (!un) return;
+        g_currentChatUserName = un;
+        UITableView *tv = PJFindTableView([me view]);
+        if (!tv) return;
+        if ([tv.tableHeaderView.accessibilityLabel isEqual:@"pj_misaka_header"]) return;
+        UIView *header = [[UIView alloc] initWithFrame:CGRectMake(0, 0, tv.bounds.size.width, 54)];
+        header.backgroundColor = [UIColor whiteColor];
+        header.accessibilityLabel = @"pj_misaka_header";
+        UIButton *btn = [UIButton buttonWithType:UIButtonTypeSystem];
+        btn.frame = header.bounds;
+        btn.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
+        btn.titleEdgeInsets = UIEdgeInsetsMake(0, 16, 0, 0);
+        [btn setTitle:@"分组" forState:UIControlStateNormal];
+        [btn setTitleColor:[UIColor labelColor] forState:UIControlStateNormal];
+        btn.titleLabel.font = [UIFont systemFontOfSize:16];
+        PJButtonTarget *t = [PJButtonTarget new];
+        t.userName = un;
+        objc_setAssociatedObject(btn, "pj_t", t, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+        [btn addTarget:t action:@selector(onTap) forControlEvents:UIControlEventTouchUpInside];
+        [header addSubview:btn];
+        tv.tableHeaderView = header;
+    } @catch(id e) {}
+}
+%end
+
+%hook RoomInfoViewController
+- (void)viewDidAppear:(BOOL)animated {
+    %orig;
+    @try {
+        id me = self;
+        NSString *un = [me valueForKey:@"m_strUserName"];
+        if (!un) un = [me valueForKey:@"chatUserName"];
         if (!un) un = [me valueForKey:@"m_contactUsrName"];
         if (!un) return;
         g_currentChatUserName = un;
         UITableView *tv = PJFindTableView([me view]);
         if (!tv) return;
         if ([tv.tableHeaderView.accessibilityLabel isEqual:@"pj_misaka_header"]) return;
-        // 鍔犱竴涓猦eader view, 閲岄潰鏄竴涓猚ell鏍峰紡鐨凪isaka琛?        UIView *header = [[UIView alloc] initWithFrame:CGRectMake(0, 0, tv.bounds.size.width, 54)];
+        UIView *header = [[UIView alloc] initWithFrame:CGRectMake(0, 0, tv.bounds.size.width, 54)];
         header.backgroundColor = [UIColor whiteColor];
         header.accessibilityLabel = @"pj_misaka_header";
         UIButton *btn = [UIButton buttonWithType:UIButtonTypeSystem];
