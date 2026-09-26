@@ -9,6 +9,21 @@ static UIViewController *PJTopmostVC(void) {
     return top;
 }
 
+// 全局: 所有会话
+static NSMutableArray *g_allSessions = nil;
+// 每个会话分配的分组: @{userName: groupName}
+static NSMutableDictionary *g_sessionGroups = nil;
+
+static NSMutableDictionary *SessionGroups(void) {
+    if (!g_sessionGroups) {
+        g_sessionGroups = [[NSUserDefaults standardUserDefaults] dictionaryForKey:@"sessionGroups"].mutableCopy ?: [NSMutableDictionary dictionary];
+    }
+    return g_sessionGroups;
+}
+static void SaveSessionGroups(void) {
+    [[NSUserDefaults standardUserDefaults] setObject:g_sessionGroups forKey:@"sessionGroups"];
+}
+
 @interface PJGroupEditViewController : UIViewController <UITableViewDataSource, UITableViewDelegate>
 @property (nonatomic, strong) UITableView *tableView;
 @property (nonatomic, strong) NSMutableArray *groups;
@@ -33,6 +48,25 @@ static UIViewController *PJTopmostVC(void) {
     c.textLabel.text = self.groups[ip.row];
     c.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     return c;
+}
+- (void)tableView:(UITableView *)t didSelectRowAtIndexPath:(NSIndexPath *)ip {
+    [t deselectRowAtIndexPath:ip animated:YES];
+    NSString *groupName = self.groups[ip.row];
+    // 列出所有会话让选
+    NSMutableArray *names = [NSMutableArray array];
+    for (id info in g_allSessions) {
+        NSString *un = [info valueForKey:@"userName"];
+        if (un) [names addObject:un];
+    }
+    UIAlertController *a = [UIAlertController alertControllerWithTitle:groupName message:@"Select chats" preferredStyle:UIAlertControllerStyleActionSheet];
+    for (NSString *n in names) {
+        [a addAction:[UIAlertAction actionWithTitle:n style:UIAlertActionStyleDefault handler:^(UIAlertAction * _) {
+            [SessionGroups() setObject:groupName forKey:n];
+            SaveSessionGroups();
+        }]];
+    }
+    [a addAction:[UIAlertAction actionWithTitle:@"Done" style:UIAlertActionStyleCancel handler:nil]];
+    [self presentViewController:a animated:YES completion:nil];
 }
 - (void)addGroup {
     UIAlertController *a = [UIAlertController alertControllerWithTitle:@"New Group" message:nil preferredStyle:UIAlertControllerStyleAlert];
@@ -96,15 +130,7 @@ static void PJAddSettingsEntry(id vc) {
     NSUInteger c = %orig;
     @try {
         id me = self;
-        NSMutableString *s = [NSMutableString string];
-        NSArray *arr = [me valueForKey:@"m_frontSessionArray"];
-        [s appendFormat:@"count=%lu\n", (unsigned long)arr.count];
-        for (NSInteger i = 0; i < (NSInteger)arr.count; i++) {
-            id info = arr[i];
-            NSString *un = [info valueForKey:@"userName"];
-            [s appendFormat:@"[%ld] %@\n", (long)i, un];
-        }
-        [s writeToFile:[NSTemporaryDirectory() stringByAppendingPathComponent:@"pj_groups.txt"] atomically:YES encoding:NSUTF8StringEncoding error:nil];
+        g_allSessions = [[me valueForKey:@"m_frontSessionArray"] mutableCopy];
     } @catch(id e) {}
     return c;
 }
