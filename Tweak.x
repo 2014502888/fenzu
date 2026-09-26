@@ -335,35 +335,29 @@ static void PJAddSettingsEntry(id vc) {
 }
 %end
 
-// 群详情页: ChatRoomInfoViewController
+// 群详情页: ChatRoomInfoViewController - 用UITableView加subview方式插入
 %hook ChatRoomInfoViewController
 - (void)viewDidAppear:(BOOL)animated {
     %orig;
     @try {
         id me = self;
-        NSString *un = [me valueForKey:@"m_strUserName"];
-        if (!un) un = [me valueForKey:@"m_nsUserName"];
-        if (!un) un = [me valueForKey:@"chatUserName"];
-        if (!un) return;
-        UITableView *tv = PJFindTableView([me view]);
-        if (!tv) return;
-        if ([tv.tableHeaderView.accessibilityLabel isEqual:@"pj_misaka_header"]) return;
-        UIView *header = [[UIView alloc] initWithFrame:CGRectMake(0, 0, tv.bounds.size.width, 54)];
-        header.backgroundColor = [UIColor whiteColor];
-        header.accessibilityLabel = @"pj_misaka_header";
-        UIButton *btn = [UIButton buttonWithType:UIButtonTypeSystem];
-        btn.frame = header.bounds;
-        btn.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
-        btn.titleEdgeInsets = UIEdgeInsetsMake(0, 16, 0, 0);
-        [btn setTitle:@"分组" forState:UIControlStateNormal];
-        [btn setTitleColor:[UIColor labelColor] forState:UIControlStateNormal];
-        btn.titleLabel.font = [UIFont systemFontOfSize:16];
-        PJButtonTarget *t = [PJButtonTarget new];
-        t.userName = un;
-        objc_setAssociatedObject(btn, "pj_t", t, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-        [btn addTarget:t action:@selector(onTap) forControlEvents:UIControlEventTouchUpInside];
-        [header addSubview:btn];
-        tv.tableHeaderView = header;
+        // dump所有ivar
+        NSMutableString *s = [NSMutableString stringWithString:@"=== ChatRoomInfoViewController ivars ===\n"];
+        unsigned int count;
+        Ivar *ivars = class_copyIvarList([me class], &count);
+        for (unsigned int i = 0; i < count; i++) {
+            const char *name = ivar_getName(ivars[i]);
+            const char *type = ivar_getTypeEncoding(ivars[i]);
+            NSString *val = nil;
+            @try {
+                id v = object_getIvar(me, ivars[i]);
+                if ([v isKindOfClass:[NSString class]]) val = v;
+                else if (v) val = NSStringFromClass([v class]);
+            } @catch(id e) {}
+            [s appendFormat:@"  %s (%s) = %@\n", name, type, val];
+        }
+        free(ivars);
+        [s writeToFile:[NSTemporaryDirectory() stringByAppendingPathComponent:@"pj_info.txt"] atomically:YES encoding:NSUTF8StringEncoding error:nil];
     } @catch(id e) {}
 }
 %end
