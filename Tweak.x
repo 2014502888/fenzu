@@ -50,24 +50,23 @@ static NSString *PJDisplayName(id info) {
     return [info valueForKey:@"userName"];
 }
 
-// 在群详情页显示当前群的分组, 点击可改
 static NSString *g_currentChatUserName = nil;
 
 static void PJShowAssignMenu(NSString *userName) {
     if (!userName) return;
     UIViewController *host = PJTopmostVC();
-    UIAlertController *a = [UIAlertController alertControllerWithTitle:userName message:@"Assign to group" preferredStyle:UIAlertControllerStyleActionSheet];
+    UIAlertController *a = [UIAlertController alertControllerWithTitle:userName message:@"选择分组" preferredStyle:UIAlertControllerStyleActionSheet];
     for (NSString *gn in GroupNames()) {
         [a addAction:[UIAlertAction actionWithTitle:gn style:UIAlertActionStyleDefault handler:^(UIAlertAction * _) {
             [SessionGroups() setObject:gn forKey:userName];
             SaveSessionGroups();
         }]];
     }
-    [a addAction:[UIAlertAction actionWithTitle:@"Remove from group" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _) {
+    [a addAction:[UIAlertAction actionWithTitle:@"移出分组" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _) {
         [SessionGroups() removeObjectForKey:userName];
         SaveSessionGroups();
     }]];
-    [a addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
+    [a addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
     [host presentViewController:a animated:YES completion:nil];
 }
 
@@ -118,7 +117,7 @@ static void PJShowAssignMenu(NSString *userName) {
 @implementation PJSortPicker
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.title = @"Sort";
+    self.title = @"排序方式";
     self.view.backgroundColor = [UIColor groupTableViewBackgroundColor];
     UITableView *tv = [[UITableView alloc] initWithFrame:self.view.bounds style:UITableViewStyleGrouped];
     tv.dataSource = self; tv.delegate = self;
@@ -128,7 +127,7 @@ static void PJShowAssignMenu(NSString *userName) {
 - (UITableViewCell *)tableView:(UITableView *)t cellForRowAtIndexPath:(NSIndexPath *)ip {
     static NSString *cid = @"c";
     UITableViewCell *c = [t dequeueReusableCellWithIdentifier:cid] ?: [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cid];
-    NSArray *names = @[@"By Time", @"By Unread", @"Mixed"];
+    NSArray *names = @[@"按时间", @"按未读", @"混合"];
     c.textLabel.text = names[ip.row];
     NSString *cur = PJSortMode();
     NSString *key = @[@"time", @"unread", @"mixed"][ip.row];
@@ -151,7 +150,7 @@ static void PJShowAssignMenu(NSString *userName) {
 @implementation PJGroupEditViewController
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.title = @"Groups";
+    self.title = @"会话分组";
     self.view.backgroundColor = [UIColor groupTableViewBackgroundColor];
     self.groups = [[NSUserDefaults standardUserDefaults] arrayForKey:@"misakaGroups"].mutableCopy ?: [NSMutableArray array];
     self.tableView = [[UITableView alloc] initWithFrame:self.view.bounds style:UITableViewStyleGrouped];
@@ -170,16 +169,16 @@ static void PJShowAssignMenu(NSString *userName) {
     return s == 0 ? 1 : self.groups.count;
 }
 - (NSString *)tableView:(UITableView *)t titleForHeaderInSection:(NSInteger)s {
-    return s == 0 ? @"Sort" : @"Groups";
+    return s == 0 ? @"排序" : @"分组";
 }
 - (UITableViewCell *)tableView:(UITableView *)t cellForRowAtIndexPath:(NSIndexPath *)ip {
     static NSString *cid = @"c";
     UITableViewCell *c = [t dequeueReusableCellWithIdentifier:cid] ?: [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:cid];
     if (ip.section == 0) {
         c.imageView.image = nil;
-        c.textLabel.text = @"Sort Mode";
+        c.textLabel.text = @"排序方式";
         NSString *m = PJSortMode();
-        c.detailTextLabel.text = [m isEqualToString:@"unread"] ? @"By Unread" : [m isEqualToString:@"mixed"] ? @"Mixed" : @"By Time";
+        c.detailTextLabel.text = [m isEqualToString:@"unread"] ? @"按未读" : [m isEqualToString:@"mixed"] ? @"混合" : @"按时间";
         c.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     } else {
         NSString *gn = self.groups[ip.row];
@@ -190,7 +189,7 @@ static void PJShowAssignMenu(NSString *userName) {
         c.imageView.clipsToBounds = YES;
         c.imageView.contentMode = UIViewContentModeScaleAspectFill;
         NSArray *all = [SessionGroups() allKeysForObject:gn];
-        c.detailTextLabel.text = [NSString stringWithFormat:@"%lu chats", (unsigned long)all.count];
+        c.detailTextLabel.text = [NSString stringWithFormat:@"%lu 个聊天", (unsigned long)all.count];
         c.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     }
     return c;
@@ -204,15 +203,15 @@ static void PJShowAssignMenu(NSString *userName) {
         NSString *gn = self.groups[ip.row];
         self.editingGroup = gn;
         UIAlertController *a = [UIAlertController alertControllerWithTitle:gn message:nil preferredStyle:UIAlertControllerStyleActionSheet];
-        [a addAction:[UIAlertAction actionWithTitle:@"Choose Chats" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _) {
+        [a addAction:[UIAlertAction actionWithTitle:@"选择聊天" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _) {
             PJGroupChatPicker *p = [PJGroupChatPicker new];
             p.groupName = gn;
             [self.navigationController pushViewController:p animated:YES];
         }]];
-        [a addAction:[UIAlertAction actionWithTitle:@"Set Avatar" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _) {
+        [a addAction:[UIAlertAction actionWithTitle:@"设置头像" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _) {
             [self pickAvatar];
         }]];
-        [a addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
+        [a addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
         [self presentViewController:a animated:YES completion:nil];
     }
 }
@@ -246,10 +245,10 @@ static void PJShowAssignMenu(NSString *userName) {
     }
 }
 - (void)addGroup {
-    UIAlertController *a = [UIAlertController alertControllerWithTitle:@"New Group" message:nil preferredStyle:UIAlertControllerStyleAlert];
-    [a addTextFieldWithConfigurationHandler:^(UITextField *f) { f.placeholder = @"Name"; }];
-    [a addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
-    [a addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _) {
+    UIAlertController *a = [UIAlertController alertControllerWithTitle:@"新建分组" message:nil preferredStyle:UIAlertControllerStyleAlert];
+    [a addTextFieldWithConfigurationHandler:^(UITextField *f) { f.placeholder = @"分组名"; }];
+    [a addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
+    [a addAction:[UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _) {
         NSString *name = a.textFields.firstObject.text;
         if (name.length) { [self.groups addObject:name]; [self save]; [self.tableView reloadData]; }
     }]];
@@ -267,6 +266,10 @@ static UITableView *PJFindTableView(UIView *view) {
 @end
 @implementation PJButtonTarget
 - (void)onTap {
+    if (g_currentChatUserName) {
+        PJShowAssignMenu(g_currentChatUserName);
+        return;
+    }
     PJGroupEditViewController *s = [PJGroupEditViewController new];
     UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:s];
     [PJTopmostVC() presentViewController:nav animated:YES completion:nil];
@@ -280,7 +283,7 @@ static void PJAddSettingsEntry(id vc) {
     btn.frame = CGRectMake(0, 0, tv.bounds.size.width, 54);
     btn.backgroundColor = [UIColor whiteColor];
     btn.accessibilityLabel = @"pj_entry";
-    [btn setTitle:@"Session Groups" forState:UIControlStateNormal];
+    [btn setTitle:@"会话分组" forState:UIControlStateNormal];
     btn.titleLabel.font = [UIFont systemFontOfSize:16];
     PJButtonTarget *t = [PJButtonTarget new];
     objc_setAssociatedObject(btn, "pj_t", t, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
@@ -313,12 +316,10 @@ static void PJAddSettingsEntry(id vc) {
 }
 %end
 
-// 群详情页: ChatInfoViewController / RoomInfoViewController
 %hook ChatInfoViewController
 - (void)viewDidAppear:(BOOL)animated {
     %orig;
     @try {
-        // 拿当前聊天的userName
         id me = self;
         NSString *un = [me valueForKey:@"m_strUserName"] ?: [me valueForKey:@"chatUserName"];
         if (!un) un = [me valueForKey:@"m_contactUsrName"];
@@ -326,14 +327,13 @@ static void PJAddSettingsEntry(id vc) {
         g_currentChatUserName = un;
         UITableView *tv = PJFindTableView([me view]);
         if (!tv) return;
-        // 在最后加一行
         if ([tv.tableFooterView.accessibilityLabel isEqual:@"pj_group_entry"]) return;
         UIButton *btn = [UIButton buttonWithType:UIButtonTypeSystem];
         btn.frame = CGRectMake(0, 0, tv.bounds.size.width, 54);
         btn.backgroundColor = [UIColor whiteColor];
         btn.accessibilityLabel = @"pj_group_entry";
         NSString *current = [SessionGroups() objectForKey:un];
-        [btn setTitle:current ? [NSString stringWithFormat:@"Group: %@ (tap to change)", current] : @"Add to Group" forState:UIControlStateNormal];
+        [btn setTitle:current ? [NSString stringWithFormat:@"分组: %@ (点击修改)", current] : @"加入分组" forState:UIControlStateNormal];
         btn.titleLabel.font = [UIFont systemFontOfSize:16];
         PJButtonTarget *t = [PJButtonTarget new];
         objc_setAssociatedObject(btn, "pj_t", t, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
