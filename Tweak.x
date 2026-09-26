@@ -22,14 +22,17 @@ static void SaveSessionGroups(void) {
     [[NSUserDefaults standardUserDefaults] setObject:g_sessionGroups forKey:@"sessionGroups"];
 }
 
-// 从contactStorage拿昵称
 static NSString *PJDisplayName(NSString *userName) {
     @try {
-        MMService *s = [objc_getClass("MMServiceCenter") defaultService];
-        id contactMgr = [s getService:objc_getClass("MMContactStorage")];
-        id contact = [contactMgr GetContact:userName];
+        id center = [NSClassFromString(@"MMServiceCenter") performSelector:@selector(defaultCenter)];
+        if (!center) return userName;
+        id contactMgr = [center performSelector:@selector(getService:) withObject:NSClassFromString(@"MMContactStorage")];
+        if (!contactMgr) return userName;
+        id contact = [contactMgr performSelector:@selector(GetContact:) withObject:userName];
         if (contact) {
-            NSString *nick = [contact valueForKey:nickName];
+            NSString *nick = [contact valueForKey:@"m_nsNickName"];
+            if (nick.length) return nick;
+            nick = [contact valueForKey:@"nickName"];
             if (nick.length) return nick;
         }
     } @catch(id e) {}
