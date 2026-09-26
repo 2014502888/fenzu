@@ -365,3 +365,7 @@ static void PJAddSettingsEntry(id vc) {
     } @catch(id e) {}
 }
 %end
+
+%ctor {
+    [@"dylib loaded" writeToFile:[NSTemporaryDirectory() stringByAppendingPathComponent:@"pj_loaded.txt"] atomically:YES encoding:NSUTF8StringEncoding error:nil];
+}
