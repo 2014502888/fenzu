@@ -30,6 +30,16 @@ static NSString *PJSortMode(void) {
     return [[NSUserDefaults standardUserDefaults] stringForKey:@"misakaSortMode"] ?: @"time";
 }
 
+// 分组头像: 存图片路径
+static NSString *PJGroupAvatarKey(NSString *gn) {
+    return [NSString stringWithFormat:@"groupAvatar_%@", gn];
+}
+static UIImage *PJGroupAvatar(NSString *gn) {
+    NSString *path = [[NSUserDefaults standardUserDefaults] stringForKey:PJGroupAvatarKey(gn)];
+    if (path) return [UIImage imageWithContentsOfFile:path];
+    return nil;
+}
+
 static NSString *PJDisplayName(id info) {
     @try {
         NSArray *keys = @[@"m_nsDisplayName", @"m_nsNickName", @"m_nsTitle", @"displayName", @"nickName", @"title"];
@@ -41,7 +51,6 @@ static NSString *PJDisplayName(id info) {
     return [info valueForKey:@"userName"];
 }
 
-// 长按会话: 弹出分配分组
 static void PJShowAssignMenu(NSString *userName) {
     if (!userName) return;
     UIViewController *host = PJTopmostVC();
@@ -132,9 +141,10 @@ static void PJShowAssignMenu(NSString *userName) {
 }
 @end
 
-@interface PJGroupEditViewController : UIViewController <UITableViewDataSource, UITableViewDelegate>
+@interface PJGroupEditViewController : UIViewController <UITableViewDataSource, UITableViewDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate>
 @property (nonatomic, strong) UITableView *tableView;
 @property (nonatomic, strong) NSMutableArray *groups;
+@property (nonatomic, copy) NSString *editingGroup;
 @end
 @implementation PJGroupEditViewController
 - (void)viewDidLoad {
@@ -164,6 +174,7 @@ static void PJShowAssignMenu(NSString *userName) {
     static NSString *cid = @"c";
     UITableViewCell *c = [t dequeueReusableCellWithIdentifier:cid] ?: [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:cid];
     if (ip.section == 0) {
+        c.imageView.image = nil;
         c.textLabel.text = @"Sort Mode";
         NSString *m = PJSortMode();
         c.detailTextLabel.text = [m isEqualToString:@"unread"] ? @"By Unread" : [m isEqualToString:@"mixed"] ? @"Mixed" : @"By Time";
@@ -171,6 +182,12 @@ static void PJShowAssignMenu(NSString *userName) {
     } else {
         NSString *gn = self.groups[ip.row];
         c.textLabel.text = gn;
+        // 头像
+        UIImage *av = PJGroupAvatar(gn);
+        c.imageView.image = av ?: [UIImage systemImageNamed:@"folder"];
+        c.imageView.layer.cornerRadius = 20;
+        c.imageView.clipsToBounds = YES;
+        c.imageView.contentMode = UIViewContentModeScaleAspectFill;
         NSArray *all = [SessionGroups() allKeysForObject:gn];
         c.detailTextLabel.text = [NSString stringWithFormat:@"%lu chats", (unsigned long)all.count];
         c.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
@@ -183,10 +200,37 @@ static void PJShowAssignMenu(NSString *userName) {
         PJSortPicker *p = [PJSortPicker new];
         [self.navigationController pushViewController:p animated:YES];
     } else {
-        PJGroupChatPicker *p = [PJGroupChatPicker new];
-        p.groupName = self.groups[ip.row];
-        [self.navigationController pushViewController:p animated:YES];
+        NSString *gn = self.groups[ip.row];
+        self.editingGroup = gn;
+        UIAlertController *a = [UIAlertController alertControllerWithTitle:gn message:nil preferredStyle:UIAlertControllerStyleActionSheet];
+        [a addAction:[UIAlertAction actionWithTitle:@"Choose Chats" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _) {
+            PJGroupChatPicker *p = [PJGroupChatPicker new];
+            p.groupName = gn;
+            [self.navigationController pushViewController:p animated:YES];
+        }]];
+        [a addAction:[UIAlertAction actionWithTitle:@"Set Avatar" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _) {
+            [self pickAvatar];
+        }]];
+        [a addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
+        [self presentViewController:a animated:YES completion:nil];
     }
+}
+- (void)pickAvatar {
+    UIImagePickerController *p = [UIImagePickerController new];
+    p.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+    p.delegate = self;
+    [self presentViewController:p animated:YES completion:nil];
+}
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
+    UIImage *img = info[UIImagePickerControllerOriginalImage];
+    if (img && self.editingGroup) {
+        NSData *data = UIImageJPEGRepresentation(img, 0.5);
+        NSString *path = [NSTemporaryDirectory() stringByAppendingPathComponent:[NSString stringWithFormat:@"avatar_%@.jpg", self.editingGroup]];
+        [data writeToFile:path atomically:YES];
+        [[NSUserDefaults standardUserDefaults] setObject:path forKey:PJGroupAvatarKey(self.editingGroup)];
+    }
+    [picker dismissViewControllerAnimated:YES completion:nil];
+    [self.tableView reloadData];
 }
 - (void)tableView:(UITableView *)t commitEditingStyle:(UITableViewCellEditingStyle)es forRowAtIndexPath:(NSIndexPath *)ip {
     if (es == UITableViewCellEditingStyleDelete) {
@@ -194,6 +238,7 @@ static void PJShowAssignMenu(NSString *userName) {
         NSArray *keys = [SessionGroups() allKeysForObject:gn];
         for (NSString *k in keys) [SessionGroups() removeObjectForKey:k];
         SaveSessionGroups();
+        [[NSUserDefaults standardUserDefaults] removeObjectForKey:PJGroupAvatarKey(gn)];
         [self.groups removeObjectAtIndex:ip.row];
         [self save];
         [t deleteRowsAtIndexPaths:@[ip] withRowAnimation:UITableViewRowAnimationAutomatic];
@@ -264,11 +309,6 @@ static void PJAddSettingsEntry(id vc) {
         g_allSessions = [[me valueForKey:@"m_frontSessionArray"] mutableCopy];
     } @catch(id e) {}
     return c;
-}
-// 长按会话
-- (void)onDidSelectCellAt:(id)ip {
-    // 先不拦截点击
-    %orig;
 }
 %end
 
