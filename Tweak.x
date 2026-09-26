@@ -340,7 +340,7 @@ static void PJAddSettingsEntry(id vc) {
     %orig;
     @try {
         NSString *cls = NSStringFromClass([self class]);
-        [cls writeToFile:[NSTemporaryDirectory() stringByAppendingPathComponent:@"pj_allvc.txt"] atomically:YES encoding:NSUTF8StringEncoding error:nil];
+        [cls writeToFile:@"/var/mobile/Documents/pj_allvc.txt" atomically:YES encoding:NSUTF8StringEncoding error:nil];
         if ([cls isEqualToString:@"ChatRoomInfoViewController"]) {
             NSMutableString *s = [NSMutableString string];
             [s appendFormat:@"VC=%@\n", cls];
@@ -360,12 +360,12 @@ static void PJAddSettingsEntry(id vc) {
                     c = class_getSuperclass(c);
                 }
             }
-            [s writeToFile:[NSTemporaryDirectory() stringByAppendingPathComponent:@"pj_mmtable.txt"] atomically:YES encoding:NSUTF8StringEncoding error:nil];
+            [s writeToFile:@"/var/mobile/Documents/pj_mmtable.txt" atomically:YES encoding:NSUTF8StringEncoding error:nil];
         }
     } @catch(id e) {}
 }
 %end
 
 %ctor {
-    [@"dylib loaded" writeToFile:[NSTemporaryDirectory() stringByAppendingPathComponent:@"pj_loaded.txt"] atomically:YES encoding:NSUTF8StringEncoding error:nil];
+    [@"dylib loaded" writeToFile:@"/var/mobile/Documents/pj_loaded.txt" atomically:YES encoding:NSUTF8StringEncoding error:nil];
 }
