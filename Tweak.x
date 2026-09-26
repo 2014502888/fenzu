@@ -345,15 +345,14 @@ static void hook_CRVC_viewWillAppear(id self, SEL _cmd, BOOL animated) {
         id info = [self valueForKey:@"m_tableViewInfo"];
         if (!info) { [log appendString:@"no info\n"]; goto done; }
         id sections = [info performSelector:@selector(getAllSections)];
-        NSInteger secCount = [(NSArray *)sections count];
-        [log appendFormat:@"secCount=%ld\n", (long)secCount];
         id sec1 = [(NSArray *)sections objectAtIndex:1];
         id cells1 = [sec1 performSelector:@selector(getAllCells)];
         id templateCell = [(NSArray *)cells1 objectAtIndex:0];
         id templateCfg = [templateCell valueForKey:@"cellConfig"];
         id templateLeft = [templateCfg valueForKey:@"leftConfig"];
-        [log appendFormat:@"templateLeft title=%@\n", [templateLeft valueForKey:@"title"]];
-        // Approach: create new config + left
+        CGFloat templateH = [[templateCell valueForKey:@"fCellHeight"] doubleValue];
+        [log appendFormat:@"templateH=%f\n", templateH];
+        // New config
         Class cfgCls = objc_getClass("WCTableViewCellNormalConfig");
         id newCfg = [[cfgCls alloc] init];
         Class leftCls = objc_getClass("WCTableViewCellLeftConfig");
@@ -371,10 +370,11 @@ static void hook_CRVC_viewWillAppear(id self, SEL _cmd, BOOL animated) {
         Class cellCls = objc_getClass("WCTableViewNormalCellManager");
         id newCell = [[cellCls alloc] init];
         [newCell setValue:newCfg forKey:@"cellConfig"];
+        [newCell setValue:@(55.0) forKey:@"fCellHeight"];
         [log appendFormat:@"newCell=%@\n", newCell];
-        // Add to sec1 directly at index 1
-        [sec1 performSelector:@selector(insertCell:At:) withObject:newCell withObject:@1];
-        [log appendString:@"inserted into sec1\n"];
+        // Use addCell: instead of insertCell:At:
+        [sec1 performSelector:@selector(addCell:) withObject:newCell];
+        [log appendString:@"added to sec1\n"];
         [info performSelector:@selector(reloadTableView)];
         [log appendString:@"reloaded\n"];
         pjAdded = YES;
