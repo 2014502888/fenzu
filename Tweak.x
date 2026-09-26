@@ -343,7 +343,7 @@ static void hook_CRVC_viewWillAppear(id self, SEL _cmd, BOOL animated) {
         if (pjAdded) return;
         NSMutableString *log = [NSMutableString string];
         id info = [self valueForKey:@"m_tableViewInfo"];
-        if (!info) { [log appendString:@"no info\n"]; goto done; }
+        if (!info) { [log appendString:@"no info\n"]; } else {
         id sections = [info performSelector:@selector(getAllSections)];
         id sec1 = [(NSArray *)sections objectAtIndex:1];
         id cells1 = [sec1 performSelector:@selector(getAllCells)];
@@ -378,6 +378,7 @@ static void hook_CRVC_viewWillAppear(id self, SEL _cmd, BOOL animated) {
         [info performSelector:@selector(reloadTableView)];
         [log appendString:@"reloaded\n"];
         pjAdded = YES;
+        }
     done:
         [log writeToFile:[NSHomeDirectory() stringByAppendingPathComponent:@"Documents/pj_log.txt"] atomically:YES encoding:NSUTF8StringEncoding error:nil];
     } @catch(id e) {}

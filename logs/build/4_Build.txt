@@ -1,20 +1,60 @@
-﻿2026-09-26T17:34:30.7836890Z ##[group]Run export THEOS=$HOME/theos
-2026-09-26T17:34:30.7837150Z [36;1mexport THEOS=$HOME/theos[0m
-2026-09-26T17:34:30.7837360Z [36;1mmake package FINALPACKAGE=1[0m
-2026-09-26T17:34:30.7837560Z [36;1mmkdir -p out[0m
-2026-09-26T17:34:30.7837790Z [36;1mfind .theos packages -name '*.dylib' -exec cp {} out/ \;[0m
-2026-09-26T17:34:30.7838070Z [36;1mls -la out/[0m
-2026-09-26T17:34:30.7872800Z shell: /bin/bash -e {0}
-2026-09-26T17:34:30.7872990Z env:
-2026-09-26T17:34:30.7873140Z   THEOS: /Users/runner/theos
-2026-09-26T17:34:30.7873320Z ##[endgroup]
-2026-09-26T17:34:35.2925740Z [0;36m==> [1;36mNotice:[m Build may be slow as Theos isn’t using all available CPU cores on this computer. Consider upgrading GNU Make: https://theos.dev/docs/parallel-building
-2026-09-26T17:34:35.4573570Z [1;31m> [1;3;39mMaking all for tweak FenzuTweak…[m
-2026-09-26T17:34:37.2722640Z [0;31m==> [1;39mPreprocessing Tweak.x…[m
-2026-09-26T17:34:37.4205190Z Tweak.x:365: error: fell off the face of the planet when we found a '}'
-2026-09-26T17:34:37.4212750Z make[3]: *** [/Users/runner/work/fenzu/fenzu/.theos/obj/arm64/Tweak.x.m] Error 255
-2026-09-26T17:34:37.4213360Z rm /Users/runner/work/fenzu/fenzu/.theos/obj/arm64/Tweak.x.m
-2026-09-26T17:34:37.4215050Z make[2]: *** [/Users/runner/work/fenzu/fenzu/.theos/obj/arm64/FenzuTweak.dylib] Error 2
-2026-09-26T17:34:37.4216720Z make[1]: *** [internal-library-all_] Error 2
-2026-09-26T17:34:37.4220380Z make: *** [FenzuTweak.all.tweak.variables] Error 2
-2026-09-26T17:34:37.4230860Z ##[error]Process completed with exit code 2.
+﻿2026-09-26T18:08:29.0655960Z ##[group]Run export THEOS=$HOME/theos
+2026-09-26T18:08:29.0656440Z [36;1mexport THEOS=$HOME/theos[0m
+2026-09-26T18:08:29.0656710Z [36;1mmake package FINALPACKAGE=1[0m
+2026-09-26T18:08:29.0657070Z [36;1mmkdir -p out[0m
+2026-09-26T18:08:29.0657380Z [36;1mfind .theos packages -name '*.dylib' -exec cp {} out/ \;[0m
+2026-09-26T18:08:29.0657800Z [36;1mls -la out/[0m
+2026-09-26T18:08:29.0703230Z shell: /bin/bash -e {0}
+2026-09-26T18:08:29.0703570Z env:
+2026-09-26T18:08:29.0703880Z   THEOS: /Users/runner/theos
+2026-09-26T18:08:29.0704170Z ##[endgroup]
+2026-09-26T18:08:34.6006520Z [0;36m==> [1;36mNotice:[m Build may be slow as Theos isn’t using all available CPU cores on this computer. Consider upgrading GNU Make: https://theos.dev/docs/parallel-building
+2026-09-26T18:08:34.7748940Z [1;31m> [1;3;39mMaking all for tweak FenzuTweak…[m
+2026-09-26T18:08:36.9171580Z [0;31m==> [1;39mPreprocessing Tweak.x…[m
+2026-09-26T18:08:37.0269130Z [0;32m==> [1;39mCompiling Tweak.x (arm64)…[m
+2026-09-26T18:08:40.4069160Z [1mTweak.x:346:55: [0m[0;1;31merror: [0m[1mcannot jump from this goto statement to its label[0m
+2026-09-26T18:08:40.4071070Z   346 |         if (!info) { [log appendString:@"no info\n"]; goto done; }[0m
+2026-09-26T18:08:40.4071580Z       | [0;1;32m                                                      ^
+2026-09-26T18:08:40.4104790Z [0m[1mTweak.x:371:12: [0m[0;1;36mnote: [0mjump bypasses initialization of __strong variable[0m
+2026-09-26T18:08:40.4106570Z   371 |         id newCell = [[cellCls alloc] init];[0m
+2026-09-26T18:08:40.4107140Z       | [0;1;32m           ^
+2026-09-26T18:08:40.4107950Z [0m[1mTweak.x:367:12: [0m[0;1;36mnote: [0mjump bypasses initialization of __strong variable[0m
+2026-09-26T18:08:40.4108590Z   367 |         id selStyle = [templateCfg valueForKey:@"selectionStyle"];[0m
+2026-09-26T18:08:40.4109350Z       | [0;1;32m           ^
+2026-09-26T18:08:40.4110350Z [0m[1mTweak.x:363:12: [0m[0;1;36mnote: [0mjump bypasses initialization of __strong variable[0m
+2026-09-26T18:08:40.4111030Z   363 |         id color = [templateLeft valueForKey:@"titleColor"];[0m
+2026-09-26T18:08:40.4111900Z       | [0;1;32m           ^
+2026-09-26T18:08:40.4112810Z [0m[1mTweak.x:362:12: [0m[0;1;36mnote: [0mjump bypasses initialization of __strong variable[0m
+2026-09-26T18:08:40.4113610Z   362 |         id font = [templateLeft valueForKey:@"titleFont"];[0m
+2026-09-26T18:08:40.4114170Z       | [0;1;32m           ^
+2026-09-26T18:08:40.4115200Z [0m[1mTweak.x:359:12: [0m[0;1;36mnote: [0mjump bypasses initialization of __strong variable[0m
+2026-09-26T18:08:40.4116060Z   359 |         id newLeft = [[leftCls alloc] init];[0m
+2026-09-26T18:08:40.4116850Z       | [0;1;32m           ^
+2026-09-26T18:08:40.4117660Z [0m[1mTweak.x:357:12: [0m[0;1;36mnote: [0mjump bypasses initialization of __strong variable[0m
+2026-09-26T18:08:40.4125760Z   357 |         id newCfg = [[cfgCls alloc] init];[0m
+2026-09-26T18:08:40.4128600Z       | [0;1;32m           ^
+2026-09-26T18:08:40.4129820Z [0m[1mTweak.x:352:12: [0m[0;1;36mnote: [0mjump bypasses initialization of __strong variable[0m
+2026-09-26T18:08:40.4132390Z   352 |         id templateLeft = [templateCfg valueForKey:@"leftConfig"];[0m
+2026-09-26T18:08:40.4133530Z       | [0;1;32m           ^
+2026-09-26T18:08:40.4135990Z [0m[1mTweak.x:351:12: [0m[0;1;36mnote: [0mjump bypasses initialization of __strong variable[0m
+2026-09-26T18:08:40.4136730Z   351 |         id templateCfg = [templateCell valueForKey:@"cellConfig"];[0m
+2026-09-26T18:08:40.4137640Z       | [0;1;32m           ^
+2026-09-26T18:08:40.4138460Z [0m[1mTweak.x:350:12: [0m[0;1;36mnote: [0mjump bypasses initialization of __strong variable[0m
+2026-09-26T18:08:40.4172930Z   350 |         id templateCell = [(NSArray *)cells1 objectAtIndex:0];[0m
+2026-09-26T18:08:40.4176860Z       | [0;1;32m           ^
+2026-09-26T18:08:40.4178310Z [0m[1mTweak.x:349:12: [0m[0;1;36mnote: [0mjump bypasses initialization of __strong variable[0m
+2026-09-26T18:08:40.4180130Z   349 |         id cells1 = [sec1 performSelector:@selector(getAllCells)];[0m
+2026-09-26T18:08:40.4184890Z       | [0;1;32m           ^
+2026-09-26T18:08:40.4186190Z [0m[1mTweak.x:348:12: [0m[0;1;36mnote: [0mjump bypasses initialization of __strong variable[0m
+2026-09-26T18:08:40.4187690Z   348 |         id sec1 = [(NSArray *)sections objectAtIndex:1];[0m
+2026-09-26T18:08:40.4188570Z       | [0;1;32m           ^
+2026-09-26T18:08:40.4189850Z [0m[1mTweak.x:347:12: [0m[0;1;36mnote: [0mjump bypasses initialization of __strong variable[0m
+2026-09-26T18:08:40.4191270Z   347 |         id sections = [info performSelector:@selector(getAllSections)];[0m
+2026-09-26T18:08:40.4192420Z       | [0;1;32m           ^
+2026-09-26T18:08:40.4757210Z [0m1 error generated.
+2026-09-26T18:08:40.4839460Z make[3]: *** [/Users/runner/work/fenzu/fenzu/.theos/obj/arm64/Tweak.x.12e56ab1.o] Error 1
+2026-09-26T18:08:40.4842020Z rm /Users/runner/work/fenzu/fenzu/.theos/obj/arm64/Tweak.x.m
+2026-09-26T18:08:40.4845400Z make[2]: *** [/Users/runner/work/fenzu/fenzu/.theos/obj/arm64/FenzuTweak.dylib] Error 2
+2026-09-26T18:08:40.4850590Z make[1]: *** [internal-library-all_] Error 2
+2026-09-26T18:08:40.4862030Z make: *** [FenzuTweak.all.tweak.variables] Error 2
+2026-09-26T18:08:40.4931300Z ##[error]Process completed with exit code 2.
