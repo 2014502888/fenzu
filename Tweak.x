@@ -22,6 +22,10 @@ static void SaveSessionGroups(void) {
     [[NSUserDefaults standardUserDefaults] setObject:g_sessionGroups forKey:@"sessionGroups"];
 }
 
+static NSArray *GroupNames(void) {
+    return [[NSUserDefaults standardUserDefaults] arrayForKey:@"misakaGroups"] ?: @[];
+}
+
 static NSString *PJSortMode(void) {
     return [[NSUserDefaults standardUserDefaults] stringForKey:@"misakaSortMode"] ?: @"time";
 }
@@ -35,6 +39,25 @@ static NSString *PJDisplayName(id info) {
         }
     } @catch(id e) {}
     return [info valueForKey:@"userName"];
+}
+
+// 长按会话: 弹出分配分组
+static void PJShowAssignMenu(NSString *userName) {
+    if (!userName) return;
+    UIViewController *host = PJTopmostVC();
+    UIAlertController *a = [UIAlertController alertControllerWithTitle:userName message:@"Assign to group" preferredStyle:UIAlertControllerStyleActionSheet];
+    for (NSString *gn in GroupNames()) {
+        [a addAction:[UIAlertAction actionWithTitle:gn style:UIAlertActionStyleDefault handler:^(UIAlertAction * _) {
+            [SessionGroups() setObject:gn forKey:userName];
+            SaveSessionGroups();
+        }]];
+    }
+    [a addAction:[UIAlertAction actionWithTitle:@"Remove from group" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _) {
+        [SessionGroups() removeObjectForKey:userName];
+        SaveSessionGroups();
+    }]];
+    [a addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
+    [host presentViewController:a animated:YES completion:nil];
 }
 
 @interface PJGroupChatPicker : UIViewController <UITableViewDataSource, UITableViewDelegate>
@@ -241,6 +264,11 @@ static void PJAddSettingsEntry(id vc) {
         g_allSessions = [[me valueForKey:@"m_frontSessionArray"] mutableCopy];
     } @catch(id e) {}
     return c;
+}
+// 长按会话
+- (void)onDidSelectCellAt:(id)ip {
+    // 先不拦截点击
+    %orig;
 }
 %end
 
