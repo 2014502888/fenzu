@@ -349,9 +349,10 @@ static void hook_CRVC_viewDidAppear(id self, SEL _cmd, BOOL animated) {
             id sec = [(NSArray *)sections objectAtIndex:i];
             NSInteger cellCount = (NSInteger)[sec performSelector:@selector(getCellCount)];
             [s appendFormat:@"sec%ld cells=%ld\n", (long)i, (long)cellCount];
-            for (NSInteger j = 0; j < cellCount; j++) {
-                id cell = [sec performSelector:@selector(getCellAt:) withObject:@(j)];
-                [s appendFormat:@"  cell%ld class=%@\n", (long)j, NSStringFromClass([cell class])];
+            id cells = [sec performSelector:@selector(getAllCells)];
+            for (NSInteger j = 0; j < [(NSArray *)cells count]; j++) {
+                id cell = [(NSArray *)cells objectAtIndex:j];
+                [s appendFormat:@"  cell%ld class=%@ desc=%@\n", (long)j, NSStringFromClass([cell class]), [cell description]];
             }
         }
         [s writeToFile:[NSHomeDirectory() stringByAppendingPathComponent:@"Documents/pj_section.txt"] atomically:YES encoding:NSUTF8StringEncoding error:nil];
