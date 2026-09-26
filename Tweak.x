@@ -335,38 +335,24 @@ static void PJAddSettingsEntry(id vc) {
 }
 %end
 
+static BOOL pjAdded = NO;
 static void (*orig_CRVC_viewDidAppear)(id, SEL, BOOL);
 static void hook_CRVC_viewDidAppear(id self, SEL _cmd, BOOL animated) {
     orig_CRVC_viewDidAppear(self, _cmd, animated);
     @try {
+        if (pjAdded) return;
         id info = [self valueForKey:@"m_tableViewInfo"];
         if (!info) return;
-        // dump section count
-        id sections = [info performSelector:@selector(getAllSections)];
-        NSMutableString *s = [NSMutableString string];
-        NSInteger count = [(NSArray *)sections count];
-        for (NSInteger i = 0; i < count; i++) {
-            id sec = [(NSArray *)sections objectAtIndex:i];
-            NSInteger cellCount = (NSInteger)[sec performSelector:@selector(getCellCount)];
-            [s appendFormat:@"sec%ld cells=%ld\n", (long)i, (long)cellCount];
-            if (i == 1 && [sec respondsToSelector:@selector(getAllCells)]) {
-                id cells = [sec performSelector:@selector(getAllCells)];
-                id cell = [(NSArray *)cells firstObject];
-                Class cc = [cell class];
-                while (cc) {
-                    [s appendFormat:@"=== %@ ===\n", NSStringFromClass(cc)];
-                    unsigned int mc;
-                    Method *methods = class_copyMethodList(cc, &mc);
-                    for (unsigned int k = 0; k < mc; k++) {
-                        SEL sel = method_getName(methods[k]);
-                        [s appendFormat:@"%s\n", sel_getName(sel)];
-                    }
-                    free(methods);
-                    cc = class_getSuperclass(cc);
-                }
-            }
-        }
-        [s writeToFile:[NSHomeDirectory() stringByAppendingPathComponent:@"Documents/pj_section.txt"] atomically:YES encoding:NSUTF8StringEncoding error:nil];
+        Class cellCls = objc_getClass("WCTableViewNormalCellManager");
+        id cell = [[cellCls alloc] init];
+        [cell setValue:@"分组" forKey:@"cellTitle"];
+        [cell setValue:@"未分组" forKey:@"cellDetail"];
+        Class secCls = objc_getClass("WCTableViewSectionManager");
+        id sec = [[secCls alloc] init];
+        [sec performSelector:@selector(addCell:) withObject:cell];
+        [info performSelector:@selector(insertSection:At:) withObject:sec withObject:@1];
+        [info performSelector:@selector(reloadTableView)];
+        pjAdded = YES;
     } @catch(id e) {}
 }
 
