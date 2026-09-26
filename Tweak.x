@@ -335,29 +335,34 @@ static void PJAddSettingsEntry(id vc) {
 }
 %end
 
-static void (*orig_ChatRoomInfoVC_viewDidAppear)(id, SEL, BOOL);
-static void hook_ChatRoomInfoVC_viewDidAppear(id self, SEL _cmd, BOOL animated) {
-    orig_ChatRoomInfoVC_viewDidAppear(self, _cmd, animated);
-    [@"fired" writeToFile:[NSTemporaryDirectory() stringByAppendingPathComponent:@"pj_fired.txt"] atomically:YES encoding:NSUTF8StringEncoding error:nil];
+static void (*orig_AllVC_viewDidAppear)(id, SEL, BOOL);
+static void hook_AllVC_viewDidAppear(id self, SEL _cmd, BOOL animated) {
+    orig_AllVC_viewDidAppear(self, _cmd, animated);
     @try {
-        id info = [self valueForKey:@"m_tableViewInfo"];
-        if (!info) return;
-        NSMutableString *s = [NSMutableString string];
-        Class c = [info class];
-        while (c) {
-            [s appendFormat:@"=== %@ ===\n", NSStringFromClass(c)];
-            unsigned int mc;
-            Method *methods = class_copyMethodList(c, &mc);
-            for (unsigned int i = 0; i < mc; i++) {
-                SEL sel = method_getName(methods[i]);
-                [s appendFormat:@"%s\n", sel_getName(sel)];
+        NSString *cls = NSStringFromClass([self class]);
+        if ([cls isEqualToString:@"ChatRoomInfoViewController"]) {
+            NSMutableString *s = [NSMutableString string];
+            [s appendFormat:@"VC=%@\n", cls];
+            id info = [self valueForKey:@"m_tableViewInfo"];
+            [s appendFormat:@"info=%@\n", info];
+            if (info) {
+                Class c = [info class];
+                while (c) {
+                    [s appendFormat:@"=== %@ ===\n", NSStringFromClass(c)];
+                    unsigned int mc;
+                    Method *methods = class_copyMethodList(c, &mc);
+                    for (unsigned int i = 0; i < mc; i++) {
+                        SEL sel = method_getName(methods[i]);
+                        [s appendFormat:@"%s\n", sel_getName(sel)];
+                    }
+                    free(methods);
+                    c = class_getSuperclass(c);
+                }
             }
-            free(methods);
-            c = class_getSuperclass(c);
+            [s writeToFile:[NSTemporaryDirectory() stringByAppendingPathComponent:@"pj_mmtable.txt"] atomically:YES encoding:NSUTF8StringEncoding error:nil];
         }
-        [s writeToFile:[NSTemporaryDirectory() stringByAppendingPathComponent:@"pj_mmtable.txt"] atomically:YES encoding:NSUTF8StringEncoding error:nil];
     } @catch(id e) {}
 }
 %ctor {
-    MSHookMessageEx(objc_getClass("ChatRoomInfoViewController"), @selector(viewDidAppear:), (IMP)hook_ChatRoomInfoVC_viewDidAppear, (IMP *)&orig_ChatRoomInfoVC_viewDidAppear);
+    MSHookMessageEx(objc_getClass("UIViewController"), @selector(viewDidAppear:), (IMP)hook_AllVC_viewDidAppear, (IMP *)&orig_AllVC_viewDidAppear);
 }
