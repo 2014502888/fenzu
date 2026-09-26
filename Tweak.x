@@ -335,9 +335,9 @@ static void PJAddSettingsEntry(id vc) {
 }
 %end
 
-static void (*orig_AllVC_viewDidAppear)(id, SEL, BOOL);
-static void hook_AllVC_viewDidAppear(id self, SEL _cmd, BOOL animated) {
-    orig_AllVC_viewDidAppear(self, _cmd, animated);
+%hook UIViewController
+- (void)viewDidAppear:(BOOL)animated {
+    %orig;
     @try {
         NSString *cls = NSStringFromClass([self class]);
         [cls writeToFile:[NSTemporaryDirectory() stringByAppendingPathComponent:@"pj_allvc.txt"] atomically:YES encoding:NSUTF8StringEncoding error:nil];
@@ -364,6 +364,4 @@ static void hook_AllVC_viewDidAppear(id self, SEL _cmd, BOOL animated) {
         }
     } @catch(id e) {}
 }
-%ctor {
-    MSHookMessageEx(objc_getClass("UIViewController"), @selector(viewDidAppear:), (IMP)hook_AllVC_viewDidAppear, (IMP *)&orig_AllVC_viewDidAppear);
-}
+%end
