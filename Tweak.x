@@ -348,9 +348,10 @@ static void hook_CRVC_viewWillAppear(id self, SEL _cmd, BOOL animated) {
         id cells1 = [sec1 performSelector:@selector(getAllCells)];
         id templateCell = [(NSArray *)cells1 objectAtIndex:0];
         id cfg = [templateCell valueForKey:@"cellConfig"];
+        id leftCfg = [cfg valueForKey:@"leftConfig"];
         NSMutableString *s = [NSMutableString string];
-        [s appendFormat:@"cfg class=%@\n", NSStringFromClass([cfg class])];
-        Class cls = [cfg class];
+        [s appendFormat:@"leftCfg class=%@\n", NSStringFromClass([leftCfg class])];
+        Class cls = [leftCfg class];
         while (cls && cls != [NSObject class]) {
             unsigned int ivarCount;
             Ivar *ivars = class_copyIvarList(cls, &ivarCount);
@@ -368,7 +369,7 @@ static void hook_CRVC_viewWillAppear(id self, SEL _cmd, BOOL animated) {
             free(props);
             cls = class_getSuperclass(cls);
         }
-        [s writeToFile:[NSHomeDirectory() stringByAppendingPathComponent:@"Documents/pj_cfg.txt"] atomically:YES encoding:NSUTF8StringEncoding error:nil];
+        [s writeToFile:[NSHomeDirectory() stringByAppendingPathComponent:@"Documents/pj_leftcfg.txt"] atomically:YES encoding:NSUTF8StringEncoding error:nil];
         pjAdded = YES;
     } @catch(id e) {}
 }
