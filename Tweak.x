@@ -22,21 +22,16 @@ static void SaveSessionGroups(void) {
     [[NSUserDefaults standardUserDefaults] setObject:g_sessionGroups forKey:@"sessionGroups"];
 }
 
-static NSString *PJDisplayName(NSString *userName) {
+// 直接从session cell data拿显示名
+static NSString *PJDisplayName(id info) {
     @try {
-        id center = [NSClassFromString(@"MMServiceCenter") performSelector:@selector(defaultCenter)];
-        if (!center) return userName;
-        id contactMgr = [center performSelector:@selector(getService:) withObject:NSClassFromString(@"MMContactStorage")];
-        if (!contactMgr) return userName;
-        id contact = [contactMgr performSelector:@selector(GetContact:) withObject:userName];
-        if (contact) {
-            NSString *nick = [contact valueForKey:@"m_nsNickName"];
-            if (nick.length) return nick;
-            nick = [contact valueForKey:@"nickName"];
-            if (nick.length) return nick;
+        NSArray *keys = @[@"m_nsDisplayName", @"m_nsNickName", @"m_nsTitle", @"displayName", @"nickName", @"title"];
+        for (NSString *k in keys) {
+            NSString *v = [info valueForKey:k];
+            if (v.length) return v;
         }
     } @catch(id e) {}
-    return userName;
+    return [info valueForKey:@"userName"];
 }
 
 @interface PJGroupChatPicker : UIViewController <UITableViewDataSource, UITableViewDelegate>
@@ -60,7 +55,7 @@ static NSString *PJDisplayName(NSString *userName) {
     UITableViewCell *c = [t dequeueReusableCellWithIdentifier:cid] ?: [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cid];
     id info = g_allSessions[ip.row];
     NSString *un = [info valueForKey:@"userName"];
-    c.textLabel.text = PJDisplayName(un);
+    c.textLabel.text = PJDisplayName(info);
     c.detailTextLabel.text = un;
     NSString *current = [SessionGroups() objectForKey:un];
     c.accessoryType = [current isEqualToString:self.groupName] ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
