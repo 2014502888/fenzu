@@ -91,7 +91,6 @@ static void PJAddSettingsEntry(id vc) {
 }
 %end
 
-// 诊断: hook MainFrameLogicController 看会话数组
 %hook MainFrameLogicController
 - (NSUInteger)getSessionCount {
     NSUInteger c = %orig;
@@ -100,8 +99,8 @@ static void PJAddSettingsEntry(id vc) {
         [s appendFormat:@"getSessionCount=%lu\n", (unsigned long)c];
         NSArray *arr = [self valueForKey:@"m_frontSessionArray"];
         [s appendFormat:@"frontSessionArray count=%lu\n", (unsigned long)arr.count];
-        for (NSInteger i = 0; i < arr.count && i < 20; i++) {
-            info = arr[i];
+        for (NSInteger i = 0; i < (NSInteger)arr.count && i < 20; i++) {
+            id info = arr[i];
             NSString *name = [info valueForKey:@"m_nsDisplayName"] ?: [info valueForKey:@"m_nsUsrName"];
             [s appendFormat:@"  [%ld] %@\n", (long)i, name];
         }
