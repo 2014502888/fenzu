@@ -378,13 +378,3 @@ static void hook_CRVC_viewDidAppear(id self, SEL _cmd, BOOL animated) {
         [s writeToFile:[NSHomeDirectory() stringByAppendingPathComponent:@"Documents/pj_cellivars.txt"] atomically:YES encoding:NSUTF8StringEncoding error:nil];
     } @catch(id e) {}
 }
-                const char *name = ivar_getName(ivars[i]);
-                const char *type = ivar_getTypeEncoding(ivars[i]);
-                [s appendFormat:@"ivar[%s]: %s : %s\n", class_getName(cls), name, type];
-            }
-            free(ivars);
-            cls = class_getSuperclass(cls);
-        }
-        [s writeToFile:[NSHomeDirectory() stringByAppendingPathComponent:@"Documents/pj_cellivars.txt"] atomically:YES encoding:NSUTF8StringEncoding error:nil];
-    } @catch(id e) {}
-}
