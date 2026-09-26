@@ -340,29 +340,44 @@ static void (*orig_CRVC_viewDidAppear)(id, SEL, BOOL);
 static void hook_CRVC_viewDidAppear(id self, SEL _cmd, BOOL animated) {
     orig_CRVC_viewDidAppear(self, _cmd, animated);
     @try {
-        if (pjAdded) return;
-        id info = [self valueForKey:@"m_tableViewInfo"];
-        if (!info) return;
-        id sections = [info performSelector:@selector(getAllSections)];
-        id sec1 = [(NSArray *)sections objectAtIndex:1];
-        id cells1 = [sec1 performSelector:@selector(getAllCells)];
-        id templateCell = [(NSArray *)cells1 firstObject];
-        if (!templateCell) return;
         NSMutableString *s = [NSMutableString string];
-        // dump all properties
-        unsigned int pCount;
-        objc_property_t *props = class_copyPropertyList([templateCell class], &pCount);
-        for (unsigned int i = 0; i < pCount; i++) {
-            const char *name = property_getName(props[i]);
-            [s appendFormat:@"prop: %s\n", name];
+        [s appendString:@"hook fired\n"];
+        id info = [self valueForKey:@"m_tableViewInfo"];
+        [s appendFormat:@"info=%@\n", info];
+        if (info) {
+            id sections = [info performSelector:@selector(getAllSections)];
+            [s appendFormat:@"sections=%ld\n", (long)[(NSArray *)sections count]];
+            if ([(NSArray *)sections count] > 1) {
+                id sec1 = [(NSArray *)sections objectAtIndex:1];
+                id cells1 = [sec1 performSelector:@selector(getAllCells)];
+                [s appendFormat:@"cells1=%ld\n", (long)[(NSArray *)cells1 count]];
+                id templateCell = [(NSArray *)cells1 firstObject];
+                [s appendFormat:@"templateCell=%@\n", templateCell];
+                if (templateCell) {
+                    unsigned int pCount;
+                    objc_property_t *props = class_copyPropertyList([templateCell class], &pCount);
+                    for (unsigned int i = 0; i < pCount; i++) {
+                        const char *name = property_getName(props[i]);
+                        [s appendFormat:@"prop: %s\n", name];
+                    }
+                    free(props);
+                    Class cls = [templateCell class];
+                    while (cls && cls != [NSObject class]) {
+                        unsigned int ivarCount;
+                        Ivar *ivars = class_copyIvarList(cls, &ivarCount);
+                        for (unsigned int i = 0; i < ivarCount; i++) {
+                            const char *name = ivar_getName(ivars[i]);
+                            [s appendFormat:@"ivar[%s]: %s\n", class_getName(cls), name];
+                        }
+                        free(ivars);
+                        cls = class_getSuperclass(cls);
+                    }
+                }
+            }
         }
-        free(props);
-        // dump ivars from superclass too
-        Class cls = [templateCell class];
-        while (cls && cls != [NSObject class]) {
-            unsigned int ivarCount;
-            Ivar *ivars = class_copyIvarList(cls, &ivarCount);
-            for (unsigned int i = 0; i < ivarCount; i++) {
+        [s writeToFile:[NSHomeDirectory() stringByAppendingPathComponent:@"Documents/pj_cellivars.txt"] atomically:YES encoding:NSUTF8StringEncoding error:nil];
+    } @catch(id e) {}
+}
                 const char *name = ivar_getName(ivars[i]);
                 const char *type = ivar_getTypeEncoding(ivars[i]);
                 [s appendFormat:@"ivar[%s]: %s : %s\n", class_getName(cls), name, type];
