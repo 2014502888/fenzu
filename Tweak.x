@@ -341,46 +341,18 @@ static void hook_CRVC_viewWillAppear(id self, SEL _cmd, BOOL animated) {
     orig_CRVC_viewWillAppear(self, _cmd, animated);
     @try {
         if (pjAdded) return;
-        NSMutableString *log = [NSMutableString string];
         id info = [self valueForKey:@"m_tableViewInfo"];
-        if (!info) { [log appendString:@"no info\n"]; } else {
+        if (!info) return;
         id sections = [info performSelector:@selector(getAllSections)];
         id sec1 = [(NSArray *)sections objectAtIndex:1];
         id cells1 = [sec1 performSelector:@selector(getAllCells)];
         id templateCell = [(NSArray *)cells1 objectAtIndex:0];
         id templateCfg = [templateCell valueForKey:@"cellConfig"];
         id templateLeft = [templateCfg valueForKey:@"leftConfig"];
-        CGFloat templateH = [[templateCell valueForKey:@"fCellHeight"] doubleValue];
-        [log appendFormat:@"templateH=%f\n", templateH];
-        // New config
-        Class cfgCls = objc_getClass("WCTableViewCellNormalConfig");
-        id newCfg = [[cfgCls alloc] init];
-        Class leftCls = objc_getClass("WCTableViewCellLeftConfig");
-        id newLeft = [[leftCls alloc] init];
-        [newLeft setValue:@"分组" forKey:@"title"];
-        [newLeft setValue:@"未分组" forKey:@"detail"];
-        id font = [templateLeft valueForKey:@"titleFont"];
-        id color = [templateLeft valueForKey:@"titleColor"];
-        if (font) [newLeft setValue:font forKey:@"titleFont"];
-        if (color) [newLeft setValue:color forKey:@"titleColor"];
-        [newCfg setValue:newLeft forKey:@"leftConfig"];
-        id selStyle = [templateCfg valueForKey:@"selectionStyle"];
-        if (selStyle) [newCfg setValue:selStyle forKey:@"selectionStyle"];
-        // New cell
-        Class cellCls = objc_getClass("WCTableViewNormalCellManager");
-        id newCell = [[cellCls alloc] init];
-        [newCell setValue:newCfg forKey:@"cellConfig"];
-        [newCell setValue:@(55.0) forKey:@"fCellHeight"];
-        [log appendFormat:@"newCell=%@\n", newCell];
-        // Use addCell: instead of insertCell:At:
-        [sec1 performSelector:@selector(addCell:) withObject:newCell];
-        [log appendString:@"added to sec1\n"];
+        // Just modify template cell title to test rendering
+        [templateLeft setValue:@"分组(测试)" forKey:@"title"];
         [info performSelector:@selector(reloadTableView)];
-        [log appendString:@"reloaded\n"];
         pjAdded = YES;
-        }
-    done:
-        [log writeToFile:[NSHomeDirectory() stringByAppendingPathComponent:@"Documents/pj_log.txt"] atomically:YES encoding:NSUTF8StringEncoding error:nil];
     } @catch(id e) {}
 }
 %ctor {
