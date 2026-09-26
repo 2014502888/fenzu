@@ -30,7 +30,6 @@ static NSString *PJSortMode(void) {
     return [[NSUserDefaults standardUserDefaults] stringForKey:@"misakaSortMode"] ?: @"time";
 }
 
-// 分组头像: 存图片路径
 static NSString *PJGroupAvatarKey(NSString *gn) {
     return [NSString stringWithFormat:@"groupAvatar_%@", gn];
 }
@@ -50,6 +49,9 @@ static NSString *PJDisplayName(id info) {
     } @catch(id e) {}
     return [info valueForKey:@"userName"];
 }
+
+// 在群详情页显示当前群的分组, 点击可改
+static NSString *g_currentChatUserName = nil;
 
 static void PJShowAssignMenu(NSString *userName) {
     if (!userName) return;
@@ -182,7 +184,6 @@ static void PJShowAssignMenu(NSString *userName) {
     } else {
         NSString *gn = self.groups[ip.row];
         c.textLabel.text = gn;
-        // 头像
         UIImage *av = PJGroupAvatar(gn);
         c.imageView.image = av ?: [UIImage systemImageNamed:@"folder"];
         c.imageView.layer.cornerRadius = 20;
@@ -309,6 +310,36 @@ static void PJAddSettingsEntry(id vc) {
         g_allSessions = [[me valueForKey:@"m_frontSessionArray"] mutableCopy];
     } @catch(id e) {}
     return c;
+}
+%end
+
+// 群详情页: ChatInfoViewController / RoomInfoViewController
+%hook ChatInfoViewController
+- (void)viewDidAppear:(BOOL)animated {
+    %orig;
+    @try {
+        // 拿当前聊天的userName
+        id me = self;
+        NSString *un = [me valueForKey:@"m_strUserName"] ?: [me valueForKey:@"chatUserName"];
+        if (!un) un = [me valueForKey:@"m_contactUsrName"];
+        if (!un) return;
+        g_currentChatUserName = un;
+        UITableView *tv = PJFindTableView([me view]);
+        if (!tv) return;
+        // 在最后加一行
+        if ([tv.tableFooterView.accessibilityLabel isEqual:@"pj_group_entry"]) return;
+        UIButton *btn = [UIButton buttonWithType:UIButtonTypeSystem];
+        btn.frame = CGRectMake(0, 0, tv.bounds.size.width, 54);
+        btn.backgroundColor = [UIColor whiteColor];
+        btn.accessibilityLabel = @"pj_group_entry";
+        NSString *current = [SessionGroups() objectForKey:un];
+        [btn setTitle:current ? [NSString stringWithFormat:@"Group: %@ (tap to change)", current] : @"Add to Group" forState:UIControlStateNormal];
+        btn.titleLabel.font = [UIFont systemFontOfSize:16];
+        PJButtonTarget *t = [PJButtonTarget new];
+        objc_setAssociatedObject(btn, "pj_t", t, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+        [btn addTarget:t action:@selector(onTap) forControlEvents:UIControlEventTouchUpInside];
+        tv.tableFooterView = btn;
+    } @catch(id e) {}
 }
 %end
 
