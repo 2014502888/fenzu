@@ -9,9 +9,7 @@ static UIViewController *PJTopmostVC(void) {
     return top;
 }
 
-// 全局: 所有会话
 static NSMutableArray *g_allSessions = nil;
-// 每个会话分配的分组: @{userName: groupName}
 static NSMutableDictionary *g_sessionGroups = nil;
 
 static NSMutableDictionary *SessionGroups(void) {
@@ -44,28 +42,39 @@ static void SaveSessionGroups(void) {
 - (NSInteger)tableView:(UITableView *)t numberOfRowsInSection:(NSInteger)s { return self.groups.count; }
 - (UITableViewCell *)tableView:(UITableView *)t cellForRowAtIndexPath:(NSIndexPath *)ip {
     static NSString *cid = @"c";
-    UITableViewCell *c = [t dequeueReusableCellWithIdentifier:cid] ?: [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cid];
-    c.textLabel.text = self.groups[ip.row];
+    UITableViewCell *c = [t dequeueReusableCellWithIdentifier:cid] ?: [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cid];
+    NSString *gn = self.groups[ip.row];
+    c.textLabel.text = gn;
+    // 显示该组有几个会话
+    NSArray *all = [SessionGroups() allKeysForObject:gn];
+    c.detailTextLabel.text = [NSString stringWithFormat:@"%lu chats", (unsigned long)all.count];
     c.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     return c;
 }
 - (void)tableView:(UITableView *)t didSelectRowAtIndexPath:(NSIndexPath *)ip {
     [t deselectRowAtIndexPath:ip animated:YES];
     NSString *groupName = self.groups[ip.row];
-    // 列出所有会话让选
     NSMutableArray *names = [NSMutableArray array];
     for (id info in g_allSessions) {
         NSString *un = [info valueForKey:@"userName"];
         if (un) [names addObject:un];
     }
-    UIAlertController *a = [UIAlertController alertControllerWithTitle:groupName message:@"Select chats" preferredStyle:UIAlertControllerStyleActionSheet];
+    UIAlertController *a = [UIAlertController alertControllerWithTitle:groupName message:nil preferredStyle:UIAlertControllerStyleActionSheet];
     for (NSString *n in names) {
-        [a addAction:[UIAlertAction actionWithTitle:n style:UIAlertActionStyleDefault handler:^(UIAlertAction * _) {
-            [SessionGroups() setObject:groupName forKey:n];
+        NSString *current = [SessionGroups() objectForKey:n];
+        BOOL selected = [current isEqualToString:groupName];
+        NSString *title = selected ? [NSString stringWithFormat:@"✓ %@", n] : n;
+        [a addAction:[UIAlertAction actionWithTitle:title style:selected ? UIAlertActionStyleCancel : UIAlertActionStyleDefault handler:^(UIAlertAction * _) {
+            if (selected) {
+                [SessionGroups() removeObjectForKey:n];
+            } else {
+                [SessionGroups() setObject:groupName forKey:n];
+            }
             SaveSessionGroups();
+            [self.tableView reloadData];
         }]];
     }
-    [a addAction:[UIAlertAction actionWithTitle:@"Done" style:UIAlertActionStyleCancel handler:nil]];
+    [a addAction:[UIAlertAction actionWithTitle:@"Done" style:UIAlertActionStyleDestructive handler:nil]];
     [self presentViewController:a animated:YES completion:nil];
 }
 - (void)addGroup {
