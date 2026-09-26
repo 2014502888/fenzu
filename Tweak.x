@@ -340,27 +340,11 @@ static void PJAddSettingsEntry(id vc) {
     %orig;
     @try {
         NSString *cls = NSStringFromClass([self class]);
-        [cls writeToFile:[NSHomeDirectory() stringByAppendingPathComponent:@"Documents/pj_allvc.txt"] atomically:YES encoding:NSUTF8StringEncoding error:nil];
-        if ([cls isEqualToString:@"ChatRoomInfoViewController"]) {
-            NSMutableString *s = [NSMutableString string];
-            [s appendFormat:@"VC=%@\n", cls];
-            id info = [self valueForKey:@"m_tableViewInfo"];
-            [s appendFormat:@"info=%@\n", info];
-            if (info) {
-                Class c = [info class];
-                while (c) {
-                    [s appendFormat:@"=== %@ ===\n", NSStringFromClass(c)];
-                    unsigned int mc;
-                    Method *methods = class_copyMethodList(c, &mc);
-                    for (unsigned int i = 0; i < mc; i++) {
-                        SEL sel = method_getName(methods[i]);
-                        [s appendFormat:@"%s\n", sel_getName(sel)];
-                    }
-                    free(methods);
-                    c = class_getSuperclass(c);
-                }
-            }
-            [s writeToFile:[NSHomeDirectory() stringByAppendingPathComponent:@"Documents/pj_mmtable.txt"] atomically:YES encoding:NSUTF8StringEncoding error:nil];
+        if ([cls containsString:@"Room"] || [cls containsString:@"ChatInfo"] || [cls containsString:@"ContactInfo"]) {
+            UIAlertController *a = [UIAlertController alertControllerWithTitle:cls message:nil preferredStyle:UIAlertControllerStyleAlert];
+            [a addAction:[UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:nil]];
+            [[[UIApplication sharedApplication] keyWindow] rootViewController];
+            [PJTopmostVC() presentViewController:a animated:YES completion:nil];
         }
     } @catch(id e) {}
 }
