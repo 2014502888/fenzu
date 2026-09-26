@@ -338,6 +338,7 @@ static void PJAddSettingsEntry(id vc) {
 static void (*orig_ChatRoomInfoVC_viewDidAppear)(id, SEL, BOOL);
 static void hook_ChatRoomInfoVC_viewDidAppear(id self, SEL _cmd, BOOL animated) {
     orig_ChatRoomInfoVC_viewDidAppear(self, _cmd, animated);
+    [@"fired" writeToFile:[NSTemporaryDirectory() stringByAppendingPathComponent:@"pj_fired.txt"] atomically:YES encoding:NSUTF8StringEncoding error:nil];
     @try {
         id info = [self valueForKey:@"m_tableViewInfo"];
         if (!info) return;
