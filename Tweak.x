@@ -22,6 +22,47 @@ static void SaveSessionGroups(void) {
     [[NSUserDefaults standardUserDefaults] setObject:g_sessionGroups forKey:@"sessionGroups"];
 }
 
+@interface PJGroupChatPicker : UIViewController <UITableViewDataSource, UITableViewDelegate>
+@property (nonatomic, strong) NSString *groupName;
+@property (nonatomic, strong) UITableView *tableView;
+@end
+@implementation PJGroupChatPicker
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    self.title = self.groupName;
+    self.view.backgroundColor = [UIColor groupTableViewBackgroundColor];
+    self.tableView = [[UITableView alloc] initWithFrame:self.view.bounds style:UITableViewStylePlain];
+    self.tableView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    self.tableView.dataSource = self;
+    self.tableView.delegate = self;
+    [self.view addSubview:self.tableView];
+}
+- (NSInteger)tableView:(UITableView *)t numberOfRowsInSection:(NSInteger)s { return g_allSessions.count; }
+- (UITableViewCell *)tableView:(UITableView *)t cellForRowAtIndexPath:(NSIndexPath *)ip {
+    static NSString *cid = @"c";
+    UITableViewCell *c = [t dequeueReusableCellWithIdentifier:cid] ?: [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cid];
+    id info = g_allSessions[ip.row];
+    NSString *un = [info valueForKey:@"userName"];
+    c.textLabel.text = un;
+    NSString *current = [SessionGroups() objectForKey:un];
+    c.accessoryType = [current isEqualToString:self.groupName] ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
+    return c;
+}
+- (void)tableView:(UITableView *)t didSelectRowAtIndexPath:(NSIndexPath *)ip {
+    [t deselectRowAtIndexPath:ip animated:YES];
+    id info = g_allSessions[ip.row];
+    NSString *un = [info valueForKey:@"userName"];
+    NSString *current = [SessionGroups() objectForKey:un];
+    if ([current isEqualToString:self.groupName]) {
+        [SessionGroups() removeObjectForKey:un];
+    } else {
+        [SessionGroups() setObject:self.groupName forKey:un];
+    }
+    SaveSessionGroups();
+    [self.tableView reloadData];
+}
+@end
+
 @interface PJGroupEditViewController : UIViewController <UITableViewDataSource, UITableViewDelegate>
 @property (nonatomic, strong) UITableView *tableView;
 @property (nonatomic, strong) NSMutableArray *groups;
@@ -39,13 +80,16 @@ static void SaveSessionGroups(void) {
     [self.view addSubview:self.tableView];
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addGroup)];
 }
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    [self.tableView reloadData];
+}
 - (NSInteger)tableView:(UITableView *)t numberOfRowsInSection:(NSInteger)s { return self.groups.count; }
 - (UITableViewCell *)tableView:(UITableView *)t cellForRowAtIndexPath:(NSIndexPath *)ip {
     static NSString *cid = @"c";
     UITableViewCell *c = [t dequeueReusableCellWithIdentifier:cid] ?: [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cid];
     NSString *gn = self.groups[ip.row];
     c.textLabel.text = gn;
-    // 显示该组有几个会话
     NSArray *all = [SessionGroups() allKeysForObject:gn];
     c.detailTextLabel.text = [NSString stringWithFormat:@"%lu chats", (unsigned long)all.count];
     c.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
@@ -53,29 +97,9 @@ static void SaveSessionGroups(void) {
 }
 - (void)tableView:(UITableView *)t didSelectRowAtIndexPath:(NSIndexPath *)ip {
     [t deselectRowAtIndexPath:ip animated:YES];
-    NSString *groupName = self.groups[ip.row];
-    NSMutableArray *names = [NSMutableArray array];
-    for (id info in g_allSessions) {
-        NSString *un = [info valueForKey:@"userName"];
-        if (un) [names addObject:un];
-    }
-    UIAlertController *a = [UIAlertController alertControllerWithTitle:groupName message:nil preferredStyle:UIAlertControllerStyleActionSheet];
-    for (NSString *n in names) {
-        NSString *current = [SessionGroups() objectForKey:n];
-        BOOL selected = [current isEqualToString:groupName];
-        NSString *title = selected ? [NSString stringWithFormat:@"✓ %@", n] : n;
-        [a addAction:[UIAlertAction actionWithTitle:title style:selected ? UIAlertActionStyleCancel : UIAlertActionStyleDefault handler:^(UIAlertAction * _) {
-            if (selected) {
-                [SessionGroups() removeObjectForKey:n];
-            } else {
-                [SessionGroups() setObject:groupName forKey:n];
-            }
-            SaveSessionGroups();
-            [self.tableView reloadData];
-        }]];
-    }
-    [a addAction:[UIAlertAction actionWithTitle:@"Done" style:UIAlertActionStyleDestructive handler:nil]];
-    [self presentViewController:a animated:YES completion:nil];
+    PJGroupChatPicker *p = [PJGroupChatPicker new];
+    p.groupName = self.groups[ip.row];
+    [self.navigationController pushViewController:p animated:YES];
 }
 - (void)addGroup {
     UIAlertController *a = [UIAlertController alertControllerWithTitle:@"New Group" message:nil preferredStyle:UIAlertControllerStyleAlert];
