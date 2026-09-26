@@ -4,10 +4,10 @@ INSTALL_TARGET_PROCESSES = WeChat
 
 include $(THEOS)/makefiles/common.mk
 
-TWEAK_NAME = MisakaGroupTweak
+TWEAK_NAME = FenzuTweak
 
-MisakaGroupTweak_FILES = Tweak.x
-MisakaGroupTweak_CFLAGS = -fobjc-arc -Wno-deprecated-declarations -Wno-unused-variable -Wno-unused-function -Wno-error
-MisakaGroupTweak_FRAMEWORKS = UIKit Foundation CoreGraphics
+FenzuTweak_FILES = Tweak.x
+FenzuTweak_CFLAGS = -fobjc-arc -Wno-deprecated-declarations -Wno-unused-variable -Wno-unused-function -Wno-error
+FenzuTweak_FRAMEWORKS = UIKit Foundation CoreGraphics
 
 include $(THEOS)/makefiles/tweak.mk
