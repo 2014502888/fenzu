@@ -72,7 +72,8 @@ static void SaveSessionGroups(void) {
     [super viewDidLoad];
     self.title = @"Groups";
     self.view.backgroundColor = [UIColor groupTableViewBackgroundColor];
-    self.groups = [[NSUserDefaults standardUserDefaults] arrayForKey:@"misakaGroups"].mutableCopy ?: [@[@"Work", @"Family", @"Other"] mutableCopy];
+    self.groups = [[NSUserDefaults standardUserDefaults] arrayForKey:@"misakaGroups"].mutableCopy ?: [NSMutableArray array];
+    if (self.groups.count == 0) self.groups = [NSMutableArray array];
     self.tableView = [[UITableView alloc] initWithFrame:self.view.bounds style:UITableViewStyleGrouped];
     self.tableView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     self.tableView.dataSource = self;
@@ -100,6 +101,18 @@ static void SaveSessionGroups(void) {
     PJGroupChatPicker *p = [PJGroupChatPicker new];
     p.groupName = self.groups[ip.row];
     [self.navigationController pushViewController:p animated:YES];
+}
+- (void)tableView:(UITableView *)t commitEditingStyle:(UITableViewCellEditingStyle)es forRowAtIndexPath:(NSIndexPath *)ip {
+    if (es == UITableViewCellEditingStyleDelete) {
+        NSString *gn = self.groups[ip.row];
+        // 删掉该组所有会话的分组
+        NSArray *keys = [SessionGroups() allKeysForObject:gn];
+        for (NSString *k in keys) [SessionGroups() removeObjectForKey:k];
+        SaveSessionGroups();
+        [self.groups removeObjectAtIndex:ip.row];
+        [self save];
+        [t deleteRowsAtIndexPaths:@[ip] withRowAnimation:UITableViewRowAnimationAutomatic];
+    }
 }
 - (void)addGroup {
     UIAlertController *a = [UIAlertController alertControllerWithTitle:@"New Group" message:nil preferredStyle:UIAlertControllerStyleAlert];
