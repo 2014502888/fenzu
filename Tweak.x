@@ -99,17 +99,10 @@ static void PJAddSettingsEntry(id vc) {
         NSMutableString *s = [NSMutableString string];
         NSArray *arr = [me valueForKey:@"m_frontSessionArray"];
         [s appendFormat:@"count=%lu\n", (unsigned long)arr.count];
-        if (arr.count > 0) {
-            id info = arr[0];
-            [s appendFormat:@"class=%@\n", [info class]];
-            // 试常见key
-            NSArray *keys = @[@"m_nsDisplayName", @"m_nsUsrName", @"name", @"displayName", @"userName", @"nickName", @"m_nsNickName", @"m_nsFromUsr"];
-            for (NSString *k in keys) {
-                @try {
-                    id v = [info valueForKey:k];
-                    [s appendFormat:@"  %@ = %@\n", k, v];
-                } @catch(...) {}
-            }
+        for (NSInteger i = 0; i < (NSInteger)arr.count; i++) {
+            id info = arr[i];
+            NSString *un = [info valueForKey:@"userName"];
+            [s appendFormat:@"[%ld] %@\n", (long)i, un];
         }
         [s writeToFile:[NSTemporaryDirectory() stringByAppendingPathComponent:@"pj_groups.txt"] atomically:YES encoding:NSUTF8StringEncoding error:nil];
     } @catch(id e) {}
