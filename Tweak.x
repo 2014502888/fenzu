@@ -344,19 +344,15 @@ static void hook_CRVC_viewDidAppear(id self, SEL _cmd, BOOL animated) {
         // dump section count
         id sections = [info performSelector:@selector(getAllSections)];
         NSMutableString *s = [NSMutableString string];
-        [s appendFormat:@"sections=%@\n", sections];
         NSInteger count = [(NSArray *)sections count];
         for (NSInteger i = 0; i < count; i++) {
             id sec = [(NSArray *)sections objectAtIndex:i];
-            [s appendFormat:@"sec%ld=%@ class=%@\n", (long)i, sec, NSStringFromClass([sec class])];
-            Class sc = [sec class];
-            unsigned int mc;
-            Method *methods = class_copyMethodList(sc, &mc);
-            for (unsigned int j = 0; j < mc; j++) {
-                SEL sel = method_getName(methods[j]);
-                [s appendFormat:@"  %s\n", sel_getName(sel)];
+            NSInteger cellCount = (NSInteger)[sec performSelector:@selector(getCellCount)];
+            [s appendFormat:@"sec%ld cells=%ld\n", (long)i, (long)cellCount];
+            for (NSInteger j = 0; j < cellCount; j++) {
+                id cell = [sec performSelector:@selector(getCellAt:) withObject:@(j)];
+                [s appendFormat:@"  cell%ld class=%@\n", (long)j, NSStringFromClass([cell class])];
             }
-            free(methods);
         }
         [s writeToFile:[NSHomeDirectory() stringByAppendingPathComponent:@"Documents/pj_section.txt"] atomically:YES encoding:NSUTF8StringEncoding error:nil];
     } @catch(id e) {}
