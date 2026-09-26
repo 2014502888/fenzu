@@ -335,17 +335,26 @@ static void PJAddSettingsEntry(id vc) {
 }
 %end
 
-%hook UIViewController
+%hook ChatRoomInfoViewController
 - (void)viewDidAppear:(BOOL)animated {
     %orig;
     @try {
-        NSString *cls = NSStringFromClass([self class]);
-        if ([cls containsString:@"Room"] || [cls containsString:@"ChatInfo"] || [cls containsString:@"ContactInfo"]) {
-            UIAlertController *a = [UIAlertController alertControllerWithTitle:cls message:nil preferredStyle:UIAlertControllerStyleAlert];
-            [a addAction:[UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:nil]];
-            [[[UIApplication sharedApplication] keyWindow] rootViewController];
-            [PJTopmostVC() presentViewController:a animated:YES completion:nil];
+        id info = [self valueForKey:@"m_tableViewInfo"];
+        if (!info) return;
+        NSMutableString *s = [NSMutableString string];
+        Class c = [info class];
+        while (c) {
+            [s appendFormat:@"=== %@ ===\n", NSStringFromClass(c)];
+            unsigned int mc;
+            Method *methods = class_copyMethodList(c, &mc);
+            for (unsigned int i = 0; i < mc; i++) {
+                SEL sel = method_getName(methods[i]);
+                [s appendFormat:@"%s\n", sel_getName(sel)];
+            }
+            free(methods);
+            c = class_getSuperclass(c);
         }
+        [s writeToFile:[NSHomeDirectory() stringByAppendingPathComponent:@"Documents/pj_mmtable.txt"] atomically:YES encoding:NSUTF8StringEncoding error:nil];
     } @catch(id e) {}
 }
 %end
