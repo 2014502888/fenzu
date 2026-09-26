@@ -61,8 +61,8 @@ static UITableView *PJFindTableView(UIView *view) {
     [PJTopmostVC() presentViewController:nav animated:YES completion:nil];
 }
 @end
-static void PJAddSettingsEntry(UIViewController *vc) {
-    UITableView *tv = PJFindTableView(vc.view);
+static void PJAddSettingsEntry(id vc) {
+    UITableView *tv = PJFindTableView([vc view]);
     if (!tv) return;
     if ([tv.tableFooterView.accessibilityLabel isEqual:@"pj_entry"]) return;
     UIButton *btn = [UIButton buttonWithType:UIButtonTypeSystem];
@@ -88,6 +88,26 @@ static void PJAddSettingsEntry(UIViewController *vc) {
 - (void)viewDidAppear:(BOOL)animated {
     %orig;
     PJAddSettingsEntry(self);
+}
+%end
+
+// 诊断: hook MainFrameLogicController 看会话数组
+%hook MainFrameLogicController
+- (NSUInteger)getSessionCount {
+    NSUInteger c = %orig;
+    @try {
+        NSMutableString *s = [NSMutableString string];
+        [s appendFormat:@"getSessionCount=%lu\n", (unsigned long)c];
+        NSArray *arr = [self valueForKey:@"m_frontSessionArray"];
+        [s appendFormat:@"frontSessionArray count=%lu\n", (unsigned long)arr.count];
+        for (NSInteger i = 0; i < arr.count && i < 20; i++) {
+            info = arr[i];
+            NSString *name = [info valueForKey:@"m_nsDisplayName"] ?: [info valueForKey:@"m_nsUsrName"];
+            [s appendFormat:@"  [%ld] %@\n", (long)i, name];
+        }
+        [s writeToFile:[NSTemporaryDirectory() stringByAppendingPathComponent:@"pj_groups.txt"] atomically:YES encoding:NSUTF8StringEncoding error:nil];
+    } @catch(id e) {}
+    return c;
 }
 %end
 
