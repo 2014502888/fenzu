@@ -98,30 +98,10 @@ static NSString *PJGetContactName(NSString *userName) {
     } else {
         c.detailTextLabel.text = @"";
     }
-    // Left circle checkmark
+    // Right checkmark
     BOOL checked = [current isEqualToString:self.groupName];
-    UIView *cv = [[UIView alloc] initWithFrame:CGRectMake(15, 14, 22, 22)];
-    cv.layer.cornerRadius = 11;
-    cv.layer.masksToBounds = YES;
-    cv.backgroundColor = checked ? [UIColor colorWithRed:0.2 green:0.75 blue:0.35 alpha:1.0] : [UIColor whiteColor];
-    cv.layer.borderWidth = 1;
-    cv.layer.borderColor = checked ? [UIColor clearColor].CGColor : [UIColor lightGrayColor].CGColor;
-    if (checked) {
-        UILabel *chk = [[UILabel alloc] initWithFrame:cv.bounds];
-        chk.text = @"✓";
-        chk.textColor = [UIColor whiteColor];
-        chk.font = [UIFont boldSystemFontOfSize:15];
-        chk.textAlignment = NSTextAlignmentCenter;
-        [cv addSubview:chk];
-    }
-    for (UIView *v in c.contentView.subviews) {
-        if (v.tag == 99) [v removeFromSuperview];
-    }
-    cv.tag = 99;
-    [c.contentView addSubview:cv];
-    c.textLabel.frame = CGRectMake(55, 12, c.contentView.bounds.size.width - 70, 20);
-    c.detailTextLabel.frame = CGRectMake(55, 32, c.contentView.bounds.size.width - 70, 16);
-    c.accessoryType = UITableViewCellAccessoryNone;
+    c.accessoryType = checked ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
+    c.tintColor = [UIColor colorWithRed:0.2 green:0.75 blue:0.35 alpha:1.0];
     return c;
 }
 - (void)tableView:(UITableView *)t didSelectRowAtIndexPath:(NSIndexPath *)ip {
