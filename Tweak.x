@@ -58,40 +58,18 @@ static void PJShowAssignMenu(NSString *userName) {
 }
 
 static NSString *PJGetContactName(NSString *userName) {
-    NSMutableString *log = [NSMutableString stringWithString:@""];
+    NSMutableString *log = [NSMutableString stringWithString:@"start\n"];
     @try {
+        [log appendFormat:@"userName=%@\n", userName];
         Class svcCls = objc_getClass("MMServiceCenter");
+        [log appendFormat:@"svcCls=%@\n", svcCls];
         id center = [svcCls performSelector:@selector(defaultCenter)];
         [log appendFormat:@"center=%@\n", center];
         Class logicCls = objc_getClass("ContactsDataLogic");
-        id logic = [center performSelector:@selector(getService:) withObject:logicCls];
-        [log appendFormat:@"logic=%@\n", logic];
-        if (logic) {
-            // Try different methods
-            id contact = nil;
-            NSArray *sels = @[@"contactUsrName:", @"getContact:"];
-            for (NSString *s in sels) {
-                SEL sel = NSSelectorFromString(s);
-                if ([logic respondsToSelector:sel]) {
-                    contact = [logic performSelector:sel withObject:userName];
-                    [log appendFormat:@"sel=%@ contact=%@\n", s, contact];
-                    break;
-                }
-            }
-            if (contact) {
-                unsigned int ic;
-                Ivar *ivs = class_copyIvarList([contact class], &ic);
-                for (unsigned int i = 0; i < ic; i++) {
-                    const char *n = ivar_getName(ivs[i]);
-                    NSString *v = [contact valueForKey:[NSString stringWithUTF8String:n]];
-                    if (v && [v isKindOfClass:[NSString class]] && [(NSString*)v length] > 1) {
-                        [log appendFormat:@"  %s = %@\n", n, v];
-                    }
-                }
-                free(ivs);
-            }
-        }
-    } @catch(id e) {}
+        [log appendFormat:@"logicCls=%@\n", logicCls];
+    } @catch(id e) {
+        [log appendFormat:@"err=%@\n", e];
+    }
     [log writeToFile:[NSHomeDirectory() stringByAppendingPathComponent:@"Documents/pj_contact.txt"] atomically:YES encoding:NSUTF8StringEncoding error:nil];
     return userName;
 }
