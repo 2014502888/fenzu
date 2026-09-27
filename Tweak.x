@@ -627,6 +627,6 @@ static void hook_NMFV_vWAppear(id self, SEL _cmd, BOOL animated) {
     MSHookMessageEx(objc_getClass("UITableView"), @selector(reloadData), (IMP)hook_TV_reloadData, (IMP *)&orig_TV_reloadData);
     MSHookMessageEx(objc_getClass("WCTableViewManager"), @selector(tableView:didSelectRowAtIndexPath:), (IMP)hook_TVM_didSelect, (IMP *)&orig_TVM_didSelect);
     
-    MSHookMessageEx(objc_getClass("MainFrameLogicController"), @selector(getSessionCount), (IMP)hook_MFL_getCount, (IMP *)&orig_MFL_getCount);
-    MSHookMessageEx(objc_getClass("MainFrameLogicController"), @selector(getSessionInfoAtIndexPath:), (IMP)hook_MFL_getInfo, (IMP *)&orig_MFL_getInfo);
+    
+    
 }
