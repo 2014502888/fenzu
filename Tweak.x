@@ -368,12 +368,18 @@ static NSMutableArray *pjGroupCells(void) {
     @try {
         id me = self;
         g_allSessions = [[me valueForKey:@"m_frontSessionArray"] mutableCopy];
-        c = c + [pjGroupCells() count];
+        // Inject group cells
+        NSMutableArray *arr = [[me valueForKey:@"m_frontSessionArray"] mutableCopy];
+        NSMutableArray *keep = [NSMutableArray array];
+        for (id s in arr) {
+            NSString *un = [s valueForKey:@"_userName"];
+            if (![un hasPrefix:@"pj_group_"]) [keep addObject:s];
+        }
+        NSMutableArray *newArr = [pjGroupCells() mutableCopy];
+        [newArr addObjectsFromArray:keep];
+        [me setValue:newArr forKey:@"m_frontSessionArray"];
     } @catch(id e) {}
     return c;
-}
-- (id)getSessionInfoAtIndexPath:(NSIndexPath *)ip {
-    return %orig(ip);
 }
 %end
 
