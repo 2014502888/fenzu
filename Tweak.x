@@ -512,7 +512,7 @@ static void hook_TV_reloadData(id self, SEL _cmd) {
         NSString *cls = NSStringFromClass([[self dataSource] class]);
         if ([cls isEqualToString:@"ChatRoomInfoViewController"]) {
             pjAddGroupRow([self dataSource]);
-
+        }
     } @catch(id e) {}
 }
 static void (*orig_TVM_didSelect)(id, SEL, id, id, id);
