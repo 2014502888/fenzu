@@ -57,32 +57,15 @@ static void PJShowAssignMenu(NSString *userName) {
     [host presentViewController:a animated:YES completion:nil];
 }
 
-static void PJWriteLog(NSString *s) {
-    [s writeToFile:[NSHomeDirectory() stringByAppendingPathComponent:@"Documents/pj_contact.txt"] atomically:YES encoding:NSUTF8StringEncoding error:nil];
-}
 static NSString *PJGetContactName(NSString *userName) {
-    NSMutableString *log = [NSMutableString stringWithFormat:@"userName=%@\n", userName];
-    NSString *result = userName;
-    // Dump all ivars of first session object
-    if (g_allSessions.count > 0) {
-        id info = g_allSessions[0];
-        [log appendFormat:@"class=%@\n", [info class]];
-        unsigned int ic;
-        Ivar *ivs = class_copyIvarList([info class], &ic);
-        for (unsigned int i = 0; i < ic; i++) {
-            const char *n = ivar_getName(ivs[i]);
-            const char *type = ivar_getTypeEncoding(ivs[i]);
-            if (type && type[0] == '@') {
-                id v = object_getIvar(info, ivs[i]);
-                [log appendFormat:@"  %s = %@\n", n, v];
-            } else {
-                [log appendFormat:@"  %s (%s)\n", n, type];
-            }
+    for (id info in g_allSessions) {
+        NSString *un = [info valueForKey:@"userName"];
+        if ([un isEqualToString:userName]) {
+            NSString *name = [info valueForKey:@"_textForNameLabel"];
+            if (name && name.length) return name;
         }
-        free(ivs);
     }
-    PJWriteLog(log);
-    return result;
+    return userName;
 }
 
 @interface PJGroupChatPicker : UIViewController <UITableViewDataSource, UITableViewDelegate>
