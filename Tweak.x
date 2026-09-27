@@ -335,16 +335,13 @@ static void PJAddSettingsEntry(id vc) {
 }
 %end
 
-static NSTimeInterval pjLastAddTime = 0;
-static void pjAddGroupRow(id self) {
-    NSTimeInterval now = [[NSDate date] timeIntervalSince1970];
-    if (now - pjLastAddTime < 1.0) return;
-    pjLastAddTime = now;
+static BOOL pjIsAdding = NO;
+static void pjAddGroupRow(id info) {
+    if (pjIsAdding) return;
+    pjIsAdding = YES;
     @try {
-        id info = [self valueForKey:@"m_tableViewInfo"];
-        if (!info) return;
-        id tableView = [info performSelector:@selector(getTableView)];
         id sections = [info performSelector:@selector(getAllSections)];
+        if ([(NSArray *)sections count] < 2) return;
         id sec1 = [(NSArray *)sections objectAtIndex:1];
         id cells1 = [sec1 performSelector:@selector(getAllCells)];
         NSInteger cellCount = [(NSArray *)cells1 count];
@@ -379,22 +376,22 @@ static void pjAddGroupRow(id self) {
         id newCell = [[cellCls alloc] init];
         [newCell setValue:newCfg forKey:@"cellConfig"];
         ((void(*)(id, SEL, id, NSUInteger))objc_msgSend)(sec1, @selector(insertCell:At:), newCell, 1);
-        if (tableView) [tableView performSelector:@selector(reloadData)];
     } @catch(id e) {}
+    pjIsAdding = NO;
 }
 
 static void (*orig_CRVC_vDAppear)(id, SEL, BOOL);
 static void hook_CRVC_vDAppear(id self, SEL _cmd, BOOL animated) {
     orig_CRVC_vDAppear(self, _cmd, animated);
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.5 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{ pjAddGroupRow(self); });
 }
 
-static void (*orig_CRVC_vWAppear)(id, SEL, BOOL);
-static void hook_CRVC_vWAppear(id self, SEL _cmd, BOOL animated) {
-    orig_CRVC_vWAppear(self, _cmd, animated);
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.5 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{ pjAddGroupRow(self); });
+static void (*orig_TVM_reload)(id, SEL);
+static void hook_TVM_reload(id self, SEL _cmd) {
+    orig_TVM_reload(self, _cmd);
+    @try {
+        pjAddGroupRow(self);
+    } @catch(id e) {}
 }
 %ctor {
-    MSHookMessageEx(objc_getClass("ChatRoomInfoViewController"), @selector(viewDidAppear:), (IMP)hook_CRVC_vDAppear, (IMP *)&orig_CRVC_vDAppear);
-    MSHookMessageEx(objc_getClass("ChatRoomInfoViewController"), @selector(viewWillAppear:), (IMP)hook_CRVC_vWAppear, (IMP *)&orig_CRVC_vWAppear);
+    MSHookMessageEx(objc_getClass("WCTableViewManager"), @selector(reloadTableView), (IMP)hook_TVM_reload, (IMP *)&orig_TVM_reload);
 }
