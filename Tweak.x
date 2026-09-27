@@ -428,21 +428,38 @@ static void hook_CRVC_vDAppear(id self, SEL _cmd, BOOL animated) {
 
 static void pjAddMainGroups(id vc) {
     @try {
-        NSMutableString *log = [NSMutableString stringWithFormat:@"pjAddMainGroups: %@\n", NSStringFromClass([vc class])];
-        // Dump all ivars
-        unsigned int ic;
-        Ivar *ivs = class_copyIvarList([vc class], &ic);
-        for (unsigned int i = 0; i < ic; i++) {
-            const char *n = ivar_getName(ivs[i]);
-            const char *type = ivar_getTypeEncoding(ivs[i]);
-            if (type && type[0] == '@') {
-                id v = object_getIvar(vc, ivs[i]);
-                if (v) [log appendFormat:@"  %s = %@\n", n, v];
-            }
+        id logic = [vc valueForKey:@"m_mainFrameLogicController"];
+        id info = [logic valueForKey:@"m_tableViewInfo"];
+        if (!info) return;
+        id sections = [info performSelector:@selector(getAllSections)];
+        if (!sections || [(NSArray *)sections count] == 0) return;
+        id sec0 = [(NSArray *)sections objectAtIndex:0];
+        id cells = [sec0 performSelector:@selector(getAllCells)];
+        // Remove old pj group cells
+        NSMutableArray *toRemove = [NSMutableArray array];
+        for (id cell in cells) {
+            id cfg = [cell valueForKey:@"cellConfig"];
+            id leftCfg = [cfg valueForKey:@"leftConfig"];
+            NSString *t = [leftCfg valueForKey:@"title"];
+            if ([t hasPrefix:@"【分组】"]) [toRemove addObject:cell];
         }
-        free(ivs);
-        [log writeToFile:[NSHomeDirectory() stringByAppendingPathComponent:@"Documents/pj_main.txt"] atomically:YES encoding:NSUTF8StringEncoding error:nil];
-        return;
+        for (id cell in toRemove) {
+            [sec0 performSelector:@selector(removeCell:) withObject:cell];
+        }
+        // Add group cells at top
+        NSArray *groups = [[NSUserDefaults standardUserDefaults] arrayForKey:@"misakaGroups"];
+        NSDictionary *sg = [[NSUserDefaults standardUserDefaults] dictionaryForKey:@"sessionGroups"];
+        for (NSInteger i = groups.count - 1; i >= 0; i--) {
+            NSString *gn = groups[i];
+            NSUInteger cnt = 0;
+            for (NSString *k in sg) { if ([sg[k] isEqualToString:gn]) cnt++; }
+            id newCell = [NSClassFromString(@"WCTableViewNormalCellManager") new];
+            id cfg = [newCell valueForKey:@"cellConfig"];
+            id leftCfg = [cfg valueForKey:@"leftConfig"];
+            [leftCfg setValue:[NSString stringWithFormat:@"【分组】%@ (%lu个)", gn, (unsigned long)cnt] forKey:@"title"];
+            NSIndexPath *ip = [NSIndexPath indexPathForRow:0 inSection:0];
+            ((void(*)(id,SEL,id,id))objc_msgSend)(sec0, @selector(insertCell:At:), newCell, ip);
+        }
     } @catch(id e) {}
 }
 
