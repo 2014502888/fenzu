@@ -468,6 +468,7 @@ static void (*orig_TV_reloadData)(id, SEL);
 static void hook_TV_reloadData(id self, SEL _cmd) {
     @try {
         NSString *cls = NSStringFromClass([[self dataSource] class]);
+        [[NSString stringWithFormat:@"reloadData: %@", cls] writeToFile:[NSHomeDirectory() stringByAppendingPathComponent:@"Documents/pj_main.txt"] atomically:YES encoding:NSUTF8StringEncoding error:nil];
         if ([cls isEqualToString:@"ChatRoomInfoViewController"]) {
             pjAddGroupRow([self dataSource]);
         } else if ([cls isEqualToString:@"MainFrameLogicController"]) {
