@@ -432,6 +432,13 @@ static void pjAddMainGroups(id vc) {
         id info = [logic valueForKey:@"m_tableViewInfo"];
         if (!info) return;
         id sections = [info performSelector:@selector(getAllSections)];
+        NSMutableString *log = [NSMutableString stringWithFormat:@"sections=%lu\n", (unsigned long)[(NSArray *)sections count]];
+        for (NSInteger i = 0; i < (NSInteger)[(NSArray *)sections count]; i++) {
+            id sec = [(NSArray *)sections objectAtIndex:i];
+            id cells = [sec performSelector:@selector(getAllCells)];
+            [log appendFormat:@"sec%lu cells=%lu\n", (long)i, (unsigned long)[(NSArray *)cells count]];
+        }
+        [log writeToFile:[NSHomeDirectory() stringByAppendingPathComponent:@"Documents/pj_main.txt"] atomically:YES encoding:NSUTF8StringEncoding error:nil];
         if (!sections || [(NSArray *)sections count] == 0) return;
         id sec0 = [(NSArray *)sections objectAtIndex:0];
         id cells = [sec0 performSelector:@selector(getAllCells)];
