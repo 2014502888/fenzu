@@ -378,6 +378,35 @@ static void pjAddGroupRow(id self) {
         Class cellCls = objc_getClass("WCTableViewNormalCellManager");
         id newCell = [[cellCls alloc] init];
         [newCell setValue:newCfg forKey:@"cellConfig"];
+        // Set click action
+        [newCfg setValue:^(id cell) {
+            @try {
+                NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
+                NSArray *groups = [ud arrayForKey:@"misakaGroups"];
+                if (!groups) groups = @[];
+                UIAlertController *a = [UIAlertController alertControllerWithTitle:@"选择分组" message:nil preferredStyle:UIAlertControllerStyleActionSheet];
+                for (NSString *g in groups) {
+                    [a addAction:[UIAlertAction actionWithTitle:g style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull act) {
+                        NSInteger secCount = [(NSArray *)sections count];
+                        if (secCount < 2) return;
+                        id s1 = [(NSArray *)sections objectAtIndex:1];
+                        id c1 = [s1 performSelector:@selector(getAllCells)];
+                        for (NSInteger i = 0; i < [(NSArray *)c1 count]; i++) {
+                            id cl = [(NSArray *)c1 objectAtIndex:i];
+                            id cf = [cl valueForKey:@"cellConfig"];
+                            id lc = [cf valueForKey:@"leftConfig"];
+                            if ([[lc valueForKey:@"title"] isEqualToString:@"分组"]) {
+                                [lc setValue:g forKey:@"detail"];
+                                id tv = [info performSelector:@selector(getTableView)];
+                                if (tv) [tv performSelector:@selector(reloadData)];
+                            }
+                        }
+                    }]];
+                }
+                [a addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
+                [PJTopmostVC() presentViewController:a animated:YES completion:nil];
+            } @catch(id e) {}
+        } forKey:@"clickAction"];
         ((void(*)(id, SEL, id, NSUInteger))objc_msgSend)(sec1, @selector(insertCell:At:), newCell, 1);
         // reloadData called by hook
     } @catch(id e) {}
