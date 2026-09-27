@@ -336,25 +336,27 @@ static void PJAddSettingsEntry(id vc) {
 %end
 
 static BOOL pjAdded = NO;
-static void (*orig_CRVC_viewWillAppear)(id, SEL, BOOL);
-static void hook_CRVC_viewWillAppear(id self, SEL _cmd, BOOL animated) {
-    orig_CRVC_viewWillAppear(self, _cmd, animated);
+static void (*orig_CRVC_vDAppear)(id, SEL, BOOL);
+static void hook_CRVC_vDAppear(id self, SEL _cmd, BOOL animated) {
+    orig_CRVC_vDAppear(self, _cmd, animated);
     @try {
         if (pjAdded) return;
         id info = [self valueForKey:@"m_tableViewInfo"];
         if (!info) return;
+        id tableView = [info performSelector:@selector(getTableView)];
         id sections = [info performSelector:@selector(getAllSections)];
         id sec1 = [(NSArray *)sections objectAtIndex:1];
         id cells1 = [sec1 performSelector:@selector(getAllCells)];
         id templateCell = [(NSArray *)cells1 objectAtIndex:0];
         id templateCfg = [templateCell valueForKey:@"cellConfig"];
         id templateLeft = [templateCfg valueForKey:@"leftConfig"];
-        // Just modify template cell title to test rendering
         [templateLeft setValue:@"分组(测试)" forKey:@"title"];
-        [info performSelector:@selector(reloadTableView)];
+        if (tableView) {
+            [tableView performSelector:@selector(reloadData)];
+        }
         pjAdded = YES;
     } @catch(id e) {}
 }
 %ctor {
-    MSHookMessageEx(objc_getClass("ChatRoomInfoViewController"), @selector(viewWillAppear:), (IMP)hook_CRVC_viewWillAppear, (IMP *)&orig_CRVC_viewWillAppear);
+    MSHookMessageEx(objc_getClass("ChatRoomInfoViewController"), @selector(viewDidAppear:), (IMP)hook_CRVC_vDAppear, (IMP *)&orig_CRVC_vDAppear);
 }
