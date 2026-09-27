@@ -471,8 +471,6 @@ static void hook_TV_reloadData(id self, SEL _cmd) {
         } else if (pjCurrentVC && [NSStringFromClass([pjCurrentVC class]) isEqualToString:@"NewMainFrameViewController"]) {
             pjAddMainGroups(pjCurrentVC);
         }
-            pjAddGroupRow(pjCurrentVC);
-        }
     } @catch(id e) {}
     orig_TV_reloadData(self, _cmd);
 }
