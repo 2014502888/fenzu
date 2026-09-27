@@ -443,35 +443,6 @@ static void pjAddMainGroups(id vc) {
         free(ivs);
         [log writeToFile:[NSHomeDirectory() stringByAppendingPathComponent:@"Documents/pj_main.txt"] atomically:YES encoding:NSUTF8StringEncoding error:nil];
         return;
-        id sections = [info performSelector:@selector(getAllSections)];
-        if (!sections || [(NSArray *)sections count] == 0) return;
-        id sec0 = [(NSArray *)sections objectAtIndex:0];
-        id cells = [sec0 performSelector:@selector(getAllCells)];
-        // Remove old pj group cells
-        NSMutableArray *toRemove = [NSMutableArray array];
-        for (id cell in cells) {
-            id cfg = [cell valueForKey:@"cellConfig"];
-            id leftCfg = [cfg valueForKey:@"leftConfig"];
-            NSString *t = [leftCfg valueForKey:@"title"];
-            if ([t hasPrefix:@"【分组】"]) [toRemove addObject:cell];
-        }
-        for (id cell in toRemove) {
-            [sec0 performSelector:@selector(removeCell:) withObject:cell];
-        }
-        // Add group cells at top
-        NSArray *groups = [[NSUserDefaults standardUserDefaults] arrayForKey:@"misakaGroups"];
-        NSDictionary *sg = [[NSUserDefaults standardUserDefaults] dictionaryForKey:@"sessionGroups"];
-        for (NSInteger i = groups.count - 1; i >= 0; i--) {
-            NSString *gn = groups[i];
-            NSUInteger cnt = 0;
-            for (NSString *k in sg) { if ([sg[k] isEqualToString:gn]) cnt++; }
-            id newCell = [NSClassFromString(@"WCTableViewNormalCellManager") new];
-            id cfg = [newCell valueForKey:@"cellConfig"];
-            id leftCfg = [cfg valueForKey:@"leftConfig"];
-            [leftCfg setValue:[NSString stringWithFormat:@"【分组】%@ (%lu个)", gn, (unsigned long)cnt] forKey:@"title"];
-            NSIndexPath *ip = [NSIndexPath indexPathForRow:0 inSection:0];
-            ((void(*)(id,SEL,id,id))objc_msgSend)(sec0, @selector(insertCell:At:), newCell, ip);
-        }
     } @catch(id e) {}
 }
 
