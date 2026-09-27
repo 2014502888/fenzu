@@ -346,17 +346,41 @@ static void PJAddSettingsEntry(id vc) {
 
 static NSString *pjSelectedGroup = nil; // nil = all
 
+static NSMutableArray *pjGroupCells(void) {
+    NSMutableArray *result = [NSMutableArray array];
+    NSArray *groups = [[NSUserDefaults standardUserDefaults] arrayForKey:@"misakaGroups"];
+    NSDictionary *sg = [[NSUserDefaults standardUserDefaults] dictionaryForKey:@"sessionGroups"];
+    for (NSString *gn in groups) {
+        NSUInteger cnt = 0;
+        for (NSString *k in sg) { if ([sg[k] isEqualToString:gn]) cnt++; }
+        id cellData = [NSClassFromString(@"FakeMainFrameCellData") new];
+        [cellData setValue:[NSString stringWithFormat:@"pj_group_%@", gn] forKey:@"_userName"];
+        [cellData setValue:[NSString stringWithFormat:@"%@ (%lu个)", gn, (unsigned long)cnt] forKey:@"_textForNameLabel"];
+        [cellData setValue:@"群收纳" forKey:@"_textForMessageLabel"];
+        [result addObject:cellData];
+    }
+    return result;
+}
+
 %hook MainFrameLogicController
 - (NSUInteger)getSessionCount {
     NSUInteger c = %orig;
     @try {
         id me = self;
         g_allSessions = [[me valueForKey:@"m_frontSessionArray"] mutableCopy];
+        c = c + [pjGroupCells() count];
     } @catch(id e) {}
     return c;
 }
-
-
+- (id)getSessionInfoAtIndexPath:(NSIndexPath *)ip {
+    @try {
+        NSUInteger groupCount = [pjGroupCells() count];
+        if ((NSUInteger)ip.row < groupCount) return pjGroupCells()[ip.row];
+        NSIndexPath *newIp = [NSIndexPath indexPathForRow:ip.row - groupCount inSection:ip.section];
+        return %orig(newIp);
+    } @catch(id e) {}
+    return %orig(ip);
+}
 %end
 
 static __weak UIViewController *pjCurrentVC = nil;
