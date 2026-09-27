@@ -405,8 +405,36 @@ static void hook_TV_reloadData(id self, SEL _cmd) {
     } @catch(id e) {}
     orig_TV_reloadData(self, _cmd);
 }
+static void (*orig_TVM_didSelect)(id, SEL, id, id, id);
+static void hook_TVM_didSelect(id self, SEL _cmd, id tableView, id section, id row) {
+    @try {
+        // Check if this is our group row
+        id cell = [self performSelector:@selector(cellInfoAtIndexPath:) withObject:section];
+        id cfg = [cell valueForKey:@"cellConfig"];
+        id leftCfg = [cfg valueForKey:@"leftConfig"];
+        NSString *title = [leftCfg valueForKey:@"title"];
+        if ([title isEqualToString:@"分组"]) {
+            NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
+            NSArray *groups = [ud arrayForKey:@"misakaGroups"];
+            if (!groups) groups = @[];
+            UIAlertController *a = [UIAlertController alertControllerWithTitle:@"选择分组" message:nil preferredStyle:UIAlertControllerStyleActionSheet];
+            for (NSString *g in groups) {
+                [a addAction:[UIAlertAction actionWithTitle:g style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull act) {
+                    // Save group assignment
+                    // Need chat room username - will add later
+                }]];
+            }
+            [a addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
+            [PJTopmostVC() presentViewController:a animated:YES completion:nil];
+            return;
+        }
+    } @catch(id e) {}
+    orig_TVM_didSelect(self, _cmd, tableView, section, row);
+}
+
 %ctor {
     MSHookMessageEx(objc_getClass("ChatRoomInfoViewController"), @selector(viewDidAppear:), (IMP)hook_CRVC_vDAppear, (IMP *)&orig_CRVC_vDAppear);
     MSHookMessageEx(objc_getClass("ChatRoomInfoViewController"), @selector(viewWillAppear:), (IMP)hook_CRVC_vWAppear, (IMP *)&orig_CRVC_vWAppear);
     MSHookMessageEx(objc_getClass("UITableView"), @selector(reloadData), (IMP)hook_TV_reloadData, (IMP *)&orig_TV_reloadData);
+    MSHookMessageEx(objc_getClass("WCTableViewManager"), @selector(tableView:didSelectRowAtIndexPath:), (IMP)hook_TVM_didSelect, (IMP *)&orig_TVM_didSelect);
 }
