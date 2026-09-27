@@ -471,10 +471,8 @@ static void hook_TV_reloadData(id self, SEL _cmd) {
         [[NSString stringWithFormat:@"reloadData: %@", cls] writeToFile:[NSHomeDirectory() stringByAppendingPathComponent:@"Documents/pj_main.txt"] atomically:YES encoding:NSUTF8StringEncoding error:nil];
         if ([cls isEqualToString:@"ChatRoomInfoViewController"]) {
             pjAddGroupRow([self dataSource]);
-        } else if ([cls isEqualToString:@"MainFrameLogicController"]) {
-            // Main frame - get the VC from the logic controller
-            id delegate = [[self dataSource] performSelector:@selector(valueForKey:) withObject:@"m_delegate"];
-            if (delegate) pjAddMainGroups(delegate);
+        } else if ([cls isEqualToString:@"NewMainFrameViewController"]) {
+            pjAddMainGroups([self dataSource]);
         }
     } @catch(id e) {}
     orig_TV_reloadData(self, _cmd);
