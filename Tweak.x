@@ -355,20 +355,7 @@ static NSString *pjSelectedGroup = nil; // nil = all
     } @catch(id e) {}
     return c;
 }
-- (void)onMainSessionReload {
-    %orig;
-    @try {
-        NSMutableArray *arr = [[self valueForKey:@"m_frontSessionArray"] mutableCopy];
-        if (!arr) return;
-        NSDictionary *sg = [[NSUserDefaults standardUserDefaults] dictionaryForKey:@"sessionGroups"];
-        NSMutableArray *keep = [NSMutableArray array];
-        for (id s in arr) {
-            NSString *un = [s valueForKey:@"_userName"];
-            if (![sg objectForKey:un]) [keep addObject:s];
-        }
-        [self setValue:keep forKey:@"m_frontSessionArray"];
-    } @catch(id e) {}
-}
+
 
 %end
 
