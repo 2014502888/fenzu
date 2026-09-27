@@ -495,6 +495,44 @@ static void hook_TVM_didSelect(id self, SEL _cmd, id tableView, id indexPath) {
 }
 
 
+@interface PJGroupListPage : UIViewController <UITableViewDataSource, UITableViewDelegate>
+@end
+@implementation PJGroupListPage {
+    UITableView *_tv;
+}
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    self.title = @"群收纳";
+    self.view.backgroundColor = [UIColor groupTableViewBackgroundColor];
+    _tv = [[UITableView alloc] initWithFrame:self.view.bounds style:UITableViewStyleGrouped];
+    _tv.dataSource = self; _tv.delegate = self;
+    _tv.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    [self.view addSubview:_tv];
+}
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)t { return 1; }
+- (NSInteger)tableView:(UITableView *)t numberOfRowsInSection:(NSInteger)s { return [[[NSUserDefaults standardUserDefaults] arrayForKey:@"misakaGroups"] count]; }
+- (UITableViewCell *)tableView:(UITableView *)t cellForRowAtIndexPath:(NSIndexPath *)ip {
+    UITableViewCell *c = [t dequeueReusableCellWithIdentifier:@"g"] ?: [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:@"g"];
+    NSArray *groups = [[NSUserDefaults standardUserDefaults] arrayForKey:@"misakaGroups"];
+    NSString *gn = groups[ip.row];
+    c.textLabel.text = gn;
+    NSDictionary *sg = [[NSUserDefaults standardUserDefaults] dictionaryForKey:@"sessionGroups"];
+    NSUInteger cnt = 0;
+    for (NSString *k in sg) { if ([sg[k] isEqualToString:gn]) cnt++; }
+    c.detailTextLabel.text = [NSString stringWithFormat:@"%lu群", (unsigned long)cnt];
+    c.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+    return c;
+}
+- (void)tableView:(UITableView *)t didSelectRowAtIndexPath:(NSIndexPath *)ip {
+    [t deselectRowAtIndexPath:ip animated:YES];
+    NSArray *groups = [[NSUserDefaults standardUserDefaults] arrayForKey:@"misakaGroups"];
+    NSString *gn = groups[ip.row];
+    PJGroupChatPicker *p = [PJGroupChatPicker new];
+    p.groupName = gn;
+    [self.navigationController pushViewController:p animated:YES];
+}
+@end
+
 %ctor {
     MSHookMessageEx(objc_getClass("ChatRoomInfoViewController"), @selector(viewDidAppear:), (IMP)hook_CRVC_vDAppear, (IMP *)&orig_CRVC_vDAppear);
     MSHookMessageEx(objc_getClass("ChatRoomInfoViewController"), @selector(viewWillAppear:), (IMP)hook_CRVC_vWAppear, (IMP *)&orig_CRVC_vWAppear);
