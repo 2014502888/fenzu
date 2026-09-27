@@ -435,6 +435,9 @@ static void hook_TVM_didSelect(id self, SEL _cmd, id tableView, id indexPath) {
                         if (chatName) [dict setObject:g forKey:chatName];
                         [ud setObject:dict forKey:@"sessionGroups"];
                         [ud synchronize];
+                        UIAlertController *ok = [UIAlertController alertControllerWithTitle:@"已分组" message:[NSString stringWithFormat:@"已归入: %@", g] preferredStyle:UIAlertControllerStyleAlert];
+                        [ok addAction:[UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:nil]];
+                        [top presentViewController:ok animated:YES completion:nil];
                         // Update UI
                         id info2 = [top valueForKey:@"m_tableViewInfo"];
                         id sections2 = [info2 performSelector:@selector(getAllSections)];
