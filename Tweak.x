@@ -61,37 +61,23 @@ static NSString *PJGetContactName(NSString *userName) {
     NSMutableString *log = [NSMutableString stringWithFormat:@"userName=%@\n", userName];
     NSString *result = userName;
     @try {
-        // Try MMServiceCenter
+        // Dump MMServiceCenter class methods
         Class svcCls = objc_getClass("MMServiceCenter");
-        if (svcCls) {
-            id center = [svcCls performSelector:@selector(defaultCenter)];
-            [log appendFormat:@"center=%@\n", center];
-            // Try ContactsDataLogic
-            Class logicCls = objc_getClass("ContactsDataLogic");
-            if (logicCls && center) {
-                id logic = [center performSelector:@selector(getService:) withObject:logicCls];
-                [log appendFormat:@"logic=%@\n", logic];
-                if (logic) {
-                    NSArray *trySels = @[@"contactUsrName:", @"getContact:", @"contactForUsrName:", @"getContactForUsrName:"];
-                    for (NSString *s in trySels) {
-                        SEL sel = NSSelectorFromString(s);
-                        if ([logic respondsToSelector:sel]) {
-                            id contact = [logic performSelector:sel withObject:userName];
-                            [log appendFormat:@"sel=%@ -> %@\n", s, contact];
-                            if (contact) {
-                                NSArray *keys = @[@"m_nsNickName", @"m_nsDisplayName", @"m_nsRemark", @"nickName", @"displayName", @"name"];
-                                for (NSString *k in keys) {
-                                    NSString *v = [contact valueForKey:k];
-                                    if (v && [v isKindOfClass:[NSString class]] && v.length > 0) {
-                                        [log appendFormat:@"  %@=%@\n", k, v];
-                                        if ([k isEqualToString:@"m_nsNickName"] || [k isEqualToString:@"nickName"]) result = v;
-                                    }
-                                }
-                            }
-                            break;
-                        }
-                    }
-                }
+        unsigned int mc;
+        Method *ms = class_copyMethodList(object_getClass(svcCls), &mc);
+        for (unsigned int i = 0; i < mc; i++) {
+            [log appendFormat:@"clsMethod: %s\n", sel_getName(method_getName(ms[i]))];
+        }
+        free(ms);
+        // Try common shared instance methods
+        NSArray *sharedSels = @[@"defaultCenter", @"sharedCenter", @"sharedInstance", @"center"];
+        id center = nil;
+        for (NSString *s in sharedSels) {
+            SEL sel = NSSelectorFromString(s);
+            if ([svcCls respondsToSelector:sel]) {
+                center = [svcCls performSelector:sel];
+                [log appendFormat:@"found center via %@: %@\n", s, center];
+                break;
             }
         }
     } @catch(id e) { [log appendFormat:@"err=%@\n", e]; }
