@@ -382,15 +382,10 @@ static void pjAddGroupRow(id self) {
 static void (*orig_CRVC_vDAppear)(id, SEL, BOOL);
 static void hook_CRVC_vDAppear(id self, SEL _cmd, BOOL animated) {
     orig_CRVC_vDAppear(self, _cmd, animated);
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.3 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{ pjAddGroupRow(self); });
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.5 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{ pjAddGroupRow(self); });
 }
 
-static void (*orig_CRVC_vWAppear)(id, SEL, BOOL);
-static void hook_CRVC_vWAppear(id self, SEL _cmd, BOOL animated) {
-    orig_CRVC_vWAppear(self, _cmd, animated);
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.3 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{ pjAddGroupRow(self); });
-}
+
 %ctor {
     MSHookMessageEx(objc_getClass("ChatRoomInfoViewController"), @selector(viewDidAppear:), (IMP)hook_CRVC_vDAppear, (IMP *)&orig_CRVC_vDAppear);
-    MSHookMessageEx(objc_getClass("ChatRoomInfoViewController"), @selector(viewWillAppear:), (IMP)hook_CRVC_vWAppear, (IMP *)&orig_CRVC_vWAppear);
 }
