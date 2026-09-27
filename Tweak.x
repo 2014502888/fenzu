@@ -362,7 +362,22 @@ static void pjAddGroupRow(id self) {
             newCell = [info performSelector:@selector(getNormalCellWithTitle:) withObject:@"分组"];
         }
         if (!newCell && [info respondsToSelector:@selector(normalCellForSel:target:title:detail:accessoryType:)]) {
-            newCell = [info performSelector:@selector(normalCellForSel:target:title:detail:accessoryType:) withObject:nil withObject:nil withObject:@"分组" withObject:@"未分组" withObject:@0];
+            {
+    NSMethodSignature *sig = [info methodSignatureForSelector:@selector(normalCellForSel:target:title:detail:accessoryType:)];
+    if (sig) {
+        NSInvocation *inv = [NSInvocation invocationWithMethodSignature:sig];
+        [inv setTarget:info];
+        [inv setSelector:@selector(normalCellForSel:target:title:detail:accessoryType:)];
+        id a1 = nil; id a2 = nil; id a3 = @"分组"; id a4 = @"未分组"; id a5 = @0;
+        [inv setArgument:&a1 atIndex:2];
+        [inv setArgument:&a2 atIndex:3];
+        [inv setArgument:&a3 atIndex:4];
+        [inv setArgument:&a4 atIndex:5];
+        [inv setArgument:&a5 atIndex:6];
+        [inv invoke];
+        [inv getReturnValue:&newCell];
+    }
+}
         }
         if (newCell) {
             [sec1 performSelector:@selector(addCell:) withObject:newCell];
