@@ -428,6 +428,7 @@ static void hook_CRVC_vDAppear(id self, SEL _cmd, BOOL animated) {
 
 static void pjAddMainGroups(id vc) {
     @try {
+        [[NSString stringWithFormat:@"pjAddMainGroups: %@", NSStringFromClass([vc class])] writeToFile:[NSHomeDirectory() stringByAppendingPathComponent:@"Documents/pj_main.txt"] atomically:YES encoding:NSUTF8StringEncoding error:nil];
         if (![NSStringFromClass([vc class]) isEqualToString:@"NewMainFrameViewController"]) return;
         id info = [vc valueForKey:@"m_tableViewInfo"];
         if (!info) return;
