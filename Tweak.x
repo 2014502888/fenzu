@@ -57,6 +57,25 @@ static void PJShowAssignMenu(NSString *userName) {
     [host presentViewController:a animated:YES completion:nil];
 }
 
+static NSString *PJGetContactName(NSString *userName) {
+    @try {
+        Class svcCls = objc_getClass("MMServiceCenter");
+        id center = [svcCls performSelector:@selector(defaultCenter)];
+        Class logicCls = objc_getClass("ContactsDataLogic");
+        id logic = [center performSelector:@selector(getService:) withObject:logicCls];
+        if (logic) {
+            id contact = [logic performSelector:@selector(contactUsrName:) withObject:userName];
+            if (contact) {
+                NSString *nick = [contact valueForKey:@"m_nsNickName"];
+                if (nick && nick.length) return nick;
+                NSString *display = [contact valueForKey:@"m_nsDisplayName"];
+                if (display && display.length) return display;
+            }
+        }
+    } @catch(id e) {}
+    return userName;
+}
+
 @interface PJGroupChatPicker : UIViewController <UITableViewDataSource, UITableViewDelegate>
 @property (nonatomic, strong) NSString *groupName;
 @property (nonatomic, strong) UITableView *tableView;
@@ -82,7 +101,7 @@ static void PJShowAssignMenu(NSString *userName) {
     if (!name) name = [info valueForKey:@"displayName"];
     if (!name) name = [info valueForKey:@"nickName"];
     if (!name) name = [info valueForKey:@"name"];
-    if (!name) name = un;
+    name = PJGetContactName(un);
     c.textLabel.text = name;
     c.detailTextLabel.text = un;
     NSString *current = [SessionGroups() objectForKey:un];
