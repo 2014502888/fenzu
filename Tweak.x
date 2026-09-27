@@ -522,31 +522,6 @@ static void hook_TVM_didSelect(id self, SEL _cmd, id tableView, id indexPath) {
     orig_TVM_didSelect(self, _cmd, tableView, indexPath, nil);
 }
 
-static UISegmentedControl *pjSeg = nil;
-%hook NewMainFrameViewController
-- (void)viewDidAppear:(BOOL)animated {
-    %orig;
-    @try {
-        if (!pjSeg) {
-            NSArray *groups = [[NSUserDefaults standardUserDefaults] arrayForKey:@"misakaGroups"];
-            NSMutableArray *titles = [NSMutableArray arrayWithObject:@"全部"];
-            [titles addObjectsFromArray:groups];
-            pjSeg = [[UISegmentedControl alloc] initWithItems:titles];
-            pjSeg.frame = CGRectMake(8, 8, self.view.bounds.size.width - 16, 36);
-            pjSeg.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-            pjSeg.selectedSegmentIndex = 0;
-            [pjSeg addTarget:self action:@selector(pjSegChanged:) forControlEvents:UIControlEventValueChanged];
-            [self.view addSubview:pjSeg];
-        }
-    } @catch(id e) {}
-}
-- (void)pjSegChanged:(UISegmentedControl *)s {
-    pjSelectedGroup = s.selectedSegmentIndex == 0 ? nil : [[s titleForSegmentAtIndex:s.selectedSegmentIndex] copy];
-    // Reload
-    id tv = [self valueForKey:@"m_tableView"];
-    if (tv) [tv performSelector:@selector(reloadData)];
-}
-%end
 
 %ctor {
     MSHookMessageEx(objc_getClass("ChatRoomInfoViewController"), @selector(viewDidAppear:), (IMP)hook_CRVC_vDAppear, (IMP *)&orig_CRVC_vDAppear);
