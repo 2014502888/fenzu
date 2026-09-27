@@ -373,12 +373,6 @@ static NSMutableArray *pjGroupCells(void) {
     return c;
 }
 - (id)getSessionInfoAtIndexPath:(NSIndexPath *)ip {
-    @try {
-        NSUInteger groupCount = [pjGroupCells() count];
-        if ((NSUInteger)ip.row < groupCount) return pjGroupCells()[ip.row];
-        NSIndexPath *newIp = [NSIndexPath indexPathForRow:ip.row - groupCount inSection:ip.section];
-        return %orig(newIp);
-    } @catch(id e) {}
     return %orig(ip);
 }
 %end
