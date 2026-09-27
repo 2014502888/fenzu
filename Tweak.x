@@ -78,7 +78,12 @@ static void PJShowAssignMenu(NSString *userName) {
     UITableViewCell *c = [t dequeueReusableCellWithIdentifier:cid] ?: [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cid];
     id info = g_allSessions[ip.row];
     NSString *un = [info valueForKey:@"userName"];
-    c.textLabel.text = un;
+    NSString *name = [info valueForKey:@"m_nsNickName"];
+    if (!name) name = [info valueForKey:@"displayName"];
+    if (!name) name = [info valueForKey:@"nickName"];
+    if (!name) name = [info valueForKey:@"name"];
+    if (!name) name = un;
+    c.textLabel.text = name;
     c.detailTextLabel.text = un;
     NSString *current = [SessionGroups() objectForKey:un];
     c.accessoryType = [current isEqualToString:self.groupName] ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
