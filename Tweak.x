@@ -424,6 +424,14 @@ static void hook_TVM_didSelect(id self, SEL _cmd, id tableView, id indexPath) {
             if (!top) top = PJTopmostVC();
             id contact = [top valueForKey:@"m_chatRoomContact"];
             NSString *chatName = [contact valueForKey:@"m_nsUsrName"];
+            if (!chatName) {
+                contact = [top valueForKey:@"m_chatRoom"];
+                chatName = [contact valueForKey:@"m_nsUsrName"];
+            }
+            if (!chatName) {
+                chatName = [top valueForKey:@"m_nsChatRoomUserName"];
+            }
+            [[NSString stringWithFormat:@"chatName=%@", chatName] writeToFile:[NSHomeDirectory() stringByAppendingPathComponent:@"Documents/pj_chat.txt"] atomically:YES encoding:NSUTF8StringEncoding error:nil];
             NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
             NSArray *groups = [ud arrayForKey:@"misakaGroups"];
             if (!groups || [groups count] == 0) groups = @[];
