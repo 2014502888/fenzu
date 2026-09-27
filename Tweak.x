@@ -365,15 +365,19 @@ static NSMutableArray *pjGroupCells(void) {
 static NSUInteger (*orig_MFL_getCount)(id, SEL);
 static NSUInteger hook_MFL_getCount(id self, SEL _cmd) {
     NSUInteger c = orig_MFL_getCount(self, _cmd);
-    return c + [pjGroupCells() count];
+    @try { c = c + [pjGroupCells() count]; } @catch(id e) {}
+    return c;
 }
 static id (*orig_MFL_getInfo)(id, SEL, id);
 static id hook_MFL_getInfo(id self, SEL _cmd, id ip) {
-    NSUInteger gc = [pjGroupCells() count];
-    NSInteger row = [(NSIndexPath *)ip row];
-    if (row < (NSInteger)gc) return pjGroupCells()[row];
-    NSIndexPath *nip = [NSIndexPath indexPathForRow:row - gc inSection:[(NSIndexPath *)ip section]];
-    return orig_MFL_getInfo(self, _cmd, nip);
+    @try {
+        NSUInteger gc = [pjGroupCells() count];
+        NSInteger row = [(NSIndexPath *)ip row];
+        if (row < (NSInteger)gc) return pjGroupCells()[row];
+        NSIndexPath *nip = [NSIndexPath indexPathForRow:row - gc inSection:[(NSIndexPath *)ip section]];
+        return orig_MFL_getInfo(self, _cmd, nip);
+    } @catch(id e) {}
+    return orig_MFL_getInfo(self, _cmd, ip);
 }
 static void (*orig_MFL_onReload)(id, SEL);
 static void hook_MFL_onReload(id self, SEL _cmd) {
