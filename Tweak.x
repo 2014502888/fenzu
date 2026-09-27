@@ -363,7 +363,13 @@ static void pjAddGroupRow(id self) {
         Class leftCls = objc_getClass("WCTableViewCellLeftConfig");
         id newLeft = [[leftCls alloc] init];
         [newLeft setValue:@"分组" forKey:@"title"];
-        [newLeft setValue:@"未分组" forKey:@"detail"];
+                // Show current group assignment
+        NSUserDefaults *ud2 = [NSUserDefaults standardUserDefaults];
+        id contact2 = [self valueForKey:@"m_chatRoomContact"];
+        NSString *chatName2 = [contact2 valueForKey:@"m_nsUsrName"];
+        NSDictionary *sg = [ud2 dictionaryForKey:@"sessionGroups"];
+        NSString *currentG = chatName2 ? [sg objectForKey:chatName2] : nil;
+        [newLeft setValue:(currentG ?: @"未分组") forKey:@"detail"];
         id font = [templateLeft valueForKey:@"titleFont"];
         id color = [templateLeft valueForKey:@"titleColor"];
         id mode = [templateLeft valueForKey:@"mode"];
@@ -419,7 +425,7 @@ static void hook_TVM_didSelect(id self, SEL _cmd, id tableView, id indexPath) {
             NSString *chatName = [contact valueForKey:@"m_nsUsrName"];
             NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
             NSArray *groups = [ud arrayForKey:@"misakaGroups"];
-            if (!groups) groups = @[@"工作群", @"常用群"];
+            if (!groups || [groups count] == 0) groups = @[];
             UIAlertController *a = [UIAlertController alertControllerWithTitle:@"选择分组" message:nil preferredStyle:UIAlertControllerStyleActionSheet];
             for (NSString *g in groups) {
                 [a addAction:[UIAlertAction actionWithTitle:g style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull act) {
@@ -429,6 +435,20 @@ static void hook_TVM_didSelect(id self, SEL _cmd, id tableView, id indexPath) {
                         if (chatName) [dict setObject:g forKey:chatName];
                         [ud setObject:dict forKey:@"sessionGroups"];
                         [ud synchronize];
+                        // Update UI
+                        id info2 = [top valueForKey:@"m_tableViewInfo"];
+                        id sections2 = [info2 performSelector:@selector(getAllSections)];
+                        id sec1 = [(NSArray *)sections2 objectAtIndex:1];
+                        id cells1 = [sec1 performSelector:@selector(getAllCells)];
+                        for (id cl in cells1) {
+                            id cf = [cl valueForKey:@"cellConfig"];
+                            id lc = [cf valueForKey:@"leftConfig"];
+                            if ([[lc valueForKey:@"title"] isEqualToString:@"分组"]) {
+                                [lc setValue:g forKey:@"detail"];
+                            }
+                        }
+                        id tv = [info2 performSelector:@selector(getTableView)];
+                        if (tv) [tv performSelector:@selector(reloadData)];
                     } @catch(id e) {}
                 }]];
             }
