@@ -362,12 +362,11 @@ static NSMutableArray *pjGroupCells(void) {
     return result;
 }
 
-%hook MainFrameLogicController
-- (void)onMainSessionReload {
-    %orig;
+static void (*orig_MFL_onReload)(id, SEL);
+static void hook_MFL_onReload(id self, SEL _cmd) {
+    orig_MFL_onReload(self, _cmd);
     @try {
-        id me = self;
-        NSMutableArray *arr = [[me valueForKey:@"m_frontSessionArray"] mutableCopy];
+        NSMutableArray *arr = [[self valueForKey:@"m_frontSessionArray"] mutableCopy];
         NSMutableArray *keep = [NSMutableArray array];
         for (id s in arr) {
             NSString *un = [s valueForKey:@"_userName"];
@@ -375,17 +374,9 @@ static NSMutableArray *pjGroupCells(void) {
         }
         NSMutableArray *newArr = [pjGroupCells() mutableCopy];
         [newArr addObjectsFromArray:keep];
-        [me setValue:newArr forKey:@"m_frontSessionArray"];
+        [self setValue:newArr forKey:@"m_frontSessionArray"];
     } @catch(id e) {}
 }
-- (NSUInteger)getSessionCount {
-    NSUInteger c = %orig;
-    @try {
-        g_allSessions = [[self valueForKey:@"m_frontSessionArray"] mutableCopy];
-    } @catch(id e) {}
-    return c;
-}
-%end
 
 static __weak UIViewController *pjCurrentVC = nil;
 
@@ -636,4 +627,5 @@ static void hook_NMFV_vWAppear(id self, SEL _cmd, BOOL animated) {
     MSHookMessageEx(objc_getClass("NewMainFrameViewController"), @selector(viewWillAppear:), (IMP)hook_NMFV_vWAppear, (IMP *)&orig_NMFV_vWAppear);
     MSHookMessageEx(objc_getClass("UITableView"), @selector(reloadData), (IMP)hook_TV_reloadData, (IMP *)&orig_TV_reloadData);
     MSHookMessageEx(objc_getClass("WCTableViewManager"), @selector(tableView:didSelectRowAtIndexPath:), (IMP)hook_TVM_didSelect, (IMP *)&orig_TVM_didSelect);
+    MSHookMessageEx(objc_getClass("MainFrameLogicController"), @selector(onMainSessionReload), (IMP)hook_MFL_onReload, (IMP *)&orig_MFL_onReload);
 }
