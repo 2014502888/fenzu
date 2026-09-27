@@ -406,30 +406,38 @@ static void hook_TV_reloadData(id self, SEL _cmd) {
     orig_TV_reloadData(self, _cmd);
 }
 static void (*orig_TVM_didSelect)(id, SEL, id, id, id);
-static void hook_TVM_didSelect(id self, SEL _cmd, id tableView, id section, id row) {
+static void hook_TVM_didSelect(id self, SEL _cmd, id tableView, id indexPath) {
     @try {
-        // Check if this is our group row
-        id cell = [self performSelector:@selector(cellInfoAtIndexPath:) withObject:section];
+        id cell = [self performSelector:@selector(cellInfoAtIndexPath:) withObject:indexPath];
         id cfg = [cell valueForKey:@"cellConfig"];
         id leftCfg = [cfg valueForKey:@"leftConfig"];
         NSString *title = [leftCfg valueForKey:@"title"];
         if ([title isEqualToString:@"分组"]) {
+            // Get chat room username from current VC
+            UIViewController *top = PJTopmostVC();
+            id contact = [top valueForKey:@"m_chatRoomContact"];
+            NSString *chatName = [contact valueForKey:@"m_nsUsrName"];
             NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
             NSArray *groups = [ud arrayForKey:@"misakaGroups"];
-            if (!groups) groups = @[];
+            if (!groups) groups = @[@"工作群", @"常用群"];
             UIAlertController *a = [UIAlertController alertControllerWithTitle:@"选择分组" message:nil preferredStyle:UIAlertControllerStyleActionSheet];
             for (NSString *g in groups) {
                 [a addAction:[UIAlertAction actionWithTitle:g style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull act) {
-                    // Save group assignment
-                    // Need chat room username - will add later
+                    @try {
+                        NSMutableDictionary *dict = [[ud dictionaryForKey:@"sessionGroups"] mutableCopy];
+                        if (!dict) dict = [NSMutableDictionary dictionary];
+                        if (chatName) [dict setObject:g forKey:chatName];
+                        [ud setObject:dict forKey:@"sessionGroups"];
+                        [ud synchronize];
+                    } @catch(id e) {}
                 }]];
             }
             [a addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
-            [PJTopmostVC() presentViewController:a animated:YES completion:nil];
+            [top presentViewController:a animated:YES completion:nil];
             return;
         }
     } @catch(id e) {}
-    orig_TVM_didSelect(self, _cmd, tableView, section, row);
+    orig_TVM_didSelect(self, _cmd, tableView, indexPath);
 }
 
 %ctor {
