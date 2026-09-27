@@ -437,7 +437,7 @@ static void hook_TVM_didSelect(id self, SEL _cmd, id tableView, id indexPath) {
             return;
         }
     } @catch(id e) {}
-    orig_TVM_didSelect(self, _cmd, tableView, indexPath);
+    orig_TVM_didSelect(self, _cmd, tableView, indexPath, nil);
 }
 
 %ctor {
