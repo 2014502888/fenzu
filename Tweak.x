@@ -351,32 +351,7 @@ static NSString *pjSelectedGroup = nil; // nil = all
     } @catch(id e) {}
     return c;
 }
-static NSArray *PJFilteredSessions(id self) {
-    NSArray *arr = [self valueForKey:@"m_frontSessionArray"];
-    NSDictionary *sg = [[NSUserDefaults standardUserDefaults] dictionaryForKey:@"sessionGroups"];
-    NSMutableArray *result = [NSMutableArray array];
-    for (id s in arr) {
-        NSString *un = [s valueForKey:@"_userName"];
-        if (![sg objectForKey:un]) [result addObject:s]; // only non-grouped
-    }
-    return result;
-}
-- (id)getSessionInfoAtIndexPath:(id)ip {
-    id orig = %orig;
-    @try {
-        NSArray *filtered = PJFilteredSessions(self);
-        NSInteger row = [ip row];
-        if (row < (NSInteger)filtered.count) return filtered[row];
-    } @catch(id e) {}
-    return orig;
-}
-- (NSUInteger)getVisibleSessionCount {
-    NSUInteger c = %orig;
-    @try {
-        return PJFilteredSessions(self).count;
-    } @catch(id e) {}
-    return c;
-}
+
 %end
 
 static __weak UIViewController *pjCurrentVC = nil;
