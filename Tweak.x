@@ -467,10 +467,13 @@ static void pjAddMainGroups(id vc) {
 static void (*orig_TV_reloadData)(id, SEL);
 static void hook_TV_reloadData(id self, SEL _cmd) {
     @try {
-        if (pjCurrentVC && [NSStringFromClass([pjCurrentVC class]) isEqualToString:@"ChatRoomInfoViewController"]) {
-            pjAddGroupRow(pjCurrentVC);
-        } else if (pjCurrentVC && [NSStringFromClass([pjCurrentVC class]) isEqualToString:@"NewMainFrameViewController"]) {
-            pjAddMainGroups(pjCurrentVC);
+        NSString *cls = NSStringFromClass([[self dataSource] class]);
+        if ([cls isEqualToString:@"ChatRoomInfoViewController"]) {
+            pjAddGroupRow([self dataSource]);
+        } else if ([cls isEqualToString:@"MainFrameLogicController"]) {
+            // Main frame - get the VC from the logic controller
+            id delegate = [[self dataSource] valueForKey:@"m_delegate"];
+            if (delegate) pjAddMainGroups(delegate);
         }
     } @catch(id e) {}
     orig_TV_reloadData(self, _cmd);
