@@ -356,34 +356,31 @@ static void pjAddGroupRow(id self) {
                 ((void(*)(id, SEL, NSUInteger))objc_msgSend)(sec1, @selector(removeCellAt:), i);
             }
         }
-        // Try factory method on info
-        id newCell = nil;
-        if ([info respondsToSelector:@selector(getNormalCellWithTitle:)]) {
-            newCell = [info performSelector:@selector(getNormalCellWithTitle:) withObject:@"分组"];
-        }
-        if (!newCell && [info respondsToSelector:@selector(normalCellForSel:target:title:detail:accessoryType:)]) {
-            {
-    NSMethodSignature *sig = [info methodSignatureForSelector:@selector(normalCellForSel:target:title:detail:accessoryType:)];
-    if (sig) {
-        NSInvocation *inv = [NSInvocation invocationWithMethodSignature:sig];
-        [inv setTarget:info];
-        [inv setSelector:@selector(normalCellForSel:target:title:detail:accessoryType:)];
-        id a1 = nil; id a2 = nil; id a3 = @"分组"; id a4 = @"未分组"; id a5 = @0;
-        [inv setArgument:&a1 atIndex:2];
-        [inv setArgument:&a2 atIndex:3];
-        [inv setArgument:&a3 atIndex:4];
-        [inv setArgument:&a4 atIndex:5];
-        [inv setArgument:&a5 atIndex:6];
-        [inv invoke];
-        [inv getReturnValue:&newCell];
-    }
-}
-        }
-        if (newCell) {
-            [sec1 performSelector:@selector(addCell:) withObject:newCell];
-            id tableView = [info performSelector:@selector(getTableView)];
-            if (tableView) [tableView performSelector:@selector(reloadData)];
-        }
+        // Manual cell creation (proven to work)
+        id templateCell = [(NSArray *)cells1 objectAtIndex:0];
+        id templateCfg = [templateCell valueForKey:@"cellConfig"];
+        id templateLeft = [templateCfg valueForKey:@"leftConfig"];
+        Class leftCls = objc_getClass("WCTableViewCellLeftConfig");
+        id newLeft = [[leftCls alloc] init];
+        [newLeft setValue:@"分组" forKey:@"title"];
+        [newLeft setValue:@"未分组" forKey:@"detail"];
+        id font = [templateLeft valueForKey:@"titleFont"];
+        id color = [templateLeft valueForKey:@"titleColor"];
+        id mode = [templateLeft valueForKey:@"mode"];
+        if (font) [newLeft setValue:font forKey:@"titleFont"];
+        if (color) [newLeft setValue:color forKey:@"titleColor"];
+        if (mode) [newLeft setValue:mode forKey:@"mode"];
+        Class cfgCls = objc_getClass("WCTableViewCellNormalConfig");
+        id newCfg = [[cfgCls alloc] init];
+        [newCfg setValue:newLeft forKey:@"leftConfig"];
+        id selStyle = [templateCfg valueForKey:@"selectionStyle"];
+        if (selStyle) [newCfg setValue:selStyle forKey:@"selectionStyle"];
+        Class cellCls = objc_getClass("WCTableViewNormalCellManager");
+        id newCell = [[cellCls alloc] init];
+        [newCell setValue:newCfg forKey:@"cellConfig"];
+        ((void(*)(id, SEL, id, NSUInteger))objc_msgSend)(sec1, @selector(insertCell:At:), newCell, 1);
+        id tableView = [info performSelector:@selector(getTableView)];
+        if (tableView) [tableView performSelector:@selector(reloadData)];
     } @catch(id e) {}
 }
 
