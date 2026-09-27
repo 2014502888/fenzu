@@ -431,7 +431,7 @@ static void pjAddMainGroups(id vc) {
         NSMutableString *log = [NSMutableString stringWithFormat:@"pjAddMainGroups: %@\n", NSStringFromClass([vc class])];
         id info = [vc valueForKey:@"m_tableViewInfo"];
         [log appendFormat:@"info=%@\n", info];
-        if (!info) { [log writeToFile:[NSHomeDirectory() stringByAppendingPathPath:@"Documents/pj_main.txt"] atomically:YES encoding:NSUTF8StringEncoding error:nil]; return; }
+        if (!info) { [log writeToFile:[NSHomeDirectory() stringByAppendingPathComponent:@"Documents/pj_main.txt"] atomically:YES encoding:NSUTF8StringEncoding error:nil]; return; }
         id sections = [info performSelector:@selector(getAllSections)];
         if (!sections || [(NSArray *)sections count] == 0) return;
         id sec0 = [(NSArray *)sections objectAtIndex:0];
