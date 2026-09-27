@@ -341,20 +341,22 @@ static void hook_CRVC_vDAppear(id self, SEL _cmd, BOOL animated) {
     orig_CRVC_vDAppear(self, _cmd, animated);
     @try {
         if (pjAdded) return;
-        id info = [self valueForKey:@"m_tableViewInfo"];
-        if (!info) return;
-        id tableView = [info performSelector:@selector(getTableView)];
-        id sections = [info performSelector:@selector(getAllSections)];
-        id sec1 = [(NSArray *)sections objectAtIndex:1];
-        id cells1 = [sec1 performSelector:@selector(getAllCells)];
-        id templateCell = [(NSArray *)cells1 objectAtIndex:0];
-        id templateCfg = [templateCell valueForKey:@"cellConfig"];
-        id templateLeft = [templateCfg valueForKey:@"leftConfig"];
-        [templateLeft setValue:@"分组(测试)" forKey:@"title"];
-        if (tableView) {
-            [tableView performSelector:@selector(reloadData)];
-        }
         pjAdded = YES;
+        dispatch_async(dispatch_get_main_queue(), ^{
+            @try {
+                id info = [self valueForKey:@"m_tableViewInfo"];
+                if (!info) return;
+                id tableView = [info performSelector:@selector(getTableView)];
+                id sections = [info performSelector:@selector(getAllSections)];
+                id sec1 = [(NSArray *)sections objectAtIndex:1];
+                id cells1 = [sec1 performSelector:@selector(getAllCells)];
+                id templateCell = [(NSArray *)cells1 objectAtIndex:0];
+                id templateCfg = [templateCell valueForKey:@"cellConfig"];
+                id templateLeft = [templateCfg valueForKey:@"leftConfig"];
+                [templateLeft setValue:@"分组(测试)" forKey:@"title"];
+                if (tableView) [tableView performSelector:@selector(reloadData)];
+            } @catch(id e) {}
+        });
     } @catch(id e) {}
 }
 %ctor {
