@@ -413,6 +413,7 @@ static void hook_TV_reloadData(id self, SEL _cmd) {
 }
 static void (*orig_TVM_didSelect)(id, SEL, id, id, id);
 static void hook_TVM_didSelect(id self, SEL _cmd, id tableView, id indexPath) {
+    [[NSString stringWithFormat:@"didSelect: %@", indexPath] writeToFile:[NSHomeDirectory() stringByAppendingPathComponent:@"Documents/pj_tap.txt"] atomically:YES encoding:NSUTF8StringEncoding error:nil];
     @try {
         id cell = [self performSelector:@selector(cellInfoAtIndexPath:) withObject:indexPath];
         id cfg = [cell valueForKey:@"cellConfig"];
