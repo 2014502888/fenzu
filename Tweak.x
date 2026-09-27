@@ -71,8 +71,13 @@ static NSString *PJGetContactName(NSString *userName) {
         Ivar *ivs = class_copyIvarList([info class], &ic);
         for (unsigned int i = 0; i < ic; i++) {
             const char *n = ivar_getName(ivs[i]);
-            id v = object_getIvar(info, ivs[i]);
-            [log appendFormat:@"  %s = %@\n", n, v];
+            const char *type = ivar_getTypeEncoding(ivs[i]);
+            if (type && type[0] == '@') {
+                id v = object_getIvar(info, ivs[i]);
+                [log appendFormat:@"  %s = %@\n", n, v];
+            } else {
+                [log appendFormat:@"  %s (%s)\n", n, type];
+            }
         }
         free(ivs);
     }
