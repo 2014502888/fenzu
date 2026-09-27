@@ -86,39 +86,41 @@ static NSString *PJGetContactName(NSString *userName) {
 - (NSInteger)tableView:(UITableView *)t numberOfRowsInSection:(NSInteger)s { return g_allSessions.count; }
 - (UITableViewCell *)tableView:(UITableView *)t cellForRowAtIndexPath:(NSIndexPath *)ip {
     static NSString *cid = @"c";
-    UITableViewCell *c = [t dequeueReusableCellWithIdentifier:cid] ?: [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cid];
+    UITableViewCell *c = [t dequeueReusableCellWithIdentifier:cid] ?: [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cid];
     id info = g_allSessions[ip.row];
     NSString *un = [info valueForKey:@"userName"];
     NSString *name = PJGetContactName(un);
     NSString *current = [SessionGroups() objectForKey:un];
-    NSMutableString *title = [name mutableCopy];
+    c.textLabel.text = name;
     if (current && ![current isEqualToString:self.groupName]) {
-        [title appendFormat:@"（%@）", current];
+        c.detailTextLabel.text = [NSString stringWithFormat:@"已分类到（%@）群", current];
+        c.detailTextLabel.textColor = [UIColor grayColor];
+    } else {
+        c.detailTextLabel.text = @"";
     }
-    c.textLabel.text = title;
     // Left circle checkmark
     BOOL checked = [current isEqualToString:self.groupName];
-    UIImageView *iv = [[UIImageView alloc] initWithFrame:CGRectMake(15, 12, 24, 24)];
-    iv.layer.cornerRadius = 12;
-    iv.layer.masksToBounds = YES;
-    iv.backgroundColor = checked ? [UIColor colorWithRed:0.2 green:0.75 blue:0.35 alpha:1.0] : [UIColor whiteColor];
-    iv.layer.borderWidth = 1;
-    iv.layer.borderColor = checked ? [UIColor clearColor].CGColor : [UIColor lightGrayColor].CGColor;
+    UIView *cv = [[UIView alloc] initWithFrame:CGRectMake(15, 14, 22, 22)];
+    cv.layer.cornerRadius = 11;
+    cv.layer.masksToBounds = YES;
+    cv.backgroundColor = checked ? [UIColor colorWithRed:0.2 green:0.75 blue:0.35 alpha:1.0] : [UIColor whiteColor];
+    cv.layer.borderWidth = 1;
+    cv.layer.borderColor = checked ? [UIColor clearColor].CGColor : [UIColor lightGrayColor].CGColor;
     if (checked) {
-        UILabel *chk = [[UILabel alloc] initWithFrame:iv.bounds];
+        UILabel *chk = [[UILabel alloc] initWithFrame:cv.bounds];
         chk.text = @"✓";
         chk.textColor = [UIColor whiteColor];
-        chk.font = [UIFont boldSystemFontOfSize:16];
+        chk.font = [UIFont boldSystemFontOfSize:15];
         chk.textAlignment = NSTextAlignmentCenter;
-        [iv addSubview:chk];
+        [cv addSubview:chk];
     }
-    // Remove old checkmark view
     for (UIView *v in c.contentView.subviews) {
         if (v.tag == 99) [v removeFromSuperview];
     }
-    iv.tag = 99;
-    [c.contentView addSubview:iv];
-    c.textLabel.frame = CGRectMake(50, 0, c.contentView.bounds.size.width - 60, 48);
+    cv.tag = 99;
+    [c.contentView addSubview:cv];
+    c.textLabel.frame = CGRectMake(50, c.textLabel.frame.origin.y, c.contentView.bounds.size.width - 60, 20);
+    c.detailTextLabel.frame = CGRectMake(50, c.textLabel.frame.origin.y + 20, c.contentView.bounds.size.width - 60, 16);
     c.accessoryType = UITableViewCellAccessoryNone;
     return c;
 }
