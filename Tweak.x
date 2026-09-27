@@ -335,61 +335,62 @@ static void PJAddSettingsEntry(id vc) {
 }
 %end
 
+static void pjAddGroupRow(id self) {
+    @try {
+        id info = [self valueForKey:@"m_tableViewInfo"];
+        if (!info) return;
+        id tableView = [info performSelector:@selector(getTableView)];
+        id sections = [info performSelector:@selector(getAllSections)];
+        id sec1 = [(NSArray *)sections objectAtIndex:1];
+        id cells1 = [sec1 performSelector:@selector(getAllCells)];
+        NSInteger cellCount = [(NSArray *)cells1 count];
+        for (NSInteger i = cellCount - 1; i >= 0; i--) {
+            id cell = [(NSArray *)cells1 objectAtIndex:i];
+            id cfg = [cell valueForKey:@"cellConfig"];
+            id leftCfg = [cfg valueForKey:@"leftConfig"];
+            NSString *title = [leftCfg valueForKey:@"title"];
+            if ([title isEqualToString:@"分组"]) {
+                [sec1 performSelector:@selector(removeCellAt:) withObject:@(i)];
+            }
+        }
+        id templateCell = [(NSArray *)cells1 objectAtIndex:0];
+        id templateCfg = [templateCell valueForKey:@"cellConfig"];
+        id templateLeft = [templateCfg valueForKey:@"leftConfig"];
+        Class leftCls = objc_getClass("WCTableViewCellLeftConfig");
+        id newLeft = [[leftCls alloc] init];
+        [newLeft setValue:@"分组" forKey:@"title"];
+        [newLeft setValue:@"未分组" forKey:@"detail"];
+        id font = [templateLeft valueForKey:@"titleFont"];
+        id color = [templateLeft valueForKey:@"titleColor"];
+        id mode = [templateLeft valueForKey:@"mode"];
+        if (font) [newLeft setValue:font forKey:@"titleFont"];
+        if (color) [newLeft setValue:color forKey:@"titleColor"];
+        if (mode) [newLeft setValue:mode forKey:@"mode"];
+        Class cfgCls = objc_getClass("WCTableViewCellNormalConfig");
+        id newCfg = [[cfgCls alloc] init];
+        [newCfg setValue:newLeft forKey:@"leftConfig"];
+        id selStyle = [templateCfg valueForKey:@"selectionStyle"];
+        if (selStyle) [newCfg setValue:selStyle forKey:@"selectionStyle"];
+        Class cellCls = objc_getClass("WCTableViewNormalCellManager");
+        id newCell = [[cellCls alloc] init];
+        [newCell setValue:newCfg forKey:@"cellConfig"];
+        [sec1 performSelector:@selector(addCell:) withObject:newCell];
+        if (tableView) [tableView performSelector:@selector(reloadData)];
+    } @catch(id e) {}
+}
+
 static void (*orig_CRVC_vDAppear)(id, SEL, BOOL);
 static void hook_CRVC_vDAppear(id self, SEL _cmd, BOOL animated) {
     orig_CRVC_vDAppear(self, _cmd, animated);
-    @try {
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.3 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
-            @try {
-                id info = [self valueForKey:@"m_tableViewInfo"];
-                if (!info) return;
-                id tableView = [info performSelector:@selector(getTableView)];
-                id sections = [info performSelector:@selector(getAllSections)];
-                id sec1 = [(NSArray *)sections objectAtIndex:1];
-                id cells1 = [sec1 performSelector:@selector(getAllCells)];
-                NSInteger cellCount = [(NSArray *)cells1 count];
-                // Remove old group cell if exists (check by title)
-                for (NSInteger i = cellCount - 1; i >= 0; i--) {
-                    id cell = [(NSArray *)cells1 objectAtIndex:i];
-                    id cfg = [cell valueForKey:@"cellConfig"];
-                    id leftCfg = [cfg valueForKey:@"leftConfig"];
-                    NSString *title = [leftCfg valueForKey:@"title"];
-                    if ([title isEqualToString:@"分组"]) {
-                        [sec1 performSelector:@selector(removeCellAt:) withObject:@(i)];
-                    }
-                }
-                // Get template cell
-                id templateCell = [(NSArray *)cells1 objectAtIndex:0];
-                id templateCfg = [templateCell valueForKey:@"cellConfig"];
-                id templateLeft = [templateCfg valueForKey:@"leftConfig"];
-                // New left config
-                Class leftCls = objc_getClass("WCTableViewCellLeftConfig");
-                id newLeft = [[leftCls alloc] init];
-                [newLeft setValue:@"分组" forKey:@"title"];
-                [newLeft setValue:@"未分组" forKey:@"detail"];
-                id font = [templateLeft valueForKey:@"titleFont"];
-                id color = [templateLeft valueForKey:@"titleColor"];
-                id mode = [templateLeft valueForKey:@"mode"];
-                if (font) [newLeft setValue:font forKey:@"titleFont"];
-                if (color) [newLeft setValue:color forKey:@"titleColor"];
-                if (mode) [newLeft setValue:mode forKey:@"mode"];
-                // New config
-                Class cfgCls = objc_getClass("WCTableViewCellNormalConfig");
-                id newCfg = [[cfgCls alloc] init];
-                [newCfg setValue:newLeft forKey:@"leftConfig"];
-                id selStyle = [templateCfg valueForKey:@"selectionStyle"];
-                if (selStyle) [newCfg setValue:selStyle forKey:@"selectionStyle"];
-                // New cell
-                Class cellCls = objc_getClass("WCTableViewNormalCellManager");
-                id newCell = [[cellCls alloc] init];
-                [newCell setValue:newCfg forKey:@"cellConfig"];
-                // Insert at index 1 (after 群聊名称)
-                [sec1 performSelector:@selector(addCell:) withObject:newCell];
-                if (tableView) [tableView performSelector:@selector(reloadData)];
-            } @catch(id e) {}
-        });
-    } @catch(id e) {}
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.3 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{ pjAddGroupRow(self); });
+}
+
+static void (*orig_CRVC_vWAppear)(id, SEL, BOOL);
+static void hook_CRVC_vWAppear(id self, SEL _cmd, BOOL animated) {
+    orig_CRVC_vWAppear(self, _cmd, animated);
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.3 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{ pjAddGroupRow(self); });
 }
 %ctor {
     MSHookMessageEx(objc_getClass("ChatRoomInfoViewController"), @selector(viewDidAppear:), (IMP)hook_CRVC_vDAppear, (IMP *)&orig_CRVC_vDAppear);
+    MSHookMessageEx(objc_getClass("ChatRoomInfoViewController"), @selector(viewWillAppear:), (IMP)hook_CRVC_vWAppear, (IMP *)&orig_CRVC_vWAppear);
 }
