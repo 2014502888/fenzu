@@ -86,18 +86,40 @@ static NSString *PJGetContactName(NSString *userName) {
 - (NSInteger)tableView:(UITableView *)t numberOfRowsInSection:(NSInteger)s { return g_allSessions.count; }
 - (UITableViewCell *)tableView:(UITableView *)t cellForRowAtIndexPath:(NSIndexPath *)ip {
     static NSString *cid = @"c";
-    UITableViewCell *c = [t dequeueReusableCellWithIdentifier:cid] ?: [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cid];
+    UITableViewCell *c = [t dequeueReusableCellWithIdentifier:cid] ?: [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cid];
     id info = g_allSessions[ip.row];
     NSString *un = [info valueForKey:@"userName"];
-    NSString *name = [info valueForKey:@"m_nsNickName"];
-    if (!name) name = [info valueForKey:@"displayName"];
-    if (!name) name = [info valueForKey:@"nickName"];
-    if (!name) name = [info valueForKey:@"name"];
-    name = PJGetContactName(un);
-    c.textLabel.text = name;
-    c.detailTextLabel.text = un;
+    NSString *name = PJGetContactName(un);
     NSString *current = [SessionGroups() objectForKey:un];
-    c.accessoryType = [current isEqualToString:self.groupName] ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
+    NSMutableString *title = [name mutableCopy];
+    if (current && ![current isEqualToString:self.groupName]) {
+        [title appendFormat:@"（%@）", current];
+    }
+    c.textLabel.text = title;
+    // Left circle checkmark
+    BOOL checked = [current isEqualToString:self.groupName];
+    UIImageView *iv = [[UIImageView alloc] initWithFrame:CGRectMake(15, 12, 24, 24)];
+    iv.layer.cornerRadius = 12;
+    iv.layer.masksToBounds = YES;
+    iv.backgroundColor = checked ? [UIColor colorWithRed:0.2 green:0.75 blue:0.35 alpha:1.0] : [UIColor whiteColor];
+    iv.layer.borderWidth = 1;
+    iv.layer.borderColor = checked ? [UIColor clearColor].CGColor : [UIColor lightGrayColor].CGColor;
+    if (checked) {
+        UILabel *chk = [[UILabel alloc] initWithFrame:iv.bounds];
+        chk.text = @"✓";
+        chk.textColor = [UIColor whiteColor];
+        chk.font = [UIFont boldSystemFontOfSize:16];
+        chk.textAlignment = NSTextAlignmentCenter;
+        [iv addSubview:chk];
+    }
+    // Remove old checkmark view
+    for (UIView *v in c.contentView.subviews) {
+        if (v.tag == 99) [v removeFromSuperview];
+    }
+    iv.tag = 99;
+    [c.contentView addSubview:iv];
+    c.textLabel.frame = CGRectMake(50, 0, c.contentView.bounds.size.width - 60, 48);
+    c.accessoryType = UITableViewCellAccessoryNone;
     return c;
 }
 - (void)tableView:(UITableView *)t didSelectRowAtIndexPath:(NSIndexPath *)ip {
