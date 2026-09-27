@@ -61,25 +61,30 @@ static NSString *PJGetContactName(NSString *userName) {
     NSMutableString *log = [NSMutableString stringWithFormat:@"userName=%@\n", userName];
     NSString *result = userName;
     @try {
-        NSArray *tryClasses = @[
-            @"MMServiceCenter", @"ContactsDataLogic", @"WAContactGetter",
-            @"MMCommonContactCenter", @"ContactDataUtil", @"WCContactUtil",
-            @"MMSessionContentUtil", @"MMContactService", @"ContactService",
-            @"MMContactLogic", @"ContactLogic", @"WAContactService",
-            @"MMFriendDataLogic", @"ChatRoomDataLogic", @"MMChatRoomLogic",
-            @"MMSessionLogic", @"SessionLogic", @"MainFrameLogicController"
-        ];
-        for (NSString *cn in tryClasses) {
-            Class c = objc_getClass([cn UTF8String]);
-            [log appendFormat:@"\n=== %@: %@ ===\n", cn, c ? @"FOUND" : @"nil"];
-            if (!c) continue;
-            // Dump class methods
-            unsigned int mc;
-            Method *ms = class_copyMethodList(object_getClass(c), &mc);
-            for (unsigned int i = 0; i < mc; i++) {
-                [log appendFormat:@"  +%s\n", sel_getName(method_getName(ms[i]))];
+        // Try to get MMServiceCenter instance
+        Class scCls = objc_getClass("MMServiceCenter");
+        // Try all possible shared methods
+        for (NSString *s in @[@"defaultCenter", @"sharedCenter", @"sharedInstance", @"center", @"defaultInstance", @"shared"]) {
+            SEL sel = NSSelectorFromString(s);
+            if ([scCls respondsToSelector:sel]) {
+                id inst = [scCls performSelector:sel];
+                [log appendFormat:@"MMServiceCenter via %@ = %@\n", s, inst];
+                if (inst) {
+                    Class logicCls = objc_getClass("ContactsDataLogic");
+                    id logic = [inst performSelector:@selector(getService:) withObject:logicCls];
+                    [log appendFormat:@"ContactsDataLogic = %@\n", logic];
+                    if (logic) {
+                        // Dump instance methods of logic
+                        unsigned int ic;
+                        Method *ims = class_copyMethodList(logicCls, &ic);
+                        for (unsigned int i = 0; i < ic; i++) {
+                            [log appendFormat:@"  -%s\n", sel_getName(method_getName(ims[i]))];
+                        }
+                        free(ims);
+                    }
+                }
+                break;
             }
-            free(ms);
         }
     } @catch(id e) { [log appendFormat:@"err=%@\n", e]; }
     [log writeToFile:[NSHomeDirectory() stringByAppendingPathComponent:@"Documents/pj_contact.txt"] atomically:YES encoding:NSUTF8StringEncoding error:nil];
