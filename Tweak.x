@@ -428,10 +428,10 @@ static void hook_CRVC_vDAppear(id self, SEL _cmd, BOOL animated) {
 
 static void pjAddMainGroups(id vc) {
     @try {
-        [[NSString stringWithFormat:@"pjAddMainGroups: %@", NSStringFromClass([vc class])] writeToFile:[NSHomeDirectory() stringByAppendingPathComponent:@"Documents/pj_main.txt"] atomically:YES encoding:NSUTF8StringEncoding error:nil];
-        if (![NSStringFromClass([vc class]) isEqualToString:@"NewMainFrameViewController"]) return;
+        NSMutableString *log = [NSMutableString stringWithFormat:@"pjAddMainGroups: %@\n", NSStringFromClass([vc class])];
         id info = [vc valueForKey:@"m_tableViewInfo"];
-        if (!info) return;
+        [log appendFormat:@"info=%@\n", info];
+        if (!info) { [log writeToFile:[NSHomeDirectory() stringByAppendingPathPath:@"Documents/pj_main.txt"] atomically:YES encoding:NSUTF8StringEncoding error:nil]; return; }
         id sections = [info performSelector:@selector(getAllSections)];
         if (!sections || [(NSArray *)sections count] == 0) return;
         id sec0 = [(NSArray *)sections objectAtIndex:0];
