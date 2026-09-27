@@ -63,36 +63,20 @@ static void PJWriteLog(NSString *s) {
 static NSString *PJGetContactName(NSString *userName) {
     NSMutableString *log = [NSMutableString stringWithFormat:@"userName=%@\n", userName];
     NSString *result = userName;
-    Class scCls = objc_getClass("MMServiceCenter");
-    [log appendFormat:@"scCls=%@\n", scCls];
-    PJWriteLog(log);
-    for (NSString *s in @[@"defaultCenter", @"sharedCenter", @"sharedInstance", @"center"]) {
-        SEL sel = NSSelectorFromString(s);
-        BOOL resp = [scCls respondsToSelector:sel];
-        [log appendFormat:@"try %@ -> %@\n", s, resp ? @"YES" : @"NO"];
-        PJWriteLog(log);
-        if (resp) {
-            id inst = [scCls performSelector:sel];
-            [log appendFormat:@"inst=%@\n", inst];
-            PJWriteLog(log);
-            if (inst) {
-                Class logicCls = objc_getClass("ContactsDataLogic");
-                id logic = [inst performSelector:@selector(getService:) withObject:logicCls];
-                [log appendFormat:@"logic=%@\n", logic];
-                PJWriteLog(log);
-                if (logic) {
-                    unsigned int ic;
-                    Method *ims = class_copyMethodList(logicCls, &ic);
-                    for (unsigned int i = 0; i < ic; i++) {
-                        [log appendFormat:@"  -%s\n", sel_getName(method_getName(ims[i]))];
-                    }
-                    free(ims);
-                    PJWriteLog(log);
-                }
-            }
-            break;
+    // Dump all ivars of first session object
+    if (g_allSessions.count > 0) {
+        id info = g_allSessions[0];
+        [log appendFormat:@"class=%@\n", [info class]];
+        unsigned int ic;
+        Ivar *ivs = class_copyIvarList([info class], &ic);
+        for (unsigned int i = 0; i < ic; i++) {
+            const char *n = ivar_getName(ivs[i]);
+            id v = object_getIvar(info, ivs[i]);
+            [log appendFormat:@"  %s = %@\n", n, v];
         }
+        free(ivs);
     }
+    PJWriteLog(log);
     return result;
 }
 
