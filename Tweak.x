@@ -413,7 +413,7 @@ static void hook_TV_reloadData(id self, SEL _cmd) {
 }
 static void (*orig_TVM_didSelect)(id, SEL, id, id, id);
 static void hook_TVM_didSelect(id self, SEL _cmd, id tableView, id indexPath) {
-    [[NSString stringWithFormat:@"didSelect: %@", indexPath] writeToFile:[NSHomeDirectory() stringByAppendingPathComponent:@"Documents/pj_tap.txt"] atomically:YES encoding:NSUTF8StringEncoding error:nil];
+    
     @try {
         id cell = [self performSelector:@selector(cellInfoAtIndexPath:) withObject:indexPath];
         id cfg = [cell valueForKey:@"cellConfig"];
@@ -432,7 +432,7 @@ static void hook_TVM_didSelect(id self, SEL _cmd, id tableView, id indexPath) {
             if (!chatName) {
                 chatName = [top valueForKey:@"m_nsChatRoomUserName"];
             }
-            [[NSString stringWithFormat:@"chatName=%@", chatName] writeToFile:[NSHomeDirectory() stringByAppendingPathComponent:@"Documents/pj_chat.txt"] atomically:YES encoding:NSUTF8StringEncoding error:nil];
+            
             NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
             NSArray *groups = [ud arrayForKey:@"misakaGroups"];
             if (!groups || [groups count] == 0) groups = @[];
@@ -445,9 +445,6 @@ static void hook_TVM_didSelect(id self, SEL _cmd, id tableView, id indexPath) {
                         if (chatName) [dict setObject:g forKey:chatName];
                         [ud setObject:dict forKey:@"sessionGroups"];
                         [ud synchronize];
-                        UIAlertController *ok = [UIAlertController alertControllerWithTitle:@"已分组" message:[NSString stringWithFormat:@"已归入: %@", g] preferredStyle:UIAlertControllerStyleAlert];
-                        [ok addAction:[UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:nil]];
-                        [top presentViewController:ok animated:YES completion:nil];
                         // Update UI
                         id info2 = [top valueForKey:@"m_tableViewInfo"];
                         id sections2 = [info2 performSelector:@selector(getAllSections)];
