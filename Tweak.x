@@ -430,7 +430,7 @@ static void pjAddMainGroups(id vc) {
     @try {
         id logic = [vc valueForKey:@"m_mainFrameLogicController"];
         id info = [logic valueForKey:@"m_tableViewInfo"];
-        NSMutableString *log = [NSMutableString stringWithFormat:@"logic=%@ info=%@\n", logic, info];
+        NSMutableString *pjlog = [NSMutableString stringWithFormat:@"logic=%@ info=%@\n", logic, info];
         // Dump logic ivars
         unsigned int ic;
         Ivar *ivs = class_copyIvarList([logic class], &ic);
@@ -439,11 +439,11 @@ static void pjAddMainGroups(id vc) {
             const char *type = ivar_getTypeEncoding(ivs[i]);
             if (type && type[0] == '@') {
                 id v = object_getIvar(logic, ivs[i]);
-                if (v) [log appendFormat:@"  %s = %@\n", n, v];
+                if (v) [pjlog appendFormat:@"  %s = %@\n", n, v];
             }
         }
         free(ivs);
-        [log writeToFile:[NSHomeDirectory() stringByAppendingPathComponent:@"Documents/pj_main.txt"] atomically:YES encoding:NSUTF8StringEncoding error:nil];
+        [pjlog writeToFile:[NSHomeDirectory() stringByAppendingPathComponent:@"Documents/pj_main.txt"] atomically:YES encoding:NSUTF8StringEncoding error:nil];
         if (!info) return;
         id sections = [info performSelector:@selector(getAllSections)];
         NSMutableString *log = [NSMutableString stringWithFormat:@"sections=%lu\n", (unsigned long)[(NSArray *)sections count]];
@@ -452,7 +452,7 @@ static void pjAddMainGroups(id vc) {
             id cells = [sec performSelector:@selector(getAllCells)];
             [log appendFormat:@"sec%lu cells=%lu\n", (long)i, (unsigned long)[(NSArray *)cells count]];
         }
-        [log writeToFile:[NSHomeDirectory() stringByAppendingPathComponent:@"Documents/pj_main.txt"] atomically:YES encoding:NSUTF8StringEncoding error:nil];
+        [pjlog writeToFile:[NSHomeDirectory() stringByAppendingPathComponent:@"Documents/pj_main.txt"] atomically:YES encoding:NSUTF8StringEncoding error:nil];
         if (!sections || [(NSArray *)sections count] == 0) return;
         id sec0 = [(NSArray *)sections objectAtIndex:0];
         id cells = [sec0 performSelector:@selector(getAllCells)];
