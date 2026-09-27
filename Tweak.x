@@ -345,6 +345,7 @@ static void pjAddGroupRow(id self) {
         if ([(NSArray *)sections count] < 2) return;
         id sec1 = [(NSArray *)sections objectAtIndex:1];
         id cells1 = [sec1 performSelector:@selector(getAllCells)];
+        // Remove old
         NSInteger cellCount = [(NSArray *)cells1 count];
         for (NSInteger i = cellCount - 1; i >= 0; i--) {
             id cell = [(NSArray *)cells1 objectAtIndex:i];
@@ -355,28 +356,19 @@ static void pjAddGroupRow(id self) {
                 ((void(*)(id, SEL, NSUInteger))objc_msgSend)(sec1, @selector(removeCellAt:), i);
             }
         }
-        id templateCell = [(NSArray *)cells1 objectAtIndex:0];
-        id templateCfg = [templateCell valueForKey:@"cellConfig"];
-        id templateLeft = [templateCfg valueForKey:@"leftConfig"];
-        Class leftCls = objc_getClass("WCTableViewCellLeftConfig");
-        id newLeft = [[leftCls alloc] init];
-        [newLeft setValue:@"分组" forKey:@"title"];
-        [newLeft setValue:@"未分组" forKey:@"detail"];
-        id font = [templateLeft valueForKey:@"titleFont"];
-        id color = [templateLeft valueForKey:@"titleColor"];
-        id mode = [templateLeft valueForKey:@"mode"];
-        if (font) [newLeft setValue:font forKey:@"titleFont"];
-        if (color) [newLeft setValue:color forKey:@"titleColor"];
-        if (mode) [newLeft setValue:mode forKey:@"mode"];
-        Class cfgCls = objc_getClass("WCTableViewCellNormalConfig");
-        id newCfg = [[cfgCls alloc] init];
-        [newCfg setValue:newLeft forKey:@"leftConfig"];
-        id selStyle = [templateCfg valueForKey:@"selectionStyle"];
-        if (selStyle) [newCfg setValue:selStyle forKey:@"selectionStyle"];
-        Class cellCls = objc_getClass("WCTableViewNormalCellManager");
-        id newCell = [[cellCls alloc] init];
-        [newCell setValue:newCfg forKey:@"cellConfig"];
-        ((void(*)(id, SEL, id, NSUInteger))objc_msgSend)(sec1, @selector(insertCell:At:), newCell, 1);
+        // Try factory method on info
+        id newCell = nil;
+        if ([info respondsToSelector:@selector(getNormalCellWithTitle:)]) {
+            newCell = [info performSelector:@selector(getNormalCellWithTitle:) withObject:@"分组"];
+        }
+        if (!newCell && [info respondsToSelector:@selector(normalCellForSel:target:title:detail:accessoryType:)]) {
+            newCell = [info performSelector:@selector(normalCellForSel:target:title:detail:accessoryType:) withObject:nil withObject:nil withObject:@"分组" withObject:@"未分组" withObject:@0];
+        }
+        if (newCell) {
+            [sec1 performSelector:@selector(addCell:) withObject:newCell];
+            id tableView = [info performSelector:@selector(getTableView)];
+            if (tableView) [tableView performSelector:@selector(reloadData)];
+        }
     } @catch(id e) {}
 }
 
@@ -392,9 +384,7 @@ static void hook_TV_reloadData(id self, SEL _cmd) {
     orig_TV_reloadData(self, _cmd);
     @try {
         if (pjCurrentVC) {
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.1 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
-                pjAddGroupRow(pjCurrentVC);
-            });
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.1 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{ pjAddGroupRow(pjCurrentVC); });
         }
     } @catch(id e) {}
 }
