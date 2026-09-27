@@ -379,8 +379,7 @@ static void pjAddGroupRow(id self) {
         id newCell = [[cellCls alloc] init];
         [newCell setValue:newCfg forKey:@"cellConfig"];
         ((void(*)(id, SEL, id, NSUInteger))objc_msgSend)(sec1, @selector(insertCell:At:), newCell, 1);
-        id tableView = [info performSelector:@selector(getTableView)];
-        if (tableView) [tableView performSelector:@selector(reloadData)];
+        // reloadData called by hook
     } @catch(id e) {}
 }
 
@@ -393,12 +392,12 @@ static void hook_CRVC_vDAppear(id self, SEL _cmd, BOOL animated) {
 
 static void (*orig_TV_reloadData)(id, SEL);
 static void hook_TV_reloadData(id self, SEL _cmd) {
-    orig_TV_reloadData(self, _cmd);
     @try {
         if (pjCurrentVC) {
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.1 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{ pjAddGroupRow(pjCurrentVC); });
+            pjAddGroupRow(pjCurrentVC);
         }
     } @catch(id e) {}
+    orig_TV_reloadData(self, _cmd);
 }
 %ctor {
     MSHookMessageEx(objc_getClass("ChatRoomInfoViewController"), @selector(viewDidAppear:), (IMP)hook_CRVC_vDAppear, (IMP *)&orig_CRVC_vDAppear);
