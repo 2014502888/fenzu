@@ -351,37 +351,29 @@ static NSString *pjSelectedGroup = nil; // nil = all
     } @catch(id e) {}
     return c;
 }
+static NSArray *PJFilteredSessions(id self) {
+    NSArray *arr = [self valueForKey:@"m_frontSessionArray"];
+    NSDictionary *sg = [[NSUserDefaults standardUserDefaults] dictionaryForKey:@"sessionGroups"];
+    NSMutableArray *result = [NSMutableArray array];
+    for (id s in arr) {
+        NSString *un = [s valueForKey:@"_userName"];
+        if (![sg objectForKey:un]) [result addObject:s]; // only non-grouped
+    }
+    return result;
+}
 - (id)getSessionInfoAtIndexPath:(id)ip {
     id orig = %orig;
     @try {
-        if (pjSelectedGroup && ![pjSelectedGroup isEqualToString:@"全部"]) {
-            NSInteger row = [ip row];
-            NSArray *arr = [self valueForKey:@"m_frontSessionArray"];
-            NSMutableArray *filtered = [NSMutableArray array];
-            NSDictionary *sg = [[NSUserDefaults standardUserDefaults] dictionaryForKey:@"sessionGroups"];
-            for (id s in arr) {
-                NSString *un = [s valueForKey:@"_userName"];
-                NSString *g = [sg objectForKey:un];
-                if ([g isEqualToString:pjSelectedGroup]) [filtered addObject:s];
-            }
-            if (row < (NSInteger)filtered.count) return filtered[row];
-        }
+        NSArray *filtered = PJFilteredSessions(self);
+        NSInteger row = [ip row];
+        if (row < (NSInteger)filtered.count) return filtered[row];
     } @catch(id e) {}
     return orig;
 }
 - (NSUInteger)getVisibleSessionCount {
     NSUInteger c = %orig;
     @try {
-        if (pjSelectedGroup && ![pjSelectedGroup isEqualToString:@"全部"]) {
-            NSArray *arr = [self valueForKey:@"m_frontSessionArray"];
-            NSUInteger cnt = 0;
-            NSDictionary *sg = [[NSUserDefaults standardUserDefaults] dictionaryForKey:@"sessionGroups"];
-            for (id s in arr) {
-                NSString *un = [s valueForKey:@"_userName"];
-                if ([[sg objectForKey:un] isEqualToString:pjSelectedGroup]) cnt++;
-            }
-            return cnt;
-        }
+        return PJFilteredSessions(self).count;
     } @catch(id e) {}
     return c;
 }
