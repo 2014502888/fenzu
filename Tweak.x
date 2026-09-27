@@ -340,12 +340,48 @@ static void PJAddSettingsEntry(id vc) {
 }
 %end
 
+static NSString *pjSelectedGroup = nil; // nil = all
+
 %hook MainFrameLogicController
 - (NSUInteger)getSessionCount {
     NSUInteger c = %orig;
     @try {
         id me = self;
         g_allSessions = [[me valueForKey:@"m_frontSessionArray"] mutableCopy];
+    } @catch(id e) {}
+    return c;
+}
+- (id)getSessionInfoAtIndexPath:(id)ip {
+    id orig = %orig;
+    @try {
+        if (pjSelectedGroup && ![pjSelectedGroup isEqualToString:@"全部"]) {
+            NSInteger row = [ip row];
+            NSArray *arr = [self valueForKey:@"m_frontSessionArray"];
+            NSMutableArray *filtered = [NSMutableArray array];
+            NSDictionary *sg = [[NSUserDefaults standardUserDefaults] dictionaryForKey:@"sessionGroups"];
+            for (id s in arr) {
+                NSString *un = [s valueForKey:@"_userName"];
+                NSString *g = [sg objectForKey:un];
+                if ([g isEqualToString:pjSelectedGroup]) [filtered addObject:s];
+            }
+            if (row < (NSInteger)filtered.count) return filtered[row];
+        }
+    } @catch(id e) {}
+    return orig;
+}
+- (NSUInteger)getVisibleSessionCount {
+    NSUInteger c = %orig;
+    @try {
+        if (pjSelectedGroup && ![pjSelectedGroup isEqualToString:@"全部"]) {
+            NSArray *arr = [self valueForKey:@"m_frontSessionArray"];
+            NSUInteger cnt = 0;
+            NSDictionary *sg = [[NSUserDefaults standardUserDefaults] dictionaryForKey:@"sessionGroups"];
+            for (id s in arr) {
+                NSString *un = [s valueForKey:@"_userName"];
+                if ([[sg objectForKey:un] isEqualToString:pjSelectedGroup]) cnt++;
+            }
+            return cnt;
+        }
     } @catch(id e) {}
     return c;
 }
