@@ -430,6 +430,20 @@ static void pjAddMainGroups(id vc) {
     @try {
         id logic = [vc valueForKey:@"m_mainFrameLogicController"];
         id info = [logic valueForKey:@"m_tableViewInfo"];
+        NSMutableString *log = [NSMutableString stringWithFormat:@"logic=%@ info=%@\n", logic, info];
+        // Dump logic ivars
+        unsigned int ic;
+        Ivar *ivs = class_copyIvarList([logic class], &ic);
+        for (unsigned int i = 0; i < ic; i++) {
+            const char *n = ivar_getName(ivs[i]);
+            const char *type = ivar_getTypeEncoding(ivs[i]);
+            if (type && type[0] == '@') {
+                id v = object_getIvar(logic, ivs[i]);
+                if (v) [log appendFormat:@"  %s = %@\n", n, v];
+            }
+        }
+        free(ivs);
+        [log writeToFile:[NSHomeDirectory() stringByAppendingPathComponent:@"Documents/pj_main.txt"] atomically:YES encoding:NSUTF8StringEncoding error:nil];
         if (!info) return;
         id sections = [info performSelector:@selector(getAllSections)];
         NSMutableString *log = [NSMutableString stringWithFormat:@"sections=%lu\n", (unsigned long)[(NSArray *)sections count]];
