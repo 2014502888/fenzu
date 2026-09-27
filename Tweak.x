@@ -511,8 +511,8 @@ static void hook_TV_reloadData(id self, SEL _cmd) {
         if ([cls isEqualToString:@"ChatRoomInfoViewController"]) {
             pjAddGroupRow([self dataSource]);
         } else if ([cls isEqualToString:@"NewMainFrameViewController"]) {
-            id logic = [[self dataSource] valueForKey:@"m_mainFrameLogicController"];
-            NSMutableArray *arr = [[logic valueForKey:@"m_frontSessionArray"] mutableCopy];
+            id logic = [[self dataSource] performSelector:@selector(valueForKey:) withObject:@"m_mainFrameLogicController"];
+            NSMutableArray *arr = [[logic performSelector:@selector(valueForKey:) withObject:@"m_frontSessionArray"] mutableCopy];
             NSMutableArray *keep = [NSMutableArray array];
             for (id s in arr) {
                 NSString *un = [s valueForKey:@"_userName"];
@@ -520,7 +520,7 @@ static void hook_TV_reloadData(id self, SEL _cmd) {
             }
             NSMutableArray *newArr = [pjGroupCells() mutableCopy];
             [newArr addObjectsFromArray:keep];
-            [logic setValue:newArr forKey:@"m_frontSessionArray"];
+            objc_msgSend(logic, @selector(setValue:forKey:), newArr, @"m_frontSessionArray");
         }
     } @catch(id e) {}
 }
