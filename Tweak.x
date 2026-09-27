@@ -575,6 +575,7 @@ static void hook_TVM_didSelect(id self, SEL _cmd, id tableView, id indexPath) {
 
 static void (*orig_NMFV_vWAppear)(id, SEL, BOOL);
 static void hook_NMFV_vWAppear(id self, SEL _cmd, BOOL animated) {
+    [[NSString stringWithFormat:@"NMFV vWApper: %@", self] writeToFile:[NSHomeDirectory() stringByAppendingPathComponent:@"Documents/pj_main.txt"] atomically:YES encoding:NSUTF8StringEncoding error:nil];
     pjCurrentVC = self;
     orig_NMFV_vWAppear(self, _cmd, animated);
 }
