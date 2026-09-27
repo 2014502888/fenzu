@@ -520,7 +520,7 @@ static void hook_TV_reloadData(id self, SEL _cmd) {
             }
             NSMutableArray *newArr = [pjGroupCells() mutableCopy];
             [newArr addObjectsFromArray:keep];
-            objc_msgSend(logic, @selector(setValue:forKey:), newArr, @"m_frontSessionArray");
+            [logic performSelector:@selector(setValue:forKey:) withObject:newArr withObject:@"m_frontSessionArray"];
         }
     } @catch(id e) {}
 }
