@@ -61,24 +61,34 @@ static NSString *PJGetContactName(NSString *userName) {
     NSMutableString *log = [NSMutableString stringWithFormat:@"userName=%@\n", userName];
     NSString *result = userName;
     @try {
-        // Dump MMServiceCenter class methods
-        Class svcCls = objc_getClass("MMServiceCenter");
-        unsigned int mc;
-        Method *ms = class_copyMethodList(object_getClass(svcCls), &mc);
-        for (unsigned int i = 0; i < mc; i++) {
-            [log appendFormat:@"clsMethod: %s\n", sel_getName(method_getName(ms[i]))];
-        }
-        free(ms);
-        // Try common shared instance methods
-        NSArray *sharedSels = @[@"defaultCenter", @"sharedCenter", @"sharedInstance", @"center"];
-        id center = nil;
-        for (NSString *s in sharedSels) {
-            SEL sel = NSSelectorFromString(s);
-            if ([svcCls respondsToSelector:sel]) {
-                center = [svcCls performSelector:sel];
-                [log appendFormat:@"found center via %@: %@\n", s, center];
-                break;
+        // Try WAContactGetter from MainFrameLogicController
+        // Try direct: NSClassFromString
+        Class cls = objc_getClass("WAContactGetter");
+        [log appendFormat:@"WAContactGetter=%@\n", cls];
+        // Try MMCommonContactCenter
+        Class cls2 = objc_getClass("MMCommonContactCenter");
+        [log appendFormat:@"MMCommonContactCenter=%@\n", cls2];
+        // Try MMSessionContentUtil
+        Class cls3 = objc_getClass("MMSessionContentUtil");
+        [log appendFormat:@"MMSessionContentUtil=%@\n", cls3];
+        // Try ContactDataUtil
+        Class cls4 = objc_getClass("ContactDataUtil");
+        [log appendFormat:@"ContactDataUtil=%@\n", cls4];
+        // Try WCAvatarView / ContactUtil
+        Class cls5 = objc_getClass("WCContactUtil");
+        [log appendFormat:@"WCContactUtil=%@\n", cls5];
+        // Try sharedInstance on each
+        for (Class c in @[cls2, cls3, cls4, cls5]) {
+            if (!c) continue;
+            unsigned int mc;
+            Method *ms = class_copyMethodList(object_getClass(c), &mc);
+            for (unsigned int i = 0; i < mc; i++) {
+                NSString *m = [NSString stringWithUTF8String:sel_getName(method_getName(ms[i]))];
+                if ([m containsString:@"shared"] || [m containsString:@"default"] || [m containsString:@"center"]) {
+                    [log appendFormat:@"%@: %@\n", NSStringFromClass(c), m];
+                }
             }
+            free(ms);
         }
     } @catch(id e) { [log appendFormat:@"err=%@\n", e]; }
     [log writeToFile:[NSHomeDirectory() stringByAppendingPathComponent:@"Documents/pj_contact.txt"] atomically:YES encoding:NSUTF8StringEncoding error:nil];
