@@ -468,6 +468,10 @@ static void hook_TV_reloadData(id self, SEL _cmd) {
     @try {
         if (pjCurrentVC && [NSStringFromClass([pjCurrentVC class]) isEqualToString:@"ChatRoomInfoViewController"]) {
             pjAddGroupRow(pjCurrentVC);
+        } else if (pjCurrentVC && [NSStringFromClass([pjCurrentVC class]) isEqualToString:@"NewMainFrameViewController"]) {
+            pjAddMainGroups(pjCurrentVC);
+        }
+            pjAddGroupRow(pjCurrentVC);
         }
     } @catch(id e) {}
     orig_TV_reloadData(self, _cmd);
@@ -570,9 +574,16 @@ static void hook_TVM_didSelect(id self, SEL _cmd, id tableView, id indexPath) {
 }
 @end
 
+static void (*orig_NMFV_vWAppear)(id, SEL, BOOL);
+static void hook_NMFV_vWAppear(id self, SEL _cmd, BOOL animated) {
+    pjCurrentVC = self;
+    orig_NMFV_vWAppear(self, _cmd, animated);
+}
+
 %ctor {
     MSHookMessageEx(objc_getClass("ChatRoomInfoViewController"), @selector(viewDidAppear:), (IMP)hook_CRVC_vDAppear, (IMP *)&orig_CRVC_vDAppear);
     MSHookMessageEx(objc_getClass("ChatRoomInfoViewController"), @selector(viewWillAppear:), (IMP)hook_CRVC_vWAppear, (IMP *)&orig_CRVC_vWAppear);
+    MSHookMessageEx(objc_getClass("NewMainFrameViewController"), @selector(viewWillAppear:), (IMP)hook_NMFV_vWAppear, (IMP *)&orig_NMFV_vWAppear);
     MSHookMessageEx(objc_getClass("UITableView"), @selector(reloadData), (IMP)hook_TV_reloadData, (IMP *)&orig_TV_reloadData);
     MSHookMessageEx(objc_getClass("WCTableViewManager"), @selector(tableView:didSelectRowAtIndexPath:), (IMP)hook_TVM_didSelect, (IMP *)&orig_TVM_didSelect);
 }
