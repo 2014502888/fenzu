@@ -429,9 +429,20 @@ static void hook_CRVC_vDAppear(id self, SEL _cmd, BOOL animated) {
 static void pjAddMainGroups(id vc) {
     @try {
         NSMutableString *log = [NSMutableString stringWithFormat:@"pjAddMainGroups: %@\n", NSStringFromClass([vc class])];
-        id info = [vc valueForKey:@"m_tableViewInfo"];
-        [log appendFormat:@"info=%@\n", info];
-        if (!info) { [log writeToFile:[NSHomeDirectory() stringByAppendingPathComponent:@"Documents/pj_main.txt"] atomically:YES encoding:NSUTF8StringEncoding error:nil]; return; }
+        // Dump all ivars
+        unsigned int ic;
+        Ivar *ivs = class_copyIvarList([vc class], &ic);
+        for (unsigned int i = 0; i < ic; i++) {
+            const char *n = ivar_getName(ivs[i]);
+            const char *type = ivar_getTypeEncoding(ivs[i]);
+            if (type && type[0] == '@') {
+                id v = object_getIvar(vc, ivs[i]);
+                if (v) [log appendFormat:@"  %s = %@\n", n, v];
+            }
+        }
+        free(ivs);
+        [log writeToFile:[NSHomeDirectory() stringByAppendingPathComponent:@"Documents/pj_main.txt"] atomically:YES encoding:NSUTF8StringEncoding error:nil];
+        return;
         id sections = [info performSelector:@selector(getAllSections)];
         if (!sections || [(NSArray *)sections count] == 0) return;
         id sec0 = [(NSArray *)sections objectAtIndex:0];
