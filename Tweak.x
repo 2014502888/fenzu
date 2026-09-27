@@ -335,14 +335,16 @@ static void PJAddSettingsEntry(id vc) {
 }
 %end
 
-static BOOL pjAdded = NO;
+static NSMutableDictionary *pjAddedVCs;
 static void (*orig_CRVC_vDAppear)(id, SEL, BOOL);
 static void hook_CRVC_vDAppear(id self, SEL _cmd, BOOL animated) {
     orig_CRVC_vDAppear(self, _cmd, animated);
     @try {
-        if (pjAdded) return;
-        pjAdded = YES;
-        dispatch_async(dispatch_get_main_queue(), ^{
+        if (!pjAddedVCs) pjAddedVCs = [[NSMutableDictionary alloc] init];
+        NSString *addr = [NSString stringWithFormat:@"%p", self];
+        if ([pjAddedVCs objectForKey:addr]) return;
+        [pjAddedVCs setObject:@(YES) forKey:addr];
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.3 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
             @try {
                 id info = [self valueForKey:@"m_tableViewInfo"];
                 if (!info) return;
@@ -353,7 +355,29 @@ static void hook_CRVC_vDAppear(id self, SEL _cmd, BOOL animated) {
                 id templateCell = [(NSArray *)cells1 objectAtIndex:0];
                 id templateCfg = [templateCell valueForKey:@"cellConfig"];
                 id templateLeft = [templateCfg valueForKey:@"leftConfig"];
-                [templateLeft setValue:@"分组(测试)" forKey:@"title"];
+                // Deep copy leftConfig by creating new one and copying all properties
+                Class leftCls = objc_getClass("WCTableViewCellLeftConfig");
+                id newLeft = [[leftCls alloc] init];
+                [newLeft setValue:@"分组" forKey:@"title"];
+                [newLeft setValue:@"未分组" forKey:@"detail"];
+                id font = [templateLeft valueForKey:@"titleFont"];
+                id color = [templateLeft valueForKey:@"titleColor"];
+                id mode = [templateLeft valueForKey:@"mode"];
+                if (font) [newLeft setValue:font forKey:@"titleFont"];
+                if (color) [newLeft setValue:color forKey:@"titleColor"];
+                if (mode) [newLeft setValue:mode forKey:@"mode"];
+                // New config
+                Class cfgCls = objc_getClass("WCTableViewCellNormalConfig");
+                id newCfg = [[cfgCls alloc] init];
+                [newCfg setValue:newLeft forKey:@"leftConfig"];
+                id selStyle = [templateCfg valueForKey:@"selectionStyle"];
+                if (selStyle) [newCfg setValue:selStyle forKey:@"selectionStyle"];
+                // New cell
+                Class cellCls = objc_getClass("WCTableViewNormalCellManager");
+                id newCell = [[cellCls alloc] init];
+                [newCell setValue:newCfg forKey:@"cellConfig"];
+                // Add to sec1
+                [sec1 performSelector:@selector(addCell:) withObject:newCell];
                 if (tableView) [tableView performSelector:@selector(reloadData)];
             } @catch(id e) {}
         });
