@@ -363,12 +363,10 @@ static NSMutableArray *pjGroupCells(void) {
 }
 
 %hook MainFrameLogicController
-- (NSUInteger)getSessionCount {
-    NSUInteger c = %orig;
+- (void)onMainSessionReload {
+    %orig;
     @try {
         id me = self;
-        g_allSessions = [[me valueForKey:@"m_frontSessionArray"] mutableCopy];
-        // Inject group cells
         NSMutableArray *arr = [[me valueForKey:@"m_frontSessionArray"] mutableCopy];
         NSMutableArray *keep = [NSMutableArray array];
         for (id s in arr) {
@@ -378,6 +376,12 @@ static NSMutableArray *pjGroupCells(void) {
         NSMutableArray *newArr = [pjGroupCells() mutableCopy];
         [newArr addObjectsFromArray:keep];
         [me setValue:newArr forKey:@"m_frontSessionArray"];
+    } @catch(id e) {}
+}
+- (NSUInteger)getSessionCount {
+    NSUInteger c = %orig;
+    @try {
+        g_allSessions = [[self valueForKey:@"m_frontSessionArray"] mutableCopy];
     } @catch(id e) {}
     return c;
 }
