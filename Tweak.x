@@ -362,6 +362,19 @@ static NSMutableArray *pjGroupCells(void) {
     return result;
 }
 
+static NSUInteger (*orig_MFL_getCount)(id, SEL);
+static NSUInteger hook_MFL_getCount(id self, SEL _cmd) {
+    NSUInteger c = orig_MFL_getCount(self, _cmd);
+    return c + [pjGroupCells() count];
+}
+static id (*orig_MFL_getInfo)(id, SEL, id);
+static id hook_MFL_getInfo(id self, SEL _cmd, id ip) {
+    NSUInteger gc = [pjGroupCells() count];
+    NSInteger row = [(NSIndexPath *)ip row];
+    if (row < (NSInteger)gc) return pjGroupCells()[row];
+    NSIndexPath *nip = [NSIndexPath indexPathForRow:row - gc inSection:[(NSIndexPath *)ip section]];
+    return orig_MFL_getInfo(self, _cmd, nip);
+}
 static void (*orig_MFL_onReload)(id, SEL);
 static void hook_MFL_onReload(id self, SEL _cmd) {
     orig_MFL_onReload(self, _cmd);
@@ -510,18 +523,7 @@ static void hook_TV_reloadData(id self, SEL _cmd) {
         NSString *cls = NSStringFromClass([[self dataSource] class]);
         if ([cls isEqualToString:@"ChatRoomInfoViewController"]) {
             pjAddGroupRow([self dataSource]);
-        } else if ([cls isEqualToString:@"NewMainFrameViewController"]) {
-            id logic = [[self dataSource] performSelector:@selector(valueForKey:) withObject:@"m_mainFrameLogicController"];
-            NSMutableArray *arr = [[logic performSelector:@selector(valueForKey:) withObject:@"m_frontSessionArray"] mutableCopy];
-            NSMutableArray *keep = [NSMutableArray array];
-            for (id s in arr) {
-                NSString *un = [s valueForKey:@"_userName"];
-                if (![un hasPrefix:@"pj_group_"]) [keep addObject:s];
-            }
-            NSMutableArray *newArr = [pjGroupCells() mutableCopy];
-            [newArr addObjectsFromArray:keep];
-            [logic performSelector:@selector(setValue:forKey:) withObject:newArr withObject:@"m_frontSessionArray"];
-        }
+
     } @catch(id e) {}
 }
 static void (*orig_TVM_didSelect)(id, SEL, id, id, id);
@@ -636,4 +638,6 @@ static void hook_NMFV_vWAppear(id self, SEL _cmd, BOOL animated) {
     MSHookMessageEx(objc_getClass("UITableView"), @selector(reloadData), (IMP)hook_TV_reloadData, (IMP *)&orig_TV_reloadData);
     MSHookMessageEx(objc_getClass("WCTableViewManager"), @selector(tableView:didSelectRowAtIndexPath:), (IMP)hook_TVM_didSelect, (IMP *)&orig_TVM_didSelect);
     MSHookMessageEx(objc_getClass("MainFrameLogicController"), @selector(onMainSessionReload), (IMP)hook_MFL_onReload, (IMP *)&orig_MFL_onReload);
+    MSHookMessageEx(objc_getClass("MainFrameLogicController"), @selector(getSessionCount), (IMP)hook_MFL_getCount, (IMP *)&orig_MFL_getCount);
+    MSHookMessageEx(objc_getClass("MainFrameLogicController"), @selector(getSessionInfoAtIndexPath:), (IMP)hook_MFL_getInfo, (IMP *)&orig_MFL_getInfo);
 }
