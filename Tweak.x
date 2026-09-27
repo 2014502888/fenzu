@@ -119,8 +119,8 @@ static NSString *PJGetContactName(NSString *userName) {
     }
     cv.tag = 99;
     [c.contentView addSubview:cv];
-    c.textLabel.frame = CGRectMake(55, c.textLabel.frame.origin.y, c.contentView.bounds.size.width - 65, 20);
-    c.detailTextLabel.frame = CGRectMake(55, c.textLabel.frame.origin.y + 20, c.contentView.bounds.size.width - 65, 16);
+    c.textLabel.frame = CGRectMake(55, 12, c.contentView.bounds.size.width - 70, 20);
+    c.detailTextLabel.frame = CGRectMake(55, 32, c.contentView.bounds.size.width - 70, 16);
     c.accessoryType = UITableViewCellAccessoryNone;
     return c;
 }
