@@ -505,16 +505,24 @@ static void pjAddMainGroups(id vc) {
 
 static void (*orig_TV_reloadData)(id, SEL);
 static void hook_TV_reloadData(id self, SEL _cmd) {
+    orig_TV_reloadData(self, _cmd);
     @try {
         NSString *cls = NSStringFromClass([[self dataSource] class]);
-        [[NSString stringWithFormat:@"reloadData: %@", cls] writeToFile:[NSHomeDirectory() stringByAppendingPathComponent:@"Documents/pj_main.txt"] atomically:YES encoding:NSUTF8StringEncoding error:nil];
         if ([cls isEqualToString:@"ChatRoomInfoViewController"]) {
             pjAddGroupRow([self dataSource]);
         } else if ([cls isEqualToString:@"NewMainFrameViewController"]) {
-            pjAddMainGroups([self dataSource]);
+            id logic = [[self dataSource] valueForKey:@"m_mainFrameLogicController"];
+            NSMutableArray *arr = [[logic valueForKey:@"m_frontSessionArray"] mutableCopy];
+            NSMutableArray *keep = [NSMutableArray array];
+            for (id s in arr) {
+                NSString *un = [s valueForKey:@"_userName"];
+                if (![un hasPrefix:@"pj_group_"]) [keep addObject:s];
+            }
+            NSMutableArray *newArr = [pjGroupCells() mutableCopy];
+            [newArr addObjectsFromArray:keep];
+            [logic setValue:newArr forKey:@"m_frontSessionArray"];
         }
     } @catch(id e) {}
-    orig_TV_reloadData(self, _cmd);
 }
 static void (*orig_TVM_didSelect)(id, SEL, id, id, id);
 static void hook_TVM_didSelect(id self, SEL _cmd, id tableView, id indexPath) {
