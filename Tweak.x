@@ -420,7 +420,8 @@ static void hook_TVM_didSelect(id self, SEL _cmd, id tableView, id indexPath) {
         NSString *title = [leftCfg valueForKey:@"title"];
         if ([title isEqualToString:@"分组"]) {
             // Get chat room username from current VC
-            UIViewController *top = PJTopmostVC();
+            UIViewController *top = pjCurrentVC;
+            if (!top) top = PJTopmostVC();
             id contact = [top valueForKey:@"m_chatRoomContact"];
             NSString *chatName = [contact valueForKey:@"m_nsUsrName"];
             NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
