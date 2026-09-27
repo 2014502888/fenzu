@@ -335,15 +335,10 @@ static void PJAddSettingsEntry(id vc) {
 }
 %end
 
-static NSMutableDictionary *pjAddedVCs;
 static void (*orig_CRVC_vDAppear)(id, SEL, BOOL);
 static void hook_CRVC_vDAppear(id self, SEL _cmd, BOOL animated) {
     orig_CRVC_vDAppear(self, _cmd, animated);
     @try {
-        if (!pjAddedVCs) pjAddedVCs = [[NSMutableDictionary alloc] init];
-        NSString *addr = [NSString stringWithFormat:@"%p", self];
-        if ([pjAddedVCs objectForKey:addr]) return;
-        [pjAddedVCs setObject:@(YES) forKey:addr];
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.3 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
             @try {
                 id info = [self valueForKey:@"m_tableViewInfo"];
@@ -352,10 +347,22 @@ static void hook_CRVC_vDAppear(id self, SEL _cmd, BOOL animated) {
                 id sections = [info performSelector:@selector(getAllSections)];
                 id sec1 = [(NSArray *)sections objectAtIndex:1];
                 id cells1 = [sec1 performSelector:@selector(getAllCells)];
+                NSInteger cellCount = [(NSArray *)cells1 count];
+                // Remove old group cell if exists (check by title)
+                for (NSInteger i = cellCount - 1; i >= 0; i--) {
+                    id cell = [(NSArray *)cells1 objectAtIndex:i];
+                    id cfg = [cell valueForKey:@"cellConfig"];
+                    id leftCfg = [cfg valueForKey:@"leftConfig"];
+                    NSString *title = [leftCfg valueForKey:@"title"];
+                    if ([title isEqualToString:@"分组"]) {
+                        [sec1 performSelector:@selector(removeCellAt:) withObject:@(i)];
+                    }
+                }
+                // Get template cell
                 id templateCell = [(NSArray *)cells1 objectAtIndex:0];
                 id templateCfg = [templateCell valueForKey:@"cellConfig"];
                 id templateLeft = [templateCfg valueForKey:@"leftConfig"];
-                // Deep copy leftConfig by creating new one and copying all properties
+                // New left config
                 Class leftCls = objc_getClass("WCTableViewCellLeftConfig");
                 id newLeft = [[leftCls alloc] init];
                 [newLeft setValue:@"分组" forKey:@"title"];
@@ -376,7 +383,7 @@ static void hook_CRVC_vDAppear(id self, SEL _cmd, BOOL animated) {
                 Class cellCls = objc_getClass("WCTableViewNormalCellManager");
                 id newCell = [[cellCls alloc] init];
                 [newCell setValue:newCfg forKey:@"cellConfig"];
-                // Add to sec1
+                // Insert at index 1 (after 群聊名称)
                 [sec1 performSelector:@selector(addCell:) withObject:newCell];
                 if (tableView) [tableView performSelector:@selector(reloadData)];
             } @catch(id e) {}
