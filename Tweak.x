@@ -335,7 +335,11 @@ static void PJAddSettingsEntry(id vc) {
 }
 %end
 
+static NSTimeInterval pjLastAddTime = 0;
 static void pjAddGroupRow(id self) {
+    NSTimeInterval now = [[NSDate date] timeIntervalSince1970];
+    if (now - pjLastAddTime < 1.0) return;
+    pjLastAddTime = now;
     @try {
         id info = [self valueForKey:@"m_tableViewInfo"];
         if (!info) return;
@@ -350,7 +354,7 @@ static void pjAddGroupRow(id self) {
             id leftCfg = [cfg valueForKey:@"leftConfig"];
             NSString *title = [leftCfg valueForKey:@"title"];
             if ([title isEqualToString:@"分组"]) {
-                [sec1 performSelector:@selector(removeCellAt:) withObject:@(i)];
+                ((void(*)(id, SEL, NSUInteger))objc_msgSend)(sec1, @selector(removeCellAt:), i);
             }
         }
         id templateCell = [(NSArray *)cells1 objectAtIndex:0];
@@ -385,7 +389,12 @@ static void hook_CRVC_vDAppear(id self, SEL _cmd, BOOL animated) {
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.5 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{ pjAddGroupRow(self); });
 }
 
-
+static void (*orig_CRVC_vWAppear)(id, SEL, BOOL);
+static void hook_CRVC_vWAppear(id self, SEL _cmd, BOOL animated) {
+    orig_CRVC_vWAppear(self, _cmd, animated);
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.5 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{ pjAddGroupRow(self); });
+}
 %ctor {
     MSHookMessageEx(objc_getClass("ChatRoomInfoViewController"), @selector(viewDidAppear:), (IMP)hook_CRVC_vDAppear, (IMP *)&orig_CRVC_vDAppear);
+    MSHookMessageEx(objc_getClass("ChatRoomInfoViewController"), @selector(viewWillAppear:), (IMP)hook_CRVC_vWAppear, (IMP *)&orig_CRVC_vWAppear);
 }
