@@ -386,8 +386,8 @@ static void pjAddGroupRow(id self) {
 static void (*orig_CRVC_vDAppear)(id, SEL, BOOL);
 static void hook_CRVC_vDAppear(id self, SEL _cmd, BOOL animated) {
     pjCurrentVC = self;
-    pjAddGroupRow(self);
     orig_CRVC_vDAppear(self, _cmd, animated);
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.1 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{ pjAddGroupRow(self); });
 }
 
 static void (*orig_TV_reloadData)(id, SEL);
