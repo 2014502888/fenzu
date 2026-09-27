@@ -1,0 +1,20 @@
+﻿2026-09-27T08:08:33.6492620Z ##[group]Run export THEOS=$HOME/theos
+2026-09-27T08:08:33.6493090Z [36;1mexport THEOS=$HOME/theos[0m
+2026-09-27T08:08:33.6567050Z [36;1mmake package FINALPACKAGE=1[0m
+2026-09-27T08:08:33.6567540Z [36;1mmkdir -p out[0m
+2026-09-27T08:08:33.6567870Z [36;1mfind .theos packages -name '*.dylib' -exec cp {} out/ \;[0m
+2026-09-27T08:08:33.6569920Z [36;1mls -la out/[0m
+2026-09-27T08:08:33.6627150Z shell: /bin/bash -e {0}
+2026-09-27T08:08:33.6627460Z env:
+2026-09-27T08:08:33.6627720Z   THEOS: /Users/runner/theos
+2026-09-27T08:08:33.6627990Z ##[endgroup]
+2026-09-27T08:08:39.7131490Z [0;36m==> [1;36mNotice:[m Build may be slow as Theos isn’t using all available CPU cores on this computer. Consider upgrading GNU Make: https://theos.dev/docs/parallel-building
+2026-09-27T08:08:39.8541100Z [1;31m> [1;3;39mMaking all for tweak FenzuTweak…[m
+2026-09-27T08:08:41.8721100Z [0;31m==> [1;39mPreprocessing Tweak.x…[m
+2026-09-27T08:08:41.9482310Z Tweak.x:638: error: %ctor does not make sense inside a block
+2026-09-27T08:08:41.9489960Z make[3]: *** [/Users/runner/work/fenzu/fenzu/.theos/obj/arm64/Tweak.x.m] Error 255
+2026-09-27T08:08:41.9490970Z rm /Users/runner/work/fenzu/fenzu/.theos/obj/arm64/Tweak.x.m
+2026-09-27T08:08:41.9492930Z make[2]: *** [/Users/runner/work/fenzu/fenzu/.theos/obj/arm64/FenzuTweak.dylib] Error 2
+2026-09-27T08:08:41.9494970Z make[1]: *** [internal-library-all_] Error 2
+2026-09-27T08:08:41.9498870Z make: *** [FenzuTweak.all.tweak.variables] Error 2
+2026-09-27T08:08:41.9530870Z ##[error]Process completed with exit code 2.

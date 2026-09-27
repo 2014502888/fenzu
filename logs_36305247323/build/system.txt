@@ -1,0 +1,8 @@
+2026-09-27T08:08:11.3480000Z Evaluating build.if
+2026-09-27T08:08:11.3480000Z Evaluating: success()
+2026-09-27T08:08:11.3480000Z Result: true
+2026-09-27T08:08:11.3490000Z Job is waiting for a hosted runner to come online.
+2026-09-27T08:08:11.3490000Z Job is about to start running on the hosted runner: GitHub Actions 1000000867
+2026-09-27T08:08:11.3480000Z Requested labels: macos-15
+2026-09-27T08:08:11.3480000Z Job defined at: 2014502888/fenzu/.github/workflows/build.yml@refs/heads/main
+2026-09-27T08:08:11.3480000Z Waiting for a runner to pick up this job...
