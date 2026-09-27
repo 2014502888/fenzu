@@ -61,32 +61,23 @@ static NSString *PJGetContactName(NSString *userName) {
     NSMutableString *log = [NSMutableString stringWithFormat:@"userName=%@\n", userName];
     NSString *result = userName;
     @try {
-        // Try WAContactGetter from MainFrameLogicController
-        // Try direct: NSClassFromString
-        Class cls = objc_getClass("WAContactGetter");
-        [log appendFormat:@"WAContactGetter=%@\n", cls];
-        // Try MMCommonContactCenter
-        Class cls2 = objc_getClass("MMCommonContactCenter");
-        [log appendFormat:@"MMCommonContactCenter=%@\n", cls2];
-        // Try MMSessionContentUtil
-        Class cls3 = objc_getClass("MMSessionContentUtil");
-        [log appendFormat:@"MMSessionContentUtil=%@\n", cls3];
-        // Try ContactDataUtil
-        Class cls4 = objc_getClass("ContactDataUtil");
-        [log appendFormat:@"ContactDataUtil=%@\n", cls4];
-        // Try WCAvatarView / ContactUtil
-        Class cls5 = objc_getClass("WCContactUtil");
-        [log appendFormat:@"WCContactUtil=%@\n", cls5];
-        // Try sharedInstance on each
-        for (Class c in @[cls2, cls3, cls4, cls5]) {
+        NSArray *tryClasses = @[
+            @"MMServiceCenter", @"ContactsDataLogic", @"WAContactGetter",
+            @"MMCommonContactCenter", @"ContactDataUtil", @"WCContactUtil",
+            @"MMSessionContentUtil", @"MMContactService", @"ContactService",
+            @"MMContactLogic", @"ContactLogic", @"WAContactService",
+            @"MMFriendDataLogic", @"ChatRoomDataLogic", @"MMChatRoomLogic",
+            @"MMSessionLogic", @"SessionLogic", @"MainFrameLogicController"
+        ];
+        for (NSString *cn in tryClasses) {
+            Class c = objc_getClass([cn UTF8String]);
+            [log appendFormat:@"\n=== %@: %@ ===\n", cn, c ? @"FOUND" : @"nil"];
             if (!c) continue;
+            // Dump class methods
             unsigned int mc;
             Method *ms = class_copyMethodList(object_getClass(c), &mc);
             for (unsigned int i = 0; i < mc; i++) {
-                NSString *m = [NSString stringWithUTF8String:sel_getName(method_getName(ms[i]))];
-                if ([m containsString:@"shared"] || [m containsString:@"default"] || [m containsString:@"center"]) {
-                    [log appendFormat:@"%@: %@\n", NSStringFromClass(c), m];
-                }
+                [log appendFormat:@"  +%s\n", sel_getName(method_getName(ms[i]))];
             }
             free(ms);
         }
