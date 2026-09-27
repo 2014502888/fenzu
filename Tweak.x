@@ -374,7 +374,7 @@ static void pjAddGroupRow(id self) {
         Class cellCls = objc_getClass("WCTableViewNormalCellManager");
         id newCell = [[cellCls alloc] init];
         [newCell setValue:newCfg forKey:@"cellConfig"];
-        [sec1 performSelector:@selector(addCell:) withObject:newCell];
+        ((void(*)(id, SEL, id, NSUInteger))objc_msgSend)(sec1, @selector(insertCell:At:), newCell, 1);
         if (tableView) [tableView performSelector:@selector(reloadData)];
     } @catch(id e) {}
 }
