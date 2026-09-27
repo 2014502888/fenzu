@@ -58,20 +58,45 @@ static void PJShowAssignMenu(NSString *userName) {
 }
 
 static NSString *PJGetContactName(NSString *userName) {
-    NSMutableString *log = [NSMutableString stringWithString:@"start\n"];
+    NSMutableString *log = [NSMutableString stringWithFormat:@"userName=%@\n", userName];
+    NSString *result = userName;
     @try {
-        [log appendFormat:@"userName=%@\n", userName];
+        // Try MMServiceCenter
         Class svcCls = objc_getClass("MMServiceCenter");
-        [log appendFormat:@"svcCls=%@\n", svcCls];
-        id center = [svcCls performSelector:@selector(defaultCenter)];
-        [log appendFormat:@"center=%@\n", center];
-        Class logicCls = objc_getClass("ContactsDataLogic");
-        [log appendFormat:@"logicCls=%@\n", logicCls];
-    } @catch(id e) {
-        [log appendFormat:@"err=%@\n", e];
-    }
+        if (svcCls) {
+            id center = [svcCls performSelector:@selector(defaultCenter)];
+            [log appendFormat:@"center=%@\n", center];
+            // Try ContactsDataLogic
+            Class logicCls = objc_getClass("ContactsDataLogic");
+            if (logicCls && center) {
+                id logic = [center performSelector:@selector(getService:) withObject:logicCls];
+                [log appendFormat:@"logic=%@\n", logic];
+                if (logic) {
+                    NSArray *trySels = @[@"contactUsrName:", @"getContact:", @"contactForUsrName:", @"getContactForUsrName:"];
+                    for (NSString *s in trySels) {
+                        SEL sel = NSSelectorFromString(s);
+                        if ([logic respondsToSelector:sel]) {
+                            id contact = [logic performSelector:sel withObject:userName];
+                            [log appendFormat:@"sel=%@ -> %@\n", s, contact];
+                            if (contact) {
+                                NSArray *keys = @[@"m_nsNickName", @"m_nsDisplayName", @"m_nsRemark", @"nickName", @"displayName", @"name"];
+                                for (NSString *k in keys) {
+                                    NSString *v = [contact valueForKey:k];
+                                    if (v && [v isKindOfClass:[NSString class]] && v.length > 0) {
+                                        [log appendFormat:@"  %@=%@\n", k, v];
+                                        if ([k isEqualToString:@"m_nsNickName"] || [k isEqualToString:@"nickName"]) result = v;
+                                    }
+                                }
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    } @catch(id e) { [log appendFormat:@"err=%@\n", e]; }
     [log writeToFile:[NSHomeDirectory() stringByAppendingPathComponent:@"Documents/pj_contact.txt"] atomically:YES encoding:NSUTF8StringEncoding error:nil];
-    return userName;
+    return result;
 }
 
 @interface PJGroupChatPicker : UIViewController <UITableViewDataSource, UITableViewDelegate>
