@@ -472,7 +472,7 @@ static void hook_TV_reloadData(id self, SEL _cmd) {
             pjAddGroupRow([self dataSource]);
         } else if ([cls isEqualToString:@"MainFrameLogicController"]) {
             // Main frame - get the VC from the logic controller
-            id delegate = [[self dataSource] valueForKey:@"m_delegate"];
+            id delegate = [[self dataSource] performSelector:@selector(valueForKey:) withObject:@"m_delegate"];
             if (delegate) pjAddMainGroups(delegate);
         }
     } @catch(id e) {}
